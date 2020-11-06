@@ -1,0 +1,7 @@
+Gizmos Setup
+
+This folder contains icons for the `SerializableObjects` of AntAI library.
+This icons makes easier to distinguish and find SO objects in the project hierarchy.
+
+To Setup the Icons, just drag and drop `Gizmos` folder to root `Assets` 
+folder of your Unity Project.

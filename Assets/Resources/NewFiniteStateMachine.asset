@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 634ee06b8c9d5414eb2d7599d1cf1c82, type: 3}
+  m_Name: NewFiniteStateMachine
+  m_EditorClassIdentifier: 
+  states:
+  - name: Idle
+    prefab: {fileID: 4777399015093968741, guid: 4b299efb0f9e9457eb7d2f8390cc70c7,
+      type: 3}
+    position: {x: 181, y: 309}
+    isDefault: 1
+  - name: Walk
+    prefab: {fileID: 6546991521165023692, guid: 30f03013054a7409bb9eff6af87b5442,
+      type: 3}
+    position: {x: 183, y: 448}
+    isDefault: 0
+  - name: Shoot
+    prefab: {fileID: 1129793867174714074, guid: 9d53e2fdc4dd240adb6b3ba8c51a3db7,
+      type: 3}
+    position: {x: 428, y: 449}
+    isDefault: 0
+  transitions:
+  - fromStateIndex: 0
+    toStateIndex: 1
+  - fromStateIndex: 1
+    toStateIndex: 0
+  - fromStateIndex: 0
+    toStateIndex: 2
+  - fromStateIndex: 2
+    toStateIndex: 0

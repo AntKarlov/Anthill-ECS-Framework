@@ -1,0 +1,32 @@
+namespace Anthill.Fsm
+{
+	using System;
+	using System.Collections.Generic;
+	using UnityEngine;
+
+	[CreateAssetMenu(fileName = "NewFiniteStateMachine", menuName = "Anthill/Finite State Machine")]
+	public class AntFsmPreset : ScriptableObject
+	{
+		[HideInInspector]
+		public List<StateItem> states = new List<StateItem>();
+
+		[HideInInspector]
+		public List<TransitionItem> transitions = new List<TransitionItem>();
+
+		[Serializable]
+		public struct StateItem
+		{
+			public string name;
+			public GameObject prefab;
+			public Vector2 position;
+			public bool isDefault;
+		}
+
+		[Serializable]
+		public struct TransitionItem
+		{
+			public int fromStateIndex;
+			public int toStateIndex;
+		}
+	}
+}
