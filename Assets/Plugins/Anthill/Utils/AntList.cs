@@ -4,7 +4,7 @@ namespace Anthill.Utils
 	
 	public static class AntList
 	{
-		public static T GetRandom<T>(this IList<T> aSource)
+		public static T GetRandom<T>(this List<T> aSource)
 		{
 			T result = default(T);
 			if (aSource.Count > 0)
@@ -14,7 +14,7 @@ namespace Anthill.Utils
 			return result;
 		}
 
-		public static T PopRandom<T>(this IList<T> aSource)
+		public static T PopRandom<T>(this List<T> aSource)
 		{
 			T result = default(T);
 			if (aSource.Count > 0)
@@ -26,7 +26,7 @@ namespace Anthill.Utils
 			return result;
 		}
 
-		public static T First<T>(this IList<T> aSource)
+		public static T First<T>(this List<T> aSource)
 		{
 			T result = default(T);
 			if (aSource.Count > 0)
@@ -36,7 +36,7 @@ namespace Anthill.Utils
 			return result;
 		}
 
-		public static T Last<T>(this IList<T> aSource)
+		public static T Last<T>(this List<T> aSource)
 		{
 			T result = default(T);
 			if (aSource.Count > 0)
@@ -46,7 +46,7 @@ namespace Anthill.Utils
 			return result;
 		}
 
-		public static T PopFirst<T>(this IList<T> aSource)
+		public static T PopFirst<T>(this List<T> aSource)
 		{
 			T result = default(T);
 			if (aSource.Count > 0)
@@ -57,7 +57,7 @@ namespace Anthill.Utils
 			return result;
 		}
 
-		public static T PopLast<T>(this IList<T> aSource)
+		public static T PopLast<T>(this List<T> aSource)
 		{
 			T result = default(T);
 			if (aSource.Count > 0)
@@ -85,7 +85,7 @@ namespace Anthill.Utils
 			return new List<T>(aSource);
 		}
 
-		public static void Shuffle<T>(this IList<T> aList)
+		public static void Shuffle<T>(this List<T> aList)
 		{
 			T temp;
 			int newPos;
@@ -100,7 +100,7 @@ namespace Anthill.Utils
 			}
 		}
 
-		public static void Swap<T>(this IList<T> aList, int aIndexA, int aIndexB)
+		public static void Swap<T>(this List<T> aList, int aIndexA, int aIndexB)
 		{
 			if (aIndexA < 0 || aIndexB < 0 ||
 				aIndexA == aIndexB ||

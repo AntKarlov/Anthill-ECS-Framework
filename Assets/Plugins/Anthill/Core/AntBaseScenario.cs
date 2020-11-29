@@ -56,7 +56,7 @@ namespace Anthill.Core
 			Type type = typeof(T);
 			ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
 			var system = (ISystem) constructor.Invoke(null);
-			A.Assert(system == null, $"Class `{type.ToString()})` not implemented ISystem interface!");
+			A.Assert(system == null, "Class `" + A.Bold(type.ToString()) + "` not implemented ISystem interface!");
 			Add(system, aPriority);
 		}
 
@@ -66,7 +66,7 @@ namespace Anthill.Core
 			{
 				_pending.Add(
 					new KeyValuePair<AntPriorityPair<ISystem>, PendingChange>(
-						new AntPriorityPair<ISystem>(aSystem, aPriority),
+						new AntPriorityPair<ISystem>(aSystem, aPriority), 
 						PendingChange.Add
 					)
 				);
@@ -141,7 +141,7 @@ namespace Anthill.Core
 			{
 				_pending.Add(
 					new KeyValuePair<AntPriorityPair<ISystem>, PendingChange>(
-						new AntPriorityPair<ISystem>(aSystem, 0), 
+						new AntPriorityPair<ISystem>(aSystem, 0),
 						PendingChange.Remove
 					)
 				);
@@ -190,6 +190,12 @@ namespace Anthill.Core
 			if (cleanupSystem != null)
 			{
 				_cleanupSystems.RemoveAll(x => Object.ReferenceEquals(x.System, cleanupSystem));
+			}
+
+			var resetSystem = aSystem as IResetSystem;
+			if (resetSystem != null)
+			{
+				_resetSystems.RemoveAll(x => Object.ReferenceEquals(x.System, resetSystem));
 			}
 
 			aSystem.RemovedFromEngine(_engine);
