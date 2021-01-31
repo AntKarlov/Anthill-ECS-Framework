@@ -2,18 +2,27 @@ namespace Anthill.Utils
 {
 	using System;
 
-// #if UNITY_EDITOR
-// 	using UnityEditor;
-// #endif
-
 	public static class AntEnum
 	{
-		public static T Parse<T>(string aValue)
+		/// <summary>
+		/// Converts string into Enum value.
+		/// </summary>
+		/// <param name="aValue">String value for converting.</param>
+		/// <typeparam name="T">Type of the Enum.</typeparam>
+		/// <returns>Enum value.</returns>
+		public static T Parse<T>(string aValue) where T : Enum
 		{
 			return (T) Enum.Parse(typeof(T), aValue);
 		}
 
-		public static T Parse<T>(string aValue, T aDefaultValue)
+		/// <summary>
+		/// Converts string into Enum value with default value.
+		/// </summary>
+		/// <param name="aValue">String value for converting.</param>
+		/// <param name="aDefaultValue">Default value if convert is impossible.</param>
+		/// <typeparam name="T">Type of the Enum.</typeparam>
+		/// <returns>Enum value.</returns>
+		public static T Parse<T>(string aValue, T aDefaultValue) where T : Enum
 		{
 			try
 			{
@@ -25,7 +34,12 @@ namespace Anthill.Utils
 			}
 		}
 
-		public static string[] GetStringValues<T>()
+		/// <summary>
+		/// Extracts all Enum values as array of the strings.
+		/// </summary>
+		/// <typeparam name="T">Type of the Enum.</typeparam>
+		/// <returns>Array of the strings.</returns>
+		public static string[] GetStringValues<T>() where T : Enum
 		{
 			var list = GetValues<T>();
 			var result = new string[list.Length];
@@ -36,42 +50,34 @@ namespace Anthill.Utils
 			return result;
 		}
 
-		public static T[] GetValues<T>()
+		/// <summary>
+		/// Extracts all Enum values as array.
+		/// </summary>
+		/// <typeparam name="T">Type of the Enum.</typeparam>
+		/// <returns>Array of the enums.</returns>
+		public static T[] GetValues<T>() where T : Enum
 		{
-			if (typeof(T).BaseType != typeof(Enum))
-			{
-				throw new ArgumentException("T must be of type System.Enum");
-			}
+			// if (typeof(T).BaseType != typeof(Enum))
+			// {
+			// 	throw new ArgumentException("T must be of type System.Enum");
+			// }
 			return (T[]) Enum.GetValues(typeof(T));
 		}
 
-		public static T GetRandomValue<T>()
+		/// <summary>
+		/// Extracts random value of Enum.
+		/// </summary>
+		/// <typeparam name="T">Type of the Enum.</typeparam>
+		/// <returns>Random value of the enum.</returns>
+		public static T GetRandomValue<T>() where T : Enum
 		{
-			if (typeof(T).BaseType != typeof(Enum))
-			{
-				throw new ArgumentException("T must be of type System.Enum");
-			}
-
+			// if (typeof(T).BaseType != typeof(Enum))
+			// {
+			// 	throw new ArgumentException("T must be of type System.Enum");
+			// }
 			var list = GetValues<T>();
-			int index = AntMath.RandomRangeInt(0, list.Length - 1);
+			int index = AntRandom.Range(0, list.Length - 1);
 			return list[index];
 		}
-
-// #if UNITY_EDITOR
-// 		public static string EnumField<T>(string aValue, string aDefValue)
-// 		{
-// 			if (typeof(T).BaseType == typeof(Enum))
-// 			{
-// 				string[] options = AntEnum.GetStringValues<T>();
-// 				int index = Array.IndexOf(options, aValue);
-// 				if (index >= 0 && index < options.Length)
-// 				{
-// 					index = EditorGUILayout.Popup(index, options);
-// 					return AntEnum.Parse<T>(options[index]).ToString();
-// 				}
-// 			}
-// 			return aDefValue;
-// 		}
-// #endif
 	}
 }

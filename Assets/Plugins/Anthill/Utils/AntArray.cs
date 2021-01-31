@@ -1,5 +1,7 @@
 namespace Anthill.Utils
 {
+	using System;
+
 	public static class AntArray
 	{
 		// int index = list.FindIndex(x => x.Key == "foobar");
@@ -9,7 +11,19 @@ namespace Anthill.Utils
 		// }
 		// //EffectItem item = Array.Find(effects, p => p.effectId == aEffectID);
 
-		public static bool Contains<T>(T[] aSource, T aValue)
+		public static int FindIndex<T>(ref T[] aSource, Func<T, bool> aClosure)
+		{
+			for (int i = 0, n = aSource.Length; i < n; i++)
+			{
+				if (aClosure(aSource[i]))
+				{
+					return i;
+				}
+			}
+			return -1;
+		}
+
+		public static bool Contains<T>(ref T[] aSource, T aValue)
 		{
 			int index = System.Array.FindIndex(aSource, x => System.Object.ReferenceEquals(x, aValue));
 			return (index >= 0 && index < aSource.Length);
@@ -24,6 +38,7 @@ namespace Anthill.Utils
 			}
 
 			newArray[newArray.Length - 1] = aValue;
+			A.Log(newArray);
 			aSource = newArray;
 		}
 
@@ -45,12 +60,9 @@ namespace Anthill.Utils
 
 		public static T GetRandom<T>(ref T[] aSource)
 		{
-			T result = default(T);
-			if (aSource.Length > 0)
-			{
-				result = aSource[AntMath.RandomRangeInt(0, aSource.Length - 1)];
-			}
-			return result;
+			return (aSource.Length > 0)
+				? aSource[AntRandom.Range(0, aSource.Length - 1)]
+				: default(T);
 		}
 
 		public static T PopRandom<T>(ref T[] aSource)
@@ -58,9 +70,9 @@ namespace Anthill.Utils
 			T result = default(T);
 			if (aSource.Length > 0)
 			{
-				int i = AntMath.RandomRangeInt(0, aSource.Length - 1);
+				int i = AntRandom.Range(0, aSource.Length - 1);
 				result = aSource[i];
-				RemoveAt<T>(ref aSource, i);
+				RemoveAt(ref aSource, i);
 			}
 			return result;
 		}
@@ -75,13 +87,13 @@ namespace Anthill.Utils
 			return (aSource.Length > 0) ? aSource[aSource.Length - 1] : default(T);
 		}
 
-		public static T PopFirst<T>(this T[] aSource)
+		public static T PopFirst<T>(ref T[] aSource)
 		{
 			T result = default(T);
 			if (aSource.Length > 0)
 			{
 				result = aSource[0];
-				RemoveAt<T>(ref aSource, 0);
+				RemoveAt(ref aSource, 0);
 			}
 			return result;
 		}
@@ -93,7 +105,7 @@ namespace Anthill.Utils
 			{
 				int i = aSource.Length - 1;
 				result = aSource[i];
-				RemoveAt<T>(ref aSource, i);
+				RemoveAt(ref aSource, i);
 			}
 			return result;
 		}
@@ -104,7 +116,7 @@ namespace Anthill.Utils
 			if (aIndex >= 0 && aIndex < aSource.Length)
 			{
 				result = aSource[aIndex];
-				RemoveAt<T>(ref aSource, aIndex);
+				RemoveAt(ref aSource, aIndex);
 			}
 			return result;
 		}
@@ -119,18 +131,18 @@ namespace Anthill.Utils
 			return newArray;
 		}
 
-		public static void Shuffle<T>(ref T[] aList)
+		public static void Shuffle<T>(ref T[] aSource)
 		{
 			T temp;
 			int newPos;
-			int index = aList.Length;
+			int index = aSource.Length;
 			while (index > 1)
 			{
 				index--;
-				newPos = AntMath.RandomRangeInt(0, index);
-				temp = aList[newPos];
-				aList[newPos] = aList[index];
-				aList[index] = temp;
+				newPos = AntRandom.Range(0, index);
+				temp = aSource[newPos];
+				aSource[newPos] = aSource[index];
+				aSource[index] = temp;
 			}
 		}
 

@@ -76,7 +76,7 @@ public static class A
 		if (aCondition)
 		{
 			var args = new object[aArgs.Length + 1];
-			args[0] = string.Concat("Assert Failed! ", aMessage);
+			args[0] = string.Concat("[Assert Failed] ", aMessage);
 			for (int i = 0, n = aArgs.Length; i < n; i++)
 			{
 				args[i + 1] = aArgs[i];
@@ -104,7 +104,7 @@ public static class A
 	/// <returns>String with colored tags.</returns>
 	public static string Colored(string aText, Color aColor)
 	{
-		return string.Format("<color={0}>{1}</color>", aColor, aText);
+		return $"<color={aColor}>{aText}</color>";
 	}
 
 	/// <summary>
@@ -115,7 +115,7 @@ public static class A
 	/// <returns>String with colored tags.</returns>
 	public static string Colored(string aText, string aColorName)
 	{
-		return string.Format("<color={0}>{1}</color>", aColorName, aText);
+		return $"<color={aColorName}>{aText}</color>";
 	}
 
 	/// <summary>
@@ -126,7 +126,7 @@ public static class A
 	/// <returns>String with size tags.</returns>
 	public static string Sized(string aText, int aSize)
 	{
-		return string.Format("<size={0}>{1}</size>", aSize, aText);
+		return $"<size={aSize}>{aText}</size>";
 	}
 
 	/// <summary>
@@ -136,7 +136,7 @@ public static class A
 	/// <returns>String with the bold tags.</returns>
 	public static string Bold(string aText)
 	{
-		return string.Format("<b>{0}</b>", aText);
+		return $"<b>{aText}</b>";
 	}
 
 	/// <summary>
@@ -146,7 +146,7 @@ public static class A
 	/// <returns>String with the italic tags.</returns>
 	public static string Italic(string aText)
 	{
-		return string.Format("<i>{0}</i>", aText);
+		return $"<i>{0}</i>";
 	}
 
 	#endregion

@@ -21,20 +21,20 @@ namespace Anthill.Utils
 		public static void BeginHandles(Matrix4x4 aMatrix)
 		{
 			_useHandles = true;
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 			_matrixBackup = Handles.matrix;
 			Handles.matrix = aMatrix;
-			#endif
+#endif
 		}
 
 		public static void EndHandles()
 		{
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 			if (_useHandles)
 			{
 				Handles.matrix = _matrixBackup;
 			}
-			#endif
+#endif
 			_useHandles = false;
 		}
 
@@ -50,14 +50,14 @@ namespace Anthill.Utils
 
 		private static void Draw(float aX1, float aY1, float aX2, float aY2, Color aColor)
 		{
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 			if (_useHandles)
 			{
 				Handles.color = aColor;
 				Handles.DrawLine(new Vector3(aX1, aY1, 0.0f), new Vector3(aX2, aY2, 0.0f));
 				return;
 			}
-			#endif
+#endif
 
 			if (_useGizmos)
 			{
@@ -93,7 +93,7 @@ namespace Anthill.Utils
 
 		public static void DrawSolidRect(float aX, float aY, float aWidth, float aHeight, Color aColor)
 		{
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 			if (_useHandles)
 			{
 				Handles.color = aColor;
@@ -108,12 +108,12 @@ namespace Anthill.Utils
 					new Color(0.5f, 0.5f, 0.5f, 0.0f)
 				);
 			}
-			#endif
+#endif
 		}
 
 		public static void DrawRect(float aX, float aY, float aWidth, float aHeight, Color aColor, float aAlpha = 0.1f)
 		{
-			#if UNITY_EDITOR
+#if UNITY_EDITOR
 			if (_useHandles)
 			{
 				Handles.color = aColor;
@@ -127,7 +127,7 @@ namespace Anthill.Utils
 					new Color(0.5f, 0.5f, 0.5f, aAlpha), Color.white
 				);
 			}
-			#endif
+#endif
 
 			if (!_useHandles)
 			{
@@ -143,13 +143,17 @@ namespace Anthill.Utils
 			DrawRect(aRect.x, aRect.y, aRect.width, aRect.height, aColor);
 		}
 
-		public static void DrawRotatedCircle(float aX, float aY, float aRadius, float aAngleDeg,
-				Color aColor, int aVertices = 12)
+		public static void DrawRotatedCircle(
+			float aX, float aY, 
+			float aRadius, 
+			float aAngleDeg,
+			Color aColor, 
+			int aVertices = 12)
 		{
 			if (aVertices >= 3)
 			{
 				var vertices = new Vector2[aVertices];
-				float rotation = aAngleDeg * AntMath.RADIANS;
+				float rotation = aAngleDeg * AntAngle.DegToRad;
 				float angle;
 				float dx = aRadius;
 				const float dy = 0.0f;
@@ -171,8 +175,12 @@ namespace Anthill.Utils
 			}
 		}
 
-		public static void DrawRotatedCircle(Vector2 aPoint, float aRadius, float aAngleDeg,
-				Color aColor, int aVertices = 12)
+		public static void DrawRotatedCircle(
+			Vector2 aPoint, 
+			float aRadius, 
+			float aAngleDeg,
+			Color aColor, 
+			int aVertices = 12)
 		{
 			DrawRotatedCircle(aPoint.x, aPoint.y, aRadius, aAngleDeg, aColor, aVertices);
 		}
@@ -296,7 +304,7 @@ namespace Anthill.Utils
 			var vertices = new Vector2[aPoints.Length];
 			for (int i = 0, n = vertices.Length; i < n; i++)
 			{
-				vertices[i] = AntMath.RotatePointDeg(aPoints[i], new Vector2(aPivotX, aPivotY), aAngleDeg);
+				vertices[i] = AntAngle.RotateAroundDeg(aPoints[i], new Vector2(aPivotX, aPivotY), aAngleDeg);
 			}
 
 			DrawPath(vertices, aColor, aLoop);

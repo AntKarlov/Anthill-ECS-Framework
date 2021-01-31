@@ -6,12 +6,9 @@ namespace Anthill.Utils
 	{
 		public static T GetRandom<T>(this List<T> aSource)
 		{
-			T result = default(T);
-			if (aSource.Count > 0)
-			{
-				result = aSource[AntMath.RandomRangeInt(0, aSource.Count - 1)];
-			}
-			return result;
+			return (aSource.Count > 0)
+				? aSource[AntRandom.Range(0, aSource.Count - 1)]
+				: default(T);
 		}
 
 		public static T PopRandom<T>(this List<T> aSource)
@@ -19,7 +16,7 @@ namespace Anthill.Utils
 			T result = default(T);
 			if (aSource.Count > 0)
 			{
-				int i = AntMath.RandomRangeInt(0, aSource.Count - 1);
+				int i = AntRandom.Range(0, aSource.Count - 1);
 				result = aSource[i];
 				aSource.RemoveAt(i);
 			}
@@ -28,22 +25,12 @@ namespace Anthill.Utils
 
 		public static T First<T>(this List<T> aSource)
 		{
-			T result = default(T);
-			if (aSource.Count > 0)
-			{
-				result = aSource[0];
-			}
-			return result;
+			return (aSource.Count > 0) ? aSource[0] : default(T);
 		}
 
 		public static T Last<T>(this List<T> aSource)
 		{
-			T result = default(T);
-			if (aSource.Count > 0)
-			{
-				result = aSource[aSource.Count - 1];
-			}
-			return result;
+			return (aSource.Count > 0) ? aSource[aSource.Count - 1] : default(T);
 		}
 
 		public static T PopFirst<T>(this List<T> aSource)
@@ -93,7 +80,7 @@ namespace Anthill.Utils
 			while (index > 1)
 			{
 				index--;
-				newPos = AntMath.RandomRangeInt(0, index);
+				newPos = AntRandom.Range(0, index);
 				temp = aList[newPos];
 				aList[newPos] = aList[index];
 				aList[index] = temp;

@@ -5,11 +5,11 @@ namespace Anthill.Utils
 	public static class AntColor
 	{
 		/// <summary>
-		/// Преобразует значение Color в Hex формат.
+		/// Converts Color into Hex string.
 		/// </summary>
-		/// <param name="aColor">Color значение.</param>
-		/// <returns>Возвращает Hex код цвета в формате string.</returns>
-		public static string ColorToHex(Color32 aColor)
+		/// <param name="aColor">Value of the color.</param>
+		/// <returns>Returns Hex of the color as String.</returns>
+		public static string ColorToHex(this Color32 aColor)
 		{
 			return string.Format("#{0}{1}{2}{3}", 
 				aColor.r.ToString("X2"),
@@ -19,11 +19,11 @@ namespace Anthill.Utils
 		}
 
 		/// <summary>
-		/// Преобразует значение Hex в Color формат.
+		/// Converts value of the Hex into Color.
 		/// </summary>
-		/// <param name="aHex">Hex код цвета в формате string.</param>
-		/// <returns>Возвращает Color значение.</returns>
-		public static Color32 HexToColor(string aHex)
+		/// <param name="aHex">Hex code in the string.</param>
+		/// <returns>Returns Color value.</returns>
+		public static Color32 HexToColor(this string aHex)
 		{
 			if (aHex.IndexOf('#') > -1)
 			{
@@ -58,9 +58,9 @@ namespace Anthill.Utils
 			}
 		}
 
-		public static Color NewColor(float aRed, float aGreen, float aBlue, float aAlpha = 255.0f)
+		public static void Set(this Color aColor, float aRed, float aGreen, float aBlue, float aAlpha = 255.0f)
 		{
-			return new Color(aRed / 255.0f, aGreen / 255.0f, aBlue / 255.0f, aAlpha / 255.0f);
+			aColor = new Color(aRed / 255.0f, aGreen / 255.0f, aBlue / 255.0f, aAlpha / 255.0f);
 		}
 	}
 }

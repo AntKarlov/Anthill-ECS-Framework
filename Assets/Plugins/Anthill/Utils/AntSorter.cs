@@ -91,7 +91,7 @@ namespace Anthill.Utils
 
 		public void Sort(int aSortOrder = AntSorterOrder.ASC)
 		{
-			list.Sort((x,y) => (x.sortIndex < y.sortIndex) 
+			list.Sort((x, y) => (x.sortIndex < y.sortIndex) 
 				? aSortOrder 
 				: (x.sortIndex > y.sortIndex) 
 					? -aSortOrder 

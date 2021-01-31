@@ -4,11 +4,6 @@ namespace Anthill.Utils
 	
 	public static class AntMath
 	{
-		public const float DEGREES = 180.0f / Mathf.PI;
-		public const float RADIANS = Mathf.PI / 180.0f;
-
-		// private static Vector3 _mouseHelper = new Vector3(0, 0, 10.0f);
-
 		// public static float ScaleByFOV(float aFOV, float aDistance, float aViewHeight)
 		// {
 		// 	// focal length is the position where objects are seen at their 
@@ -37,249 +32,6 @@ namespace Anthill.Utils
 		// 	Plane[] planes = GeometryUtility.CalculateFrustumPlanes(aCamera);
 		// 	return GeometryUtility.TestPlanesAABB(planes, aRenderer.bounds);
 		// }
-		 
-		/// <summary>
-		/// Normalize any angle as -180 to 180 in degress.
-		/// </summary>
-		/// <param name="aValue">Angle in the degrees.</param>
-		/// <returns>Normalized angle from -180 to 180 deg.</returns>
-		public static float Angle(float aValue)
-		{
-			const float ang = 180.0f;
-			bool inv = aValue < 0.0f;
-			
-			aValue = (inv ? -aValue : aValue) % 360;
-			
-			if (aValue > ang)			
-			{
-				aValue = -ang + (aValue - ang);
-			}
-			
-			return (inv ? -aValue : aValue);			
-		}
-
-		/// <summary>
-		/// Calcs difference between two angles.
-		/// </summary>
-		/// <param name="aA">First angle.</param>
-		/// <param name="aB">Second angle.</param>
-		/// <returns>Difference in the radians.</returns>
-		public static float AngleDifference(float aA, float aB)
-		{
-			return Mathf.Atan2(Mathf.Sin(aA - aB), Mathf.Cos(aA - aB));
-		}
-		
-		/// <summary>
-		/// Determines whether the angle falls into the specified area.
-		/// </summary>
-		/// <param name="aAngleDeg">Angle to check in degrees.</param>
-		/// <param name="aTarget">Rotation angle of the area in degrees.</param>
-		/// <param name="aArea">Area size to both sides from target angle.</param>
-		/// <returns>True if angle in in the area.</returns>
-		public static bool AngleArea(float aAngleDeg, float aTarget, float aArea)
-		{
-			return Mathf.Abs(AngleDifference(aAngleDeg, aTarget) * DEGREES) <= aArea;
-		}
-
-		/// <summary>
-		/// Inverse angle.
-		/// </summary>
-		/// <param name="aValue">Angle in degrees.</param>
-		/// <returns>Returns inversed angle.</returns>
-		public static float InvertAngleDeg(float aValue)
-		{
-			return Angle(aValue) + 180.0f;
-		}
-		
-		/// <summary>
-		/// Converts a negative angle value to a positive one.
-		/// </summary>
-		/// <param name="aValue">Any angle in degrees.</param>
-		/// <returns>Positive angle in degrees.</returns>
-		public static float AbsAngleDeg(float aValue)
-		{
-			return (aValue < 0.0f) ? 180.0f + (180.0f + aValue) : aValue;
-		}
-
-		/// <summary>
-		/// Change the value of the angle with a given coefficient.
-		/// </summary>
-		/// <param name="aLower">Current angle in degrees.</param>
-		/// <param name="aUpper">Target angle in degrees.</param>
-		/// <param name="aCoef">Change coefficient.</param>
-		/// <returns>The new angle value taking into account the coefficient.</returns>
-		public static float LerpAngleDeg(float aLower, float aUpper, float aCoef)
-		{
-			if (Mathf.Abs(aLower - aUpper) > 180.0f)
-			{
-				if (aLower > aUpper)
-				{
-					aUpper += 360.0f;
-				}
-				else
-				{
-					aUpper -= 360.0f;
-				}
-			}
-
-			aLower += (aUpper - aLower) * aCoef;
-			return Angle(aLower);
-		}
-
-		/// <summary>
-		/// Limits the value of angle.
-		/// </summary>
-		/// <param name="aAngle">Angle in degrees.</param>
-		/// <param name="aLimit">Limit angle.</param>
-		/// <returns>New value of the angle if angle outside the limit.</returns>
-		public static float LimitAngle(float aAngle, float aLimit)
-		{
-			if (aAngle > aLimit)
-			{
-				aAngle = aLimit;
-			}
-			else if (aAngle < -aLimit)
-			{
-				aAngle = -aLimit;
-			}
-			return aAngle;
-		}
-
-		/// <summary>
-		/// Calcs angle between two points.
-		/// </summary>
-		/// <param name="aA">First point.</param>
-		/// <param name="aB">Second point.</param>
-		/// <returns>Angle between points in radians.</returns>
-		public static float AngleRad(Vector2 aA, Vector2 aB)
-		{
-			return Mathf.Atan2(aB.y - aA.y, aB.x - aA.x);
-		}
-
-		/// <summary>
-		/// Calcs angle to point from zero point.
-		/// </summary>
-		/// <param name="aX">X pos.</param>
-		/// <param name="aY">Y pos.</param>
-		/// <returns>Angle in radians.</returns>
-		public static float AngleRad(float aX, float aY)
-		{
-			return Mathf.Atan2(aY, aX);
-		}
-
-		/// <summary>
-		/// Calcs angle to point from zero point.
-		/// </summary>
-		/// <param name="aPoint">Target point.</param>
-		/// <returns>Angle in radians.</returns>
-		public static float AngleRad(Vector2 aPoint)
-		{
-			return Mathf.Atan2(aPoint.y, aPoint.x);
-		}
-
-		/// <summary>
-		/// Calcs angle between two points.
-		/// </summary>
-		/// <param name="aA">First point.</param>
-		/// <param name="aB">Second point.</param>
-		/// <returns>Angle between points in degrees.</returns>
-		public static float AngleDeg(Vector2 aA, Vector2 aB)
-		{
-			return Mathf.Atan2(aB.y - aA.y, aB.x - aA.x) * DEGREES;
-		}
-
-		/// <summary>
-		/// Calcs angle to point from zero point.
-		/// </summary>
-		/// <param name="aX">X pos.</param>
-		/// <param name="aY">Y pos.</param>
-		/// <returns>Angle in degrees.</returns>
-		public static float AngleDeg(float aX, float aY)
-		{
-			return Mathf.Atan2(aY, aX) * DEGREES;
-		}
-
-		/// <summary>
-		/// Calcs angle to point from zero point.
-		/// </summary>
-		/// <param name="aPoint">Target point.</param>
-		/// <returns>Angle in degrees.</returns>
-		public static float AngleDeg(Vector2 aPoint)
-		{
-			return Mathf.Atan2(aPoint.y, aPoint.x) * DEGREES;
-		}
-
-		/// <summary>
-		/// Normalizes angle in the degrees.
-		/// </summary>
-		/// <param name="aAngle">Angle in degrees.</param>
-		/// <returns>Normalized angle in degrees.</returns>
-		public static float NormalizeAngleDeg(float aAngle)
-		{
-			if (aAngle < 0.0f)
-			{
-				aAngle = 360.0f + aAngle;
-			}
-			else if (aAngle >= 360.0f)
-			{
-				aAngle = aAngle - 360.0f;
-			}
-			return aAngle;
-		}
-
-		/// <summary>
-		/// Normalizes angle in the radians.
-		/// </summary>
-		/// <param name="aAngle">Angle in radians.</param>
-		/// <returns>Normalized angle in radians.</returns>
-		public static float NormalizeAngleRad(float aAngle)
-		{
-			if (aAngle < 0.0f)
-			{
-				aAngle = Mathf.PI * 2.0f + aAngle;
-			}
-			else if (aAngle >= Mathf.PI * 2.0f)
-			{
-				aAngle = aAngle - Mathf.PI * 2.0f;
-			}
-			return aAngle;
-		}
-
-		/// <summary>
-		/// Rotates the point around pivot.
-		/// </summary>
-		/// <param name="aPoint">Rotating point.</param>
-		/// <param name="aPivot">Pivot point.</param>
-		/// <param name="aAngle">Rotation angle in degrees.</param>
-		/// <returns>Point poisition after rotation.</returns>
-		public static Vector2 RotatePointDeg(Vector2 aPoint, Vector2 aPivot, float aAngle)
-		{
-			aAngle = -aAngle * RADIANS;
-			float dx = aPoint.x - aPivot.x;
-			float dy = aPivot.y - aPoint.y;
-			return new Vector2(
-				aPivot.x + Mathf.Cos(aAngle) * dx - Mathf.Sin(aAngle) * dy, 
-				aPivot.y - (Mathf.Sin(aAngle) * dx + Mathf.Cos(aAngle) * dy)
-			);
-		}
-
-		/// <summary>
-		/// Rotates the point around pivot.
-		/// </summary>
-		/// <param name="aPoint">Rotating point.</param>
-		/// <param name="aPivot">Pivot point.</param>
-		/// <param name="aAngle">Rotation angle in radians.</param>
-		/// <returns>Point poisition after rotation.</returns>
-		public static Vector2 RotatePointRad(Vector2 aPoint, Vector2 aPivot, float aAngle)
-		{
-			aAngle = -aAngle;
-			float dx = aPoint.x - aPivot.x;
-			float dy = aPivot.y - aPoint.y;
-			return new Vector2(
-				aPivot.x + Mathf.Cos(aAngle) * dx - Mathf.Sin(aAngle) * dy, 
-				aPivot.y - (Mathf.Sin(aAngle) * dx + Mathf.Cos(aAngle) * dy)
-			);
-		}
 
 		/// <summary>
 		/// Checks if the value in the specified range.
@@ -325,38 +77,6 @@ namespace Anthill.Utils
 		}
 
 		/// <summary>
-		/// Returns random rounded value from the range.
-		/// </summary>
-		/// <param name="aLower">Lower value.</param>
-		/// <param name="aUpper">Upper value.</param>
-		/// <returns>Random value from range.</returns>
-		public static int RandomRangeInt(int aLower, int aUpper)
-		{
-			return Mathf.RoundToInt(Random.value * (aUpper - aLower)) + aLower;
-		}
-
-		/// <summary>
-		/// Returns random value from the range.
-		/// </summary>
-		/// <param name="aLower">Lower value.</param>
-		/// <param name="aUpper">Upper value.</param>
-		/// <returns>Random value from range.</returns>
-		public static float RandomRangeFloat(float aLower, float aUpper)
-		{
-			return Random.value * (aUpper - aLower) + aLower;
-		}
-
-		/// <summary>
-		/// Returns random value from the range.
-		/// </summary>
-		/// <param name="aValue">Vector where is X is lower and Y is upper value.</param>
-		/// <returns>Random value from range.</returns>
-		public static float RandomRangeFloat(Vector2 aValue)
-		{
-			return RandomRangeFloat(aValue.x, aValue.y);
-		}
-
-		/// <summary>
 		/// Compares the specified values with a given difference error.
 		/// </summary>
 		/// <param name="aA">First value.</param>
@@ -394,24 +114,16 @@ namespace Anthill.Utils
 		/// <param name="aLower2">Lower value of the second range.</param>
 		/// <param name="aUpper2">Upper value of the second range.</param>
 		/// <returns>Value in the second range.</returns>
+		public static float Remap(float aValue, float aLower1, float aUpper1, float aLower2, float aUpper2)
+		{
+			float t = LerpInv(aLower1, aUpper1, aValue);
+			return Lerp(aLower2, aUpper2, t);
+		}
+
 		// public static float Remap(float aValue, float aLower1, float aUpper1, float aLower2, float aUpper2)
 		// {
 		// 	return aLower2 + (aUpper2 - aLower2) * (aValue - aLower1) / (aUpper1 - aLower1);
 		// }
-
-		public static float Remap(float aValue, float aLower1, float aUpper1, float aLower2, float aUpper2)
-		{
-			float t = InvLerp(aLower1, aUpper1, aValue);
-			return Lerp(aLower2, aUpper2, t);
-		}
-
-		/// <summary>
-		///	Ограничивает значение заданным диапазоном.
-		/// </summary>
-		/// <param name="aValue">Значение.</param>
-		/// <param name="aLower">Наименьшее значение диапазона.</param>
-		/// <param name="aUpper">Наибольшее значение диапазона.</param>
-		/// <returns>Если значение выходит за рамки диапазона, то вернется граница диапазона.</returns>
 		
 		/// <summary>
 		/// Limits value by specified range.
@@ -432,22 +144,22 @@ namespace Anthill.Utils
 		/// <param name="aUpper">Target value.</param>
 		/// <param name="aCoef">Change coefficient.</param>
 		/// <returns>The new value taking into account the coefficient.</returns>
-		// public static float Lerp(float aLower, float aUpper, float aCoef)
-		// {
-		// 	return aLower + ((aUpper - aLower) * aCoef);
-		// }
-
 		public static float Lerp(float aLower, float aUpper, float aValue)
 		{
 			return (1.0f - aValue) * aLower + aUpper * aValue;
 		}
 
-		public static float ClampedLerp(float aLower, float aUpper, float aValue)
+		// public static float Lerp(float aLower, float aUpper, float aCoef)
+		// {
+		// 	return aLower + ((aUpper - aLower) * aCoef);
+		// }
+
+		public static float LerpClamped(float aLower, float aUpper, float aValue)
 		{
 			return Lerp(aLower, aUpper, Mathf.Clamp01(aValue));
 		}
 
-		public static float InvLerp(float aLower, float aUpper, float aValue)
+		public static float LerpInv(float aLower, float aUpper, float aValue)
 		{
 			return (aValue - aLower) / (aUpper - aLower);
 		}
@@ -542,28 +254,6 @@ namespace Anthill.Utils
 		public static int Min(int aA, int aB)
 		{
 			return (aA < aB) ? aA : aB;
-		}
-		
-		/// <summary>
-		/// Returns a unique ID generated by standard Unity tools.
-		/// </summary>
-		/// <returns>Unique random string.</returns>
-		public static string GetUniqueID()
-		{
-			return System.Guid.NewGuid().ToString();
-		}
-
-		/// <summary>
-		/// Returns a unique ID string.
-		/// </summary>
-		/// <returns>Unique random string.</returns>
-		public static string UniqueID()
-		{
-			var epochStart = new System.DateTime(1970, 1, 1, 0, 0, 0, System.DateTimeKind.Utc);
-			int currentEpochTime = (int) (System.DateTime.UtcNow - epochStart).TotalSeconds;
-			int z1 = Random.Range(0, 1000000);
-			int z2 = Random.Range(0, 1000000);
-			return string.Concat(currentEpochTime.ToString(), "-", z1.ToString(), "-", z2.ToString());
 		}
 
 		/// <summary>

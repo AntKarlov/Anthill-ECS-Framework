@@ -32,13 +32,11 @@ namespace Anthill.Utils
 
 		public bool IsInside(float aX, float aY)
 		{
-			// UpdateBounds();
 			return (aX >= left && aX <= right && aY >= bottom && aY <= top);
 		}
 
 		public bool IsInside(Vector2 aPoint)
 		{
-			// UpdateBounds();
 			return (aPoint.x >= left && aPoint.x <= right && aPoint.y >= bottom && aPoint.y <= top);
 		}
 
