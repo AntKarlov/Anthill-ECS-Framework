@@ -3,124 +3,169 @@ namespace Anthill.Pool
 	using System.Collections.Generic;
 	using UnityEngine;
 
-	public class AntPool
+	public static class AntPool
 	{
-		public string name;
+		private static Transform _parent;
+		private readonly static List<AntPoolContainer> _pools = new List<AntPoolContainer>();
 
-		protected List<AntPoolObject> _objects;
-		protected Object _samplePrefab;
-		protected Transform _parent;
-		protected int _currentIndex;
-		protected int _growCount;
-
-		#region Getters / Setters
-
-		public int GrowCount { get => _growCount; }
-
-		#endregion
 		#region Public Methods
 
-		public AntPool(Object aSamplePrefab, int aCapacity, Transform aParent = null)
+		public static void SetParent(Transform aParent)
 		{
-			name = aSamplePrefab.name;
-			_objects = new List<AntPoolObject>();
-			_samplePrefab = aSamplePrefab;
 			_parent = aParent;
-			_currentIndex = -1;
-			_growCount = 0;
-
-			AntPoolObject po;
-			for (int i = 0; i < aCapacity; i++)
-			{
-				po = CreateNew();
-				if (po != null)
-				{
-					AddObject(po);
-				}
-			}
 		}
 
-		public AntPoolObject CreateNew()
+		public static void Add(AntPoolPreset.Item aSource)
 		{
-			var go = GameObject.Instantiate((GameObject) _samplePrefab);
-			go.name = _samplePrefab.name;
-
-			var po = go.GetComponent<AntPoolObject>();
-			if (po != null)
+			var go = new GameObject();
+			go.name = aSource.prefab.name;
+			if (_parent != null)
 			{
-				po.Pool = this;
-				if (_parent != null)
-				{
-					po.transform.SetParent(_parent);
-				}
-				return po;
+				go.transform.SetParent(_parent);
 			}
-
-			A.Warning($"Component `AntPoolObject` not found for the prefab `{go.name}`.");
-			return null;
+			
+			_pools.Add(new AntPoolContainer(aSource, go.transform));
 		}
 
-		public void AddObject(AntPoolObject aObject, bool aCheckCopy = false)
+		public static string[] GetPoolNames()
 		{
-			if (aCheckCopy)
+			var result = new string[_pools.Count];
+			for (int i = 0, n = _pools.Count; i < n; i++)
 			{
-				int index = _objects.IndexOf(aObject);
-				if (index >= 0 && index < _objects.Count)
-				{
-					A.Warning($"Object `{aObject.name}` already added to the pool!");
-					return;
-				}
+				result[i] = _pools[i].name;
 			}
-
-			aObject.PlacedToPool();
-			_currentIndex++;
-			if (_currentIndex < _objects.Count)
-			{
-				_objects[_currentIndex] = aObject;
-			}
-			else
-			{
-				_objects.Add(aObject);
-			}
-		}
-
-		public T GetObject<T>()
-		{
-			return GetObject().GetComponent<T>();
-		}
-
-		public AntPoolObject GetObject()
-		{
-			AntPoolObject result;
-			if (_currentIndex > -1)
-			{
-				result = _objects[_currentIndex];
-				_objects[_currentIndex] = null;
-				result.ExtractedFromPool();
-				_currentIndex--;
-				return result;
-			}
-
-			result = CreateNew();
-			result.ExtractedFromPool();
-			_growCount++;
 			return result;
 		}
 
-		public bool HasComponent<T>()
+		public static List<string> GetPoolNames<T>()
 		{
-			AntPoolObject result;
-			if (_currentIndex > -1)
+			var result = new List<string>();
+			for (int i = 0, n = _pools.Count; i < n; i++)
 			{
-				result = _objects[_currentIndex];
+				if (_pools[i].Has<T>())
+				{
+					result.Add(_pools[i].name);
+				}
 			}
-			else
-			{
-				result = CreateNew();
-				AddObject(result);
-			}
+			return result;
+		}
 
-			return (result.GetComponent<T>() != null);
+		public static T Get<T, E>(E aEnumName, Vector3 aPosition, Quaternion aRotation) where E : System.Enum
+		{
+			var go = Get(aEnumName.ToString(), aPosition, aRotation);
+			return (go != null)
+				? go.GetComponent<T>()
+				: default(T);
+		}
+
+		public static T Get<T, E>(E aEnumName, Vector3 aPosition) where E : System.Enum
+		{
+			var go = Get(aEnumName.ToString(), aPosition);
+			return (go != null)
+				? go.GetComponent<T>()
+				: default(T);
+		}
+
+		public static T Get<T, E>(E aEnumName) where E : System.Enum
+		{
+			var go = Get(aEnumName.ToString());
+			return (go != null)
+				? go.GetComponent<T>()
+				: default(T);
+		}
+
+		public static T Get<T>(string aName, Vector3 aPosition, Quaternion aRotation)
+		{
+			var go = Get(aName, aPosition, aRotation);
+			return (go != null)
+				? go.GetComponent<T>()
+				: default(T);
+		}
+
+		public static T Get<T>(string aName, Vector3 aPosition)
+		{
+			var go = Get(aName, aPosition);
+			return (go != null)
+				? go.GetComponent<T>()
+				: default(T);
+		}
+
+		public static T Get<T>(string aName)
+		{
+			var go = Get(aName);
+			return (go != null)
+				? go.GetComponent<T>()
+				: default(T);
+		}
+
+		public static GameObject Get<T>(T aEnumName, Vector3 aPosition, Quaternion aRotation) where T : System.Enum
+		{
+			return Get(aEnumName.ToString(), aPosition, aRotation);
+		}
+
+		public static GameObject Get<T>(T aEnumName, Vector3 aPosition) where T : System.Enum
+		{
+			return Get(aEnumName.ToString(), aPosition);
+		}
+
+		public static GameObject Get<T>(T aEnumName) where T : System.Enum
+		{
+			return Get(aEnumName.ToString());
+		}
+
+		public static GameObject Get(string aName, Vector3 aPosition, Quaternion aRotation)
+		{
+			var go = Get(aName);
+			if (go != null)
+			{
+				go.transform.position = aPosition;
+				go.transform.rotation = aRotation;
+			}
+			return go;
+		}
+
+		public static GameObject Get(string aName, Vector3 aPosition)
+		{
+			var go = Get(aName);
+			if (go != null)
+			{
+				go.transform.position = aPosition;
+			}
+			return go;
+		}
+
+		public static GameObject Get(string aName)
+		{
+			int index = _pools.FindIndex(x => x.name.Equals(aName));
+			if (index >= 0 && index < _pools.Count)
+			{
+				var poolable = _pools[index].Get();
+				return (poolable != null)
+					? poolable.gameObject
+					: null;
+			}
+			
+			A.Warning($"[PoolManager] Can't find the `{aName}` in the pool!");
+			return null;
+		}
+
+		public static AntPoolContainer GetContainer(string aName)
+		{
+			int index = _pools.FindIndex(x => x.name.Equals(aName));
+			return (index >= 0 && index < _pools.Count)
+				? _pools[index]
+				: null;
+		}
+
+		public static void DebugInfo()
+		{
+			for (int i = 0, n = _pools.Count; i < n; i++)
+			{
+				if (_pools[i].GrowCount > 0)
+				{
+					A.Log($"Pool `{_pools[i].name}` grew by {_pools[i].GrowCount}");
+				}
+			}
 		}
 
 		#endregion

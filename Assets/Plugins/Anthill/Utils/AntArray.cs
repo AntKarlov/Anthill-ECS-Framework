@@ -38,7 +38,6 @@ namespace Anthill.Utils
 			}
 
 			newArray[newArray.Length - 1] = aValue;
-			A.Log(newArray);
 			aSource = newArray;
 		}
 

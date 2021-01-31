@@ -3,8 +3,8 @@ namespace Anthill.Pool
 	using System;
 	using UnityEngine;
 
-	[CreateAssetMenuAttribute(fileName = "PoolList", menuName = "Anthill/Pool List", order = 2)]
-	public class AntPoolList : ScriptableObject
+	[CreateAssetMenuAttribute(fileName = "PoolPreset", menuName = "Anthill/Pool Preset", order = 2)]
+	public class AntPoolPreset : ScriptableObject
 	{
 		[Serializable]
 		public struct Item
@@ -12,7 +12,8 @@ namespace Anthill.Pool
 			public GameObject prefab;
 			public int initialSize;
 			public bool isGrow;
-			public int maxGrowing;
+			public bool isLimitCapacity;
+			public int maxCapacity;
 			public bool isOpened;
 		}
 

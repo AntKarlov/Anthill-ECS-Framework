@@ -5,10 +5,10 @@ namespace Anthill.Pool
 
 	using Anthill.Utils;
 
-	[CustomEditor(typeof(AntPoolList))]
-	public class AntPoolEditor : Editor
+	[CustomEditor(typeof(AntPoolPreset))]
+	public class AntPoolPresetEditor : Editor
 	{
-		private AntPoolList _self;
+		private AntPoolPreset _self;
 		private string _searchQuery = string.Empty;
 		private int _removeIndex = -1;
 		private bool _confirmRemove;
@@ -17,7 +17,7 @@ namespace Anthill.Pool
 
 		private void OnEnable()
 		{
-			_self = (AntPoolList) target;
+			_self = (AntPoolPreset) target;
 		}
 
 		public override void OnInspectorGUI()
@@ -54,12 +54,13 @@ namespace Anthill.Pool
 				{
 					if (!IsExists(newObject))
 					{
-						AntArray.Add<AntPoolList.Item>(ref _self.items, new AntPoolList.Item
+						AntArray.Add(ref _self.items, new AntPoolPreset.Item
 						{
 							prefab = newObject,
 							initialSize = 5,
 							isGrow = true,
-							maxGrowing = 20,
+							isLimitCapacity = false,
+							maxCapacity = 5,
 							isOpened = true
 						});
 					}
@@ -73,14 +74,14 @@ namespace Anthill.Pool
 			
 			if (_self.items.Length == 0)
 			{
-				EditorGUILayout.LabelField("The Pool List is Empty.");
+				EditorGUILayout.LabelField("No Poolable objects in the list.", EditorStyles.centeredGreyMiniLabel);
 			}
 			else
 			{
 				GUILayout.BeginVertical();
 				{
 					Color c = GUI.color;
-					AntPoolList.Item curItem;
+					AntPoolPreset.Item curItem;
 					for (int i = _self.items.Length - 1; i >= 0; i--)
 					{
 						curItem = _self.items[i];
@@ -105,10 +106,10 @@ namespace Anthill.Pool
 								if (_removeIndex == i && !_confirmRemove)
 								{
 									GUI.color = Color.red;
-									_confirmRemove = GUILayout.Button("Delete?", GUILayout.MaxWidth(70.0f), GUILayout.MaxHeight(16.0f));
+									_confirmRemove = GUILayout.Button("Delete?", GUILayout.MaxWidth(70.0f), GUILayout.MaxHeight(18.0f));
 
 									GUI.color = Color.green;
-									if (GUILayout.Button("X", GUILayout.MaxWidth(18.0f), GUILayout.MaxHeight(16.0f)))
+									if (GUILayout.Button("X", GUILayout.MaxWidth(18.0f), GUILayout.MaxHeight(18.0f)))
 									{
 										_removeIndex = -1;
 									}
@@ -117,7 +118,7 @@ namespace Anthill.Pool
 								}
 								else
 								{
-									if (GUILayout.Button("X", GUILayout.MaxWidth(18.0f), GUILayout.MaxHeight(16.0f)))
+									if (GUILayout.Button("X", GUILayout.MaxWidth(18.0f), GUILayout.MaxHeight(18.0f)))
 									{
 										_removeIndex = i;
 									}
@@ -132,8 +133,14 @@ namespace Anthill.Pool
 								GUILayout.Space(2.0f);
 								EditorGUI.indentLevel++;
 
-								curItem.prefab = (GameObject) EditorGUILayout.ObjectField("Object Prefab", curItem.prefab, typeof(GameObject), false);
+								curItem.prefab = (GameObject) EditorGUILayout.ObjectField("Prefab", curItem.prefab, typeof(GameObject), false);
 								curItem.initialSize = EditorGUILayout.IntField("Initial Size", curItem.initialSize);
+								curItem.isGrow = EditorGUILayout.Toggle("Is Growing", curItem.isGrow);
+								GUI.enabled = curItem.isGrow;
+								curItem.isLimitCapacity = EditorGUILayout.Toggle("Limit Growing", curItem.isLimitCapacity);
+								GUI.enabled = curItem.isLimitCapacity;
+								curItem.maxCapacity = EditorGUILayout.IntField("Max Capacity", curItem.maxCapacity);
+								GUI.enabled = true;
 
 								EditorGUI.indentLevel--;
 								GUILayout.Space(2.0f);
@@ -147,12 +154,26 @@ namespace Anthill.Pool
 				}
 				GUILayout.EndVertical();
 
-				EditorGUILayout.LabelField(string.Concat("Total Objects: ", _self.items.Length.ToString()));
+				EditorGUILayout.BeginHorizontal();
+				{
+					EditorGUILayout.LabelField(string.Concat("Total Objects: ", _self.items.Length.ToString()));
+					if (GUILayout.Button("Generate Enum of all Pools"))
+					{
+						var str = GenerateEnum();
+						var te = new TextEditor();
+						te.text = str;
+						te.SelectAll();
+						te.Copy();
+
+						A.Log("Enum copied into clip board!");
+					}
+				}
+				EditorGUILayout.EndHorizontal();
 			}
 
 			if (_removeIndex != 1 && _confirmRemove)
 			{
-				AntArray.RemoveAt<AntPoolList.Item>(ref _self.items, _removeIndex);
+				AntArray.RemoveAt(ref _self.items, _removeIndex);
 				_confirmRemove = false;
 				_removeIndex = -1;
 			}
@@ -162,6 +183,22 @@ namespace Anthill.Pool
 		{
 			int index = System.Array.FindIndex(_self.items, x => System.Object.ReferenceEquals(x.prefab, aObject));
 			return (index >= 0 && index < _self.items.Length);
+		}
+
+		private string GenerateEnum()
+		{
+			var str = "public enum Poolable\n{\n";
+			var obs = Resources.FindObjectsOfTypeAll<AntPoolPreset>();
+			for (int i = 0, n = obs.Length; i < n; i++)
+			{
+				var poolAsset = obs[i];
+				for (int j = 0, jn = poolAsset.items.Length; j < jn; j++)
+				{
+					str = string.Concat(str, "\t", poolAsset.items[j].prefab.name, ",\n");
+				}
+			}
+			str = string.Concat(str, "}");
+			return str;
 		}
 
 		#endregion
