@@ -3,7 +3,7 @@ namespace Anthill.Tasks
 	using UnityEngine;
 	using System.Collections.Generic;
 	using Anthill.Core;
-	using Anthill.Utils;
+	using Anthill.Extensions;
 
 	public enum UpdateMode
 	{

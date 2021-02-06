@@ -6,7 +6,7 @@ namespace Anthill.Json
 	using System.Globalization;
 	using System.IO;
 	using UnityEngine;
-	using Anthill.Utils;
+	using Anthill.Extensions;
 
 	public class AntJSONItem
 	{
@@ -239,8 +239,8 @@ namespace Anthill.Json
 
 		public virtual Color AsColor
 		{
-			get { return AntColor.HexToColor(Value); }
-			set { Value = AntColor.ColorToHex(value); }
+			get => Value.ToColor();
+			set => Value = value.ToHex(true);
 		}
 
 		public virtual AntJSONObject AsObject

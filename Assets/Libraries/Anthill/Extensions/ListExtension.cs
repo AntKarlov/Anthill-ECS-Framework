@@ -1,8 +1,9 @@
-namespace Anthill.Utils
+namespace Anthill.Extensions
 {
 	using System.Collections.Generic;
+	using Anthill.Utils;
 	
-	public static class AntList
+	public static class ListExtension
 	{
 		public static T GetRandom<T>(this List<T> aSource)
 		{
