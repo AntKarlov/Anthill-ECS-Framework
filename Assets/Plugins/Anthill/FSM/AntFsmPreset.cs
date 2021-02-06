@@ -13,6 +13,8 @@ namespace Anthill.Fsm
 		[HideInInspector]
 		public List<TransitionItem> transitions = new List<TransitionItem>();
 
+		public List<PropItem> properties = new List<PropItem>();
+
 		[Serializable]
 		public struct StateItem
 		{
@@ -27,6 +29,24 @@ namespace Anthill.Fsm
 		{
 			public int fromStateIndex;
 			public int toStateIndex;
+		}
+
+		[Serializable]
+		public struct PropItem
+		{
+			public string name;
+			public PropKind kind;
+			public bool boolValue;
+			public int intValue;
+			public float floatValue;
+		}
+
+		public enum PropKind
+		{
+			Bool,
+			Int,
+			Float,
+			Trigger
 		}
 	}
 }

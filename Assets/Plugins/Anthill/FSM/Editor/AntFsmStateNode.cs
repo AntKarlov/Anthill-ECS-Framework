@@ -119,7 +119,7 @@ namespace Anthill.Fsm
 		public Vector2 GetOutputPoint(Vector2 aToPosition)
 		{
 			var pos = Position;
-			float ang = AntMath.AngleDeg(pos, aToPosition);
+			float ang = AntAngle.BetweenDeg(pos, aToPosition);
 			return new Vector2(
 				pos.x + 10.0f * Mathf.Cos((ang + 90.0f) * Mathf.Deg2Rad),
 				pos.y + 10.0f * Mathf.Sin((ang + 90.0f) * Mathf.Deg2Rad)
@@ -129,7 +129,7 @@ namespace Anthill.Fsm
 		public Vector2 GetOutputPoint(AntFsmStateNode aToNode)
 		{
 			var pos = Position;
-			float ang = AntMath.AngleDeg(pos, aToNode.Position);
+			float ang = AntAngle.BetweenDeg(pos, aToNode.Position);
 			return new Vector2(
 				pos.x + 10.0f * Mathf.Cos((ang + 90.0f) * Mathf.Deg2Rad),
 				pos.y + 10.0f * Mathf.Sin((ang + 90.0f) * Mathf.Deg2Rad)
@@ -139,7 +139,7 @@ namespace Anthill.Fsm
 		public Vector2 GetInputPoint(AntFsmStateNode aFromNode)
 		{
 			var pos = Position;
-			float ang = AntMath.AngleDeg(pos, aFromNode.Position);
+			float ang = AntAngle.BetweenDeg(pos, aFromNode.Position);
 			return new Vector2(
 				pos.x - 10.0f * Mathf.Cos((ang + 90.0f) * Mathf.Deg2Rad),
 				pos.y - 10.0f * Mathf.Sin((ang + 90.0f) * Mathf.Deg2Rad)

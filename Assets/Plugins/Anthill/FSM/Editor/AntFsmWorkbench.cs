@@ -18,6 +18,7 @@ namespace Anthill.Fsm
 			public AntFsmStateNode toNode;
 		}
 
+		private AntFsmPreset[] _presets;
 		private List<AntFsmStateNode> _nodes;
 
 		private Vector2 _offset;
@@ -33,12 +34,31 @@ namespace Anthill.Fsm
 		private GUIStyle _titleStyle;
 		private GUIStyle _labelStyle;
 		private GUIStyle _smallLabelStyle;
-
+		
 		[MenuItem("Tools/Anthill/FSM Workbench")]
-		public static void ShowWindow()
+		public static AntFsmWorkbench ShowWindow()
 		{
 			var window = (AntFsmWorkbench) EditorWindow.GetWindow(typeof(AntFsmWorkbench), false, "FSM Workbench");
 			window.autoRepaintOnSceneChange = true;
+			return window;
+		}
+
+		public static void OpenPreset(string aName)
+		{
+			ShowWindow().OnSelectPreset(aName);
+		}
+
+		public static T[] GetAllInstances<T>() where T : ScriptableObject
+		{
+			string[] guids = AssetDatabase.FindAssets($"t:{typeof(T).Name}");
+			T[] a = new T[guids.Length];
+			for(int i = 0, n = guids.Length; i < n; i++)
+			{
+				string path = AssetDatabase.GUIDToAssetPath(guids[i]);
+				a[i] = AssetDatabase.LoadAssetAtPath<T>(path);
+			}
+
+			return a;
 		}
 
 		#region Unity Calls
@@ -47,6 +67,7 @@ namespace Anthill.Fsm
 		{
 			_nodes = new List<AntFsmStateNode>();
 			_conections = new List<Connection>();
+			_presets = GetAllInstances<AntFsmPreset>();
 
 			_titleStyle = new GUIStyle();
 			_titleStyle.fontSize = 22;
@@ -62,6 +83,245 @@ namespace Anthill.Fsm
 
 		private void OnGUI()
 		{
+			if (_currentPreset != null)
+			{
+				Handles.DrawSolidRectangleWithOutline(
+					new Rect(0.0f, 0.0f, position.width, position.height), 
+					new Color(0.184f, 0.184f, 0.184f), 
+					new Color(0.184f, 0.184f, 0.184f)
+				);
+
+				DrawGrid(20, Color.gray, 0.05f);
+				DrawGrid(100, Color.gray, 0.05f);
+
+				ProcessEvents(Event.current);
+
+				DrawLinks();
+				DrawNodes();
+
+				Repaint();
+
+				GUI.Label(
+					new Rect(20.0f, 30.0f, 200.0f, 50.0f),
+					"Hold `Ctrl` and click on Transition to delete.",
+					_smallLabelStyle
+				);
+			}
+			else
+			{
+				if (Event.current.type == EventType.Repaint)
+				{
+					// GUI.Label(
+					// 	new Rect(10.0f, 10.0f, 200.0f, 50.0f), 
+					// 	"Finite State Machine Preset is not selected.",
+					// 	_titleStyle
+					// );
+
+					GUI.Label(
+						new Rect(20.0f, 30.0f, 200.0f, 50.0f),
+						"Create and edit preset:",
+						_labelStyle
+					);
+
+					GUI.Label(
+						new Rect(30.0f, 60.0f, 200.0f, 50.0f),
+						"1. Open context menu in the Project window.",
+						_smallLabelStyle
+					);
+
+					GUI.Label(
+						new Rect(30.0f, 80.0f, 200.0f, 50.0f),
+						"2. Select `Create > Anthill > Finite State Machine`.",
+						_smallLabelStyle
+					);
+
+					GUI.Label(
+						new Rect(30.0f, 100.0f, 200.0f, 50.0f),
+						"3. Enter the name and select new preset.",
+						_smallLabelStyle
+					);
+
+					GUI.Label(
+						new Rect(30.0f, 120.0f, 200.0f, 50.0f),
+						"4. Open context menu and select `Add State`.",
+						_smallLabelStyle
+					);
+
+					GUI.Label(
+						new Rect(30.0f, 140.0f, 200.0f, 50.0f),
+						"5. Remove State, Set As Default and Add Transitions between states also via context menu.",
+						_smallLabelStyle
+					);
+
+					GUI.Label(
+						new Rect(30.0f, 160.0f, 200.0f, 50.0f),
+						"6. For remove Transitions between states, press Ctrl and click on transition.",
+						_smallLabelStyle
+					);
+				}
+			}
+
+			EditorGUILayout.BeginHorizontal();
+			{
+				EditorGUILayout.BeginVertical(GUILayout.MinWidth(200.0f), GUILayout.MaxWidth(200.0f));
+				EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+				{
+					if (GUILayout.Button("Hide Props", EditorStyles.toolbarButton))
+					{
+
+					}
+
+					GUILayout.FlexibleSpace();
+					if (GUILayout.Button("Add", EditorStyles.toolbarDropDown))
+					{
+						var menu = new GenericMenu();
+						var props = AntEnum.GetStringValues<AntFsmPreset.PropKind>();
+						for (int i = 0, n = props.Length; i < n; i++)
+						{
+							menu.AddItem(new GUIContent(props[i]), false, OnAddProperty, props[i]);
+						}
+						menu.DropDown(new Rect(0.0f, 12.0f, 0.0f, 0.0f));
+					}
+				}
+				EditorGUILayout.EndHorizontal();
+
+				EditorGUILayout.BeginHorizontal();
+				GUILayout.BeginVertical();
+				{
+					EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+					EditorGUILayout.LabelField("Properties", EditorStyles.boldLabel);
+					EditorGUILayout.EndHorizontal();
+
+					if (_currentPreset != null)
+					{
+						int delIndex = -1;
+						for (int i = 0, n = _currentPreset.properties.Count; i < n; i++)
+						{
+							var prop = _currentPreset.properties[i];
+							EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+							{
+								prop.name = EditorGUILayout.TextField(prop.name);
+								EditorGUILayout.LabelField(prop.kind.ToString(), EditorStyles.centeredGreyMiniLabel, GUILayout.MaxWidth(50.0f));
+								if (GUILayout.Button("", "OL Minus", GUILayout.MaxWidth(16.0f), GUILayout.MaxHeight(16.0f)))
+								{
+									delIndex = i;
+								}
+							}
+							EditorGUILayout.EndHorizontal();
+							_currentPreset.properties[i] = prop;
+						}
+
+						if (delIndex > -1)
+						{
+							_currentPreset.properties.RemoveAt(delIndex);
+						}
+					}
+				}
+				GUILayout.EndVertical();
+				EditorGUILayout.EndHorizontal();
+
+				EditorGUILayout.EndVertical();
+		
+				GUILayout.BeginVertical();
+				{
+					EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
+					{
+						string currentName = (_currentPreset != null) ? _currentPreset.name : "Open";
+						if (GUILayout.Button(currentName, EditorStyles.toolbarDropDown))
+						{
+							_presets = GetAllInstances<AntFsmPreset>();
+							var menu = new GenericMenu();
+							if (_presets != null && _presets.Length > 0)
+							{
+								for (int i = 0, n = _presets.Length; i < n; i++)
+								{
+									bool isSelected = (_currentPreset != null && _currentPreset.name.Equals(_presets[i].name));
+									menu.AddItem(new GUIContent(_presets[i].name), isSelected, OnSelectPreset, _presets[i].name);
+								}
+							}
+							else
+							{
+								menu.AddDisabledItem(new GUIContent("<No FSM presets>"));
+							}
+
+							// menu.AddSeparator("");
+							// menu.AddItem(new GUIContent("Update FSM presets list"), false, OnFindAllPresets);
+							// todo: сдвигать позицию меню в зависимости от того отображаются ли проперти
+							menu.DropDown(new Rect(0.0f, 12.0f, 0.0f, 0.0f));
+						}
+
+						if (_currentPreset != null)
+						{
+							if (GUILayout.Button("Export States to Enum", EditorStyles.toolbarButton))
+							{
+								var str = "public enum FsmStates\n{\n";
+								for (int i = 0, n = _nodes.Count; i < n; i++)
+								{
+									str = string.Concat(str, $"{_nodes[i].Name} = {_nodes[i].StateIndex}");
+									str = (i + 1 == _nodes.Count)
+										? string.Concat(str, "\n}")
+										: string.Concat(str, ",\n");
+								}
+
+								var te = new TextEditor();
+								te.text = str;
+								te.SelectAll();
+								te.Copy();
+							}
+						}
+
+						GUILayout.FlexibleSpace();
+					}
+					EditorGUILayout.EndHorizontal();
+				}
+				GUILayout.EndVertical();
+			}
+			EditorGUILayout.EndHorizontal();
+		}
+
+		public void OnAddProperty(object aPropertyKind)
+		{
+			_currentPreset.properties.Add(new AntFsmPreset.PropItem
+			{
+				name = "<Unnamed>",
+				kind = AntEnum.Parse<AntFsmPreset.PropKind>(aPropertyKind.ToString(), AntFsmPreset.PropKind.Bool),
+				boolValue = false,
+				intValue = 0,
+				floatValue = 0.0f
+			});
+		}
+
+		public void OnSelectPreset(object aPresetName)
+		{
+			AntFsmPreset selectedPreset = System.Array.Find(_presets, x => x.name.Equals(aPresetName.ToString()));
+			if (selectedPreset != null)
+			{
+				ClearNodes();
+				_currentPreset = null;
+			}
+
+			_currentPreset = selectedPreset;
+			ClearNodes();
+
+			AntFsmStateNode node;
+			for (int i = 0, n = _currentPreset.states.Count; i < n; i++)
+			{
+				node = new AntFsmStateNode(_currentPreset, i);
+				node.EventSettedAsDefault += OnSetNodeAsDefault;
+				node.EventDeleteState += OnDeleteState;
+				_nodes.Add(node);
+			}
+
+			AntFsmStateNode fromNode;
+			AntFsmStateNode toNode;
+			for (int i = 0, n = _currentPreset.transitions.Count; i < n; i++)
+			{
+				fromNode = GetNodeByIndex(_currentPreset.transitions[i].fromStateIndex);
+				toNode = GetNodeByIndex(_currentPreset.transitions[i].toStateIndex);
+				fromNode.AddLink(toNode, false);
+			}
+
+			/*
 			if (Selection.objects.Length == 1 && Selection.objects[0] is AntFsmPreset)
 			{
 				var t = (AntFsmPreset) Selection.objects[0];
@@ -99,79 +359,13 @@ namespace Anthill.Fsm
 				ClearNodes();
 				_currentPreset = null;
 			}
-
-			if (_currentPreset != null)
-			{
-				Handles.DrawSolidRectangleWithOutline(
-					new Rect(0.0f, 0.0f, position.width, position.height), 
-					new Color(0.184f, 0.184f, 0.184f), 
-					new Color(0.184f, 0.184f, 0.184f)
-				);
-
-				DrawGrid(20, Color.gray, 0.05f);
-				DrawGrid(100, Color.gray, 0.05f);
-
-				ProcessEvents(Event.current);
-
-				DrawLinks();
-				DrawNodes();
-
-				Repaint();
-			}
-			else
-			{
-				if (Event.current.type == EventType.Repaint)
-				{
-					GUI.Label(
-						new Rect(10.0f, 10.0f, 200.0f, 50.0f), 
-						"Finite State Machine Preset is not selected.",
-						_titleStyle
-					);
-
-					GUI.Label(
-						new Rect(20.0f, 50.0f, 200.0f, 50.0f),
-						"Create and edit preset:",
-						_labelStyle
-					);
-
-					GUI.Label(
-						new Rect(30.0f, 80.0f, 200.0f, 50.0f),
-						"1. Open context menu in the Project window.",
-						_smallLabelStyle
-					);
-
-					GUI.Label(
-						new Rect(30.0f, 100.0f, 200.0f, 50.0f),
-						"2. Select `Create > Anthill > Finite State Machine`.",
-						_smallLabelStyle
-					);
-
-					GUI.Label(
-						new Rect(30.0f, 120.0f, 200.0f, 50.0f),
-						"3. Enter the name and select new preset.",
-						_smallLabelStyle
-					);
-
-					GUI.Label(
-						new Rect(30.0f, 140.0f, 200.0f, 50.0f),
-						"4. Open context menu and select `Add State`.",
-						_smallLabelStyle
-					);
-
-					GUI.Label(
-						new Rect(30.0f, 160.0f, 200.0f, 50.0f),
-						"5. Remove State, Set As Default and Add Transitions between states also via context menu.",
-						_smallLabelStyle
-					);
-
-					GUI.Label(
-						new Rect(30.0f, 180.0f, 200.0f, 50.0f),
-						"6. For remove Transitions between states, press Ctrl and click on transition.",
-						_smallLabelStyle
-					);
-				}
-			}
+			//*/
 		}
+
+		// private void OnFindAllPresets()
+		// {
+		// 	_presets = GetAllInstances<AntFsmPreset>();
+		// }
 
 		private void OnAddState()
 		{
@@ -337,7 +531,7 @@ namespace Anthill.Fsm
 					break;
 
 				case EventType.MouseDrag :
-					if (aEvent.button == 0)
+					if (aEvent.button == 2)
 					{
 						_totalDrag += aEvent.delta;
 						_drag = aEvent.delta;
@@ -405,7 +599,7 @@ namespace Anthill.Fsm
 					// AntDrawer.DrawSolidLine(outPosition, inPosition, Color.white);
 
 					float dist = AntMath.Distance(outPosition, inPosition);
-					float ang = AntMath.AngleRad(outPosition, inPosition);
+					float ang = AntAngle.BetweenRad(outPosition, inPosition);
 					var pos = new Vector2(
 						outPosition.x + dist * 0.5f * Mathf.Cos(ang),
 						outPosition.y + dist * 0.5f * Mathf.Sin(ang));
@@ -440,7 +634,7 @@ namespace Anthill.Fsm
 					AntDrawer.DrawSolidLine(outPosition, inPosition, Color.white);
 
 					float dist = AntMath.Distance(outPosition, inPosition);
-					float ang = AntMath.AngleRad(outPosition, inPosition);
+					float ang = AntAngle.BetweenRad(outPosition, inPosition);
 					var pos = new Vector2(
 						outPosition.x + dist * 0.5f * Mathf.Cos(ang),
 						outPosition.y + dist * 0.5f * Mathf.Sin(ang)

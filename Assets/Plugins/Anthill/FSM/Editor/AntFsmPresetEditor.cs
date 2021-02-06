@@ -14,7 +14,7 @@ namespace Anthill.Fsm
 			base.OnInspectorGUI();
 			if (GUILayout.Button("Open FSM Workbench", GUILayout.MinHeight(40.0f)))
 			{
-				AntFsmWorkbench.ShowWindow();
+				AntFsmWorkbench.OpenPreset(target.name);
 			}
 		}
 	}

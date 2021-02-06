@@ -16,17 +16,17 @@ MonoBehaviour:
   - name: Idle
     prefab: {fileID: 4777399015093968741, guid: 4b299efb0f9e9457eb7d2f8390cc70c7,
       type: 3}
-    position: {x: 209, y: 285}
+    position: {x: 395, y: 197}
     isDefault: 1
   - name: Walk
     prefab: {fileID: 6546991521165023692, guid: 30f03013054a7409bb9eff6af87b5442,
       type: 3}
-    position: {x: 207, y: 439}
+    position: {x: 396, y: 351}
     isDefault: 0
   - name: Shoot
     prefab: {fileID: 1129793867174714074, guid: 9d53e2fdc4dd240adb6b3ba8c51a3db7,
       type: 3}
-    position: {x: 465, y: 439}
+    position: {x: 650, y: 354}
     isDefault: 0
   transitions:
   - fromStateIndex: 0
@@ -37,3 +37,19 @@ MonoBehaviour:
     toStateIndex: 2
   - fromStateIndex: 2
     toStateIndex: 0
+  properties:
+  - name: TestBool
+    kind: 0
+    boolValue: 0
+    intValue: 0
+    floatValue: 0
+  - name: Health
+    kind: 2
+    boolValue: 0
+    intValue: 0
+    floatValue: 0
+  - name: SomeTrigger
+    kind: 3
+    boolValue: 0
+    intValue: 0
+    floatValue: 0
