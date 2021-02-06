@@ -1,4 +1,4 @@
-namespace Anthill.Task
+namespace Anthill.Tasks
 {
 	using UnityEngine;
 	using System.Collections.Generic;

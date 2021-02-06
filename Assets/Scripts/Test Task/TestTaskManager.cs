@@ -2,7 +2,7 @@ namespace Anthill
 {
 	using UnityEngine;
 	using System.Collections;
-	using Anthill.Task;
+	using Anthill.Tasks;
 	using Anthill.Core;
 	
 	public class TestTaskManager : MonoBehaviour

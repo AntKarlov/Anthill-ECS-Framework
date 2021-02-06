@@ -1,21 +1,25 @@
-namespace Anthill.Pool
+namespace Anthill.Pools
 {
 	using UnityEngine;
-	using System.Collections.Generic;
+	using System.Collections;
 
-	using Anthill.Core;
-
-	public class AntPoolLoaderSystem : ISystem, IExecuteSystem
+	public class AntPoolLoader : MonoBehaviour
 	{
-		public delegate void PoolLoaderDelegate(AntPoolLoaderSystem aLoader);
+		public delegate void PoolLoaderDelegate(AntPoolLoader aLoader);
 		public event PoolLoaderDelegate EventStart;
 		public event PoolLoaderDelegate EventComplete;
 
-		public delegate void PoolLoaderProgressDelegate(AntPoolLoaderSystem aLoader, float aProgress);
+		public delegate void PoolLoaderProgressDelegate(AntPoolLoader aLoader, float aProgress);
 		public event PoolLoaderProgressDelegate EventProcess;
 
-		public List<AntPoolPreset> pools;
+		[HideInInspector]
+		public AntPoolPreset[] pools = new AntPoolPreset[0];
+
+		[HideInInspector]
 		public int countPerStep = 5;
+
+		[HideInInspector]
+		public bool loadOnStart;
 
 		private AntPoolPreset _currentPool; // Текущий пул.
 		private int _currentPoolIndex;      // Индекс текущего пула в списке пулов.
@@ -27,31 +31,27 @@ namespace Anthill.Pool
 		private PoolLoaderDelegate _startCallback;
 		private PoolLoaderDelegate _completeCallback;
 
+		#region Unity Calls
+		
+		private void Start()
+		{
+			if (loadOnStart)
+			{
+				StartLoading();
+			}
+		}
+		
+		#endregion
 		#region Public Methods
 
-		public AntPoolLoaderSystem()
-		{
-			pools = new List<AntPoolPreset>();
-			_isStarted = false;
-		}
-
-		public AntPoolLoaderSystem AddPreset(string aFileName)
-		{
-			var list = (AntPoolPreset) Resources.Load(aFileName);
-			A.Assert(list == null, $"Can't load `{aFileName}` pool asset!", this);
-			pools.Add(list);
-			return this;
-		}
-
-		public AntPoolLoaderSystem StartLoading()
+		public AntPoolLoader StartLoading()
 		{
 			if (_isStarted)
 			{
-				A.Editor.Warning("Already started!", this);
 				return this;
 			}
 
-			A.Assert((pools == null || pools.Count == 0), "Nothig for loading!", this);
+			A.Assert((pools == null || pools.Length == 0), "Nothing for pooling!", this);
 
 			var root = new GameObject();
 			root.name = "Pools";
@@ -59,7 +59,7 @@ namespace Anthill.Pool
 
 			_count = 0;
 			_current = 0;
-			for (int i = 0, n = pools.Count; i < n; i++)
+			for (int i = 0, n = pools.Length; i < n; i++)
 			{
 				_count += pools[i].items.Length;
 			}
@@ -67,49 +67,39 @@ namespace Anthill.Pool
 			_currentPoolIndex = 0;
 			_currentPool = pools[_currentPoolIndex];
 
-			EventStart?.Invoke(this);
-			_startCallback?.Invoke(this);
-			_startCallback = null;
-
+			StartCoroutine(DoProgress());
 			_isStarted = true;
 			return this;
 		}
 
-		public AntPoolLoaderSystem OnStart(PoolLoaderDelegate aCallback)
+		public AntPoolLoader OnStart(PoolLoaderDelegate aCallback)
 		{
 			_startCallback = aCallback;
 			return this;
 		}
 
-		public AntPoolLoaderSystem OnComplete(PoolLoaderDelegate aCallback)
+		public AntPoolLoader OnComplete(PoolLoaderDelegate aCallback)
 		{
 			_completeCallback = aCallback;
 			return this;
 		}
 
 		#endregion
-		#region ISystem Implementation
+		#region Private Methods
 		
-		public void AddedToEngine(AntEngine aEngine)
+		private IEnumerator DoProgress()
 		{
-			// ..
-		}
+			yield return null;
 
-		public void RemovedFromEngine(AntEngine aEngine)
-		{
-			// ..
-		}
+			EventStart?.Invoke(this);
+			_startCallback?.Invoke(this);
+			_startCallback = null;
 
-		#endregion
-		#region IExecuteSystem Implementation
-
-		public void Execute()
-		{
-			if (_isStarted)
+			while (true)
 			{
 				int n = (_current + countPerStep > _count) 
 					? _count - _current 
-					: countPerStep; 
+					: countPerStep;
 				
 				for (int i = 0; i < n; i++)
 				{
@@ -127,16 +117,23 @@ namespace Anthill.Pool
 
 				EventProcess?.Invoke(this, (float) _current / (float) _count);
 
-				if (_current >= _count)
+				if (_current < _count)
 				{
-					_isStarted = false;
-					EventComplete?.Invoke(this);
-					_completeCallback?.Invoke(this);
-					_completeCallback = null;
+					yield return null;
+				}
+				else
+				{
+					break;
 				}
 			}
+			
+			EventComplete?.Invoke(this);
+			_completeCallback?.Invoke(this);
+			_completeCallback = null;
+			_isStarted = false;
 		}
 
 		#endregion
+
 	}
 }

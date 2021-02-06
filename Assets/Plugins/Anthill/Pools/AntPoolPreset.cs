@@ -1,4 +1,4 @@
-namespace Anthill.Pool
+namespace Anthill.Pools
 {
 	using System;
 	using UnityEngine;

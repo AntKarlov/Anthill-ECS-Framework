@@ -1,4 +1,4 @@
-namespace Anthill.Task
+namespace Anthill.Tasks
 {
 	public class AntTask : ITask
 	{
