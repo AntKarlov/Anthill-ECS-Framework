@@ -7,12 +7,12 @@ namespace Anthill.Core
 
 		#region ISystem Implementation
 
-		public virtual void AddedToEngine(AntEngine aEngine)
+		public virtual void AddedToEngine()
 		{
 			// ..
 		}
 
-		public virtual void RemovedFromEngine(AntEngine aEngine)
+		public virtual void RemovedFromEngine()
 		{
 			// ..
 		}
@@ -32,14 +32,14 @@ namespace Anthill.Core
 	{
 		private AntNodeList<AntNode<T1>> _nodes;
 		
-		public override void AddedToEngine(AntEngine aEngine)
+		public override void AddedToEngine()
 		{
-			_nodes = aEngine.GetNodes<AntNode<T1>>();
+			_nodes = AntEngine.GetNodes<AntNode<T1>>();
 		}
 
-		public override void RemovedFromEngine(AntEngine aEngine)
+		public override void RemovedFromEngine()
 		{
-			aEngine.ReleaseNodes(_nodes);
+			AntEngine.ReleaseNodes(_nodes);
 		}
 
 		public override void Execute()
@@ -60,14 +60,14 @@ namespace Anthill.Core
 	{
 		private AntNodeList<AntNode<T1, T2>> _nodes;
 
-		public override void AddedToEngine(AntEngine aEngine)
+		public override void AddedToEngine()
 		{
-			_nodes = aEngine.GetNodes<AntNode<T1, T2>>();
+			_nodes = AntEngine.GetNodes<AntNode<T1, T2>>();
 		}
 
-		public override void RemovedFromEngine(AntEngine aEngine)
+		public override void RemovedFromEngine()
 		{
-			aEngine.ReleaseNodes(_nodes);
+			AntEngine.ReleaseNodes(_nodes);
 		}
 
 		public override void Execute()
@@ -90,14 +90,14 @@ namespace Anthill.Core
 	{
 		private AntNodeList<AntNode<T1, T2, T3>> _nodes;
 
-		public override void AddedToEngine(AntEngine aEngine)
+		public override void AddedToEngine()
 		{
-			_nodes = aEngine.GetNodes<AntNode<T1, T2, T3>>();
+			_nodes = AntEngine.GetNodes<AntNode<T1, T2, T3>>();
 		}
 
-		public override void RemovedFromEngine(AntEngine aEngine)
+		public override void RemovedFromEngine()
 		{
-			aEngine.ReleaseNodes(_nodes);
+			AntEngine.ReleaseNodes(_nodes);
 		}
 
 		public override void Execute()
@@ -120,14 +120,14 @@ namespace Anthill.Core
 	{
 		private AntNodeList<AntNode<T1, T2, T3, T4>> _nodes;
 
-		public override void AddedToEngine(AntEngine aEngine)
+		public override void AddedToEngine()
 		{
-			_nodes = aEngine.GetNodes<AntNode<T1, T2, T3, T4>>();
+			_nodes = AntEngine.GetNodes<AntNode<T1, T2, T3, T4>>();
 		}
 
-		public override void RemovedFromEngine(AntEngine aEngine)
+		public override void RemovedFromEngine()
 		{
-			aEngine.ReleaseNodes(_nodes);
+			AntEngine.ReleaseNodes(_nodes);
 		}
 
 		public override void Execute()
@@ -150,14 +150,14 @@ namespace Anthill.Core
 	{
 		private AntNodeList<AntNode<T1, T2, T3, T4, T5>> _nodes;
 
-		public override void AddedToEngine(AntEngine aEngine)
+		public override void AddedToEngine()
 		{
-			_nodes = aEngine.GetNodes<AntNode<T1, T2, T3, T4, T5>>();
+			_nodes = AntEngine.GetNodes<AntNode<T1, T2, T3, T4, T5>>();
 		}
 
-		public override void RemovedFromEngine(AntEngine aEngine)
+		public override void RemovedFromEngine()
 		{
-			aEngine.ReleaseNodes(_nodes);
+			AntEngine.ReleaseNodes(_nodes);
 		}
 
 		public override void Execute()
@@ -180,14 +180,14 @@ namespace Anthill.Core
 	{
 		private AntNodeList<AntNode<T1, T2, T3, T4, T5, T6>> _nodes;
 
-		public override void AddedToEngine(AntEngine aEngine)
+		public override void AddedToEngine()
 		{
-			_nodes = aEngine.GetNodes<AntNode<T1, T2, T3, T4, T5, T6>>();
+			_nodes = AntEngine.GetNodes<AntNode<T1, T2, T3, T4, T5, T6>>();
 		}
 
-		public override void RemovedFromEngine(AntEngine aEngine)
+		public override void RemovedFromEngine()
 		{
-			aEngine.ReleaseNodes(_nodes);
+			AntEngine.ReleaseNodes(_nodes);
 		}
 
 		public override void Execute()

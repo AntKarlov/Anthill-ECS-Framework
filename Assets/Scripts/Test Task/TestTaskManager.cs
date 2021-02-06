@@ -3,6 +3,7 @@ namespace Anthill
 	using UnityEngine;
 	using System.Collections;
 	using Anthill.Task;
+	using Anthill.Core;
 	
 	public class TestTaskManager : MonoBehaviour
 	{
@@ -22,17 +23,35 @@ namespace Anthill
 			A.verbosity = Verbosity.Verbose;
 			A.editorVerbosity = Verbosity.Verbose;
 			_t = GetComponent<Transform>();
+
+			var engine = new AntEngine();
+			AntDelayed.Call(1.0f, () =>
+			{
+				A.Editor.Verbose("Test");
+				AntDelayed.Call(2.0f, () =>
+				{
+					A.Editor.Verbose("Second delayed call");
+					_tm.SetUpdateMode(UpdateMode.Auto);
+				});
+			});
+
 			_tm = AntTaskManager.Do(true)
+				.SetUpdateMode(UpdateMode.Manual)
 				.Delay(1.5f, true)
-				.Task<Vector3, Vector3>(MoveTo, fromRef.position, toRef.position)
-				.Task<Vector3, Vector3>(MoveTo, toRef.position, fromRef.position)
+				.Task(MoveTo, fromRef.position, toRef.position)
+				.Task(MoveTo, toRef.position, fromRef.position)
 				.InstantTask(Track)
 				.OnComplete(() => A.Editor.Verbose("Queue completed!", this));
 		}
 
 		private void Update()
 		{
-			_tm.Execute();
+			AntEngine.ExecuteSystems();
+		}
+
+		private void FixedUpdate()
+		{
+			AntEngine.ExecuteFixedSystems();
 		}
 	
 		#endregion

@@ -2,7 +2,14 @@ namespace Anthill.Task
 {
 	using UnityEngine;
 	using System.Collections.Generic;
+	using Anthill.Core;
 	using Anthill.Utils;
+
+	public enum UpdateMode
+	{
+		Auto,
+		Manual
+	}
 
 	public class AntTaskManager
 	{
@@ -11,13 +18,31 @@ namespace Anthill.Task
 
 		public delegate void TaskManagerCompleteDelegate();
 
+		private static AntTaskManagerScenario _scenario;
+		private static bool _isInitialized;
+
 		protected TaskManagerCompleteDelegate _completeDelegate;
 		protected List<ITask> _queue;
 		protected ITask _currentTask;
 		protected bool _isHasTask;
 		protected float _delay;
+		protected UpdateMode _updateMode = UpdateMode.Auto;
 
 		#region Getters / Setters
+
+		private static AntTaskManagerScenario Scenario
+		{
+			get
+			{
+				if (!_isInitialized)
+				{
+					_scenario = AntEngine.AddSystem<AntTaskManagerScenario>(-1);
+					_isInitialized = true;
+				}
+
+				return _scenario;
+			}
+		}
 		
 		public bool IsCycled { get; set; }
 		public bool IsPaused { get; set; }
@@ -42,6 +67,30 @@ namespace Anthill.Task
 			IsCycled = aIsCycled;
 			IsStarted = false;
 			IsPaused = false;
+		}
+
+		/// <summary>
+		/// Sets update mode, automatic or manual.
+		/// - AUTO mode means that TaskManager will be updating via AntEngine system.
+		/// - MANUAL mode means tha TaskManager will be updating by calling Execute() method.
+		/// </summary>
+		/// <param name="aUpdateMode">Update Mode</param>
+		/// <returns>Reference to the task manager.</returns>
+		public AntTaskManager SetUpdateMode(UpdateMode aUpdateMode)
+		{
+			if (_updateMode != aUpdateMode)
+			{
+				_updateMode = aUpdateMode;
+				if (_updateMode == UpdateMode.Auto && IsStarted)
+				{
+					Scenario.Add(this);
+				}
+				else if (_updateMode == UpdateMode.Manual && IsStarted)
+				{
+					Scenario.Remove(this);
+				}
+			}
+			return this;
 		}
 
 		/// <summary>
@@ -655,6 +704,11 @@ namespace Anthill.Task
 			return this;
 		}
 
+		/// <summary>
+		/// Sets callback methods on the completion of the queue.
+		/// </summary>
+		/// <param name="aCallback">Reference on the callback method.</param>
+		/// <returns>Reference to the task manager.</returns>
 		public AntTaskManager OnComplete(TaskManagerCompleteDelegate aCallback)
 		{
 			_completeDelegate = aCallback;
@@ -754,6 +808,11 @@ namespace Anthill.Task
 		{
 			if (!IsStarted)
 			{
+				if (_updateMode == UpdateMode.Auto)
+				{
+					Scenario.Add(this);
+				}
+
 				NextTask();
 				IsStarted = true;
 				IsPaused = false;
@@ -762,7 +821,15 @@ namespace Anthill.Task
 
 		private void Stop()
 		{
-			IsStarted = false;
+			if (IsStarted)
+			{
+				if (_updateMode == UpdateMode.Manual)
+				{
+					Scenario.Remove(this);
+				}
+
+				IsStarted = false;
+			}
 		}
 		
 		#endregion

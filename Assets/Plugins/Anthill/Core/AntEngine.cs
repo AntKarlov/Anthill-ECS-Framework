@@ -6,13 +6,30 @@ namespace Anthill.Core
 
 	public class AntEngine : AntScenario
 	{
-		private readonly Dictionary<Type, IFamily> _families;
-		private List<AntEntity> _entities;
-		private List<DelayedCall> _delayedCalls;
+		private static readonly Dictionary<Type, IFamily> _families = new Dictionary<Type, IFamily>();
+		private static List<AntEntity> _entities = new List<AntEntity>();
+
+		private static bool _isInitialized = false; 
+		private static AntEngine _current = null;
 
 		#region Getters / Setters
 		
-		public static AntEngine Current { get; private set; }
+		public static AntEngine Current
+		{
+			get
+			{
+				if (!_isInitialized)
+				{
+					A.Assert(true, "Not initialized yet!", "AntEngine");
+				}
+				return _current;
+			} 
+			private set
+			{
+				_isInitialized = true;
+				_current = value;
+			}
+		}
 		
 		#endregion
 		#region Public Methods
@@ -20,10 +37,6 @@ namespace Anthill.Core
 		public AntEngine()
 		{
 			Current = this;
-			_families = new Dictionary<Type, IFamily>();
-			_entities = new List<AntEntity>();
-			_delayedCalls = new List<DelayedCall>();
-			_engine = this;
 		}
 
 		/// <summary>
@@ -31,7 +44,7 @@ namespace Anthill.Core
 		/// GameObject will be found by name.
 		/// </summary>
 		/// <param name="aTransformName">Name of the GameObject on scene.</param>
-		public void AddEntitiesFromHierarchy(string aTransformName)
+		public static void AddEntitiesFromHierarchy(string aTransformName)
 		{
 			var go = GameObject.Find(aTransformName);
 			A.Assert(go == null, $"Can't find `{aTransformName}` object on scene.");
@@ -45,7 +58,7 @@ namespace Anthill.Core
 		/// Adds all entities from specified GameObject.
 		/// </summary>
 		/// <param name="aParent">Transform of the GameObject.</param>
-		public void AddEntitiesFromHierarchy(Transform aParent)
+		public static void AddEntitiesFromHierarchy(Transform aParent)
 		{
 			Transform child;
 			AntEntity entity;
@@ -73,7 +86,7 @@ namespace Anthill.Core
 		/// Transform will be found by name.
 		/// </summary>
 		/// <param name="aTransformName">Name of the GameObject on scene.</param>
-		public void RemoveEntitiesFromHierarchy(string aTransformName)
+		public static void RemoveEntitiesFromHierarchy(string aTransformName)
 		{
 			var go = GameObject.Find(aTransformName);
 			A.Assert(go == null, $"Can't find `{aTransformName}` object on scene.");
@@ -87,7 +100,7 @@ namespace Anthill.Core
 		/// Removes all entities from specified GameObject.
 		/// </summary>
 		/// <param name="aParent">Transform of the GameObject.</param>
-		public void RemoveEntitiesFromHierarchy(Transform aParent)
+		public static void RemoveEntitiesFromHierarchy(Transform aParent)
 		{
 			Transform child;
 			AntEntity entity;
@@ -115,7 +128,7 @@ namespace Anthill.Core
 		/// </summary>
 		/// <param name="aGameObject">GameObject with Entity component to add.</param>
 		/// <param name="aIncludeChildren">Checks and adds children entities if true.</param>
-		public void AddEntity(GameObject aGameObject, bool aIncludeChildren = false)
+		public static void AddEntity(GameObject aGameObject, bool aIncludeChildren = false)
 		{
 			AddEntity(aGameObject.transform, aIncludeChildren);
 		}
@@ -125,11 +138,11 @@ namespace Anthill.Core
 		/// </summary>
 		/// <param name="aGameObject">Transform with Entity component to add.</param>
 		/// <param name="aIncludeChildren">Checks and adds children entities if true.</param>
-		public void AddEntity(Transform aTransform, bool aIncludeChildren = false)
+		public static void AddEntity(Transform aTransform, bool aIncludeChildren = false)
 		{
 			if (aTransform.gameObject.activeSelf)
 			{
-				AntEntity entity = aTransform.GetComponent<AntEntity>();
+				var entity = aTransform.GetComponent<AntEntity>();
 				if (entity != null)
 				{
 					AddEntity(entity);
@@ -148,7 +161,7 @@ namespace Anthill.Core
 		/// Adds specified entity to the ECS.
 		/// </summary>
 		/// <param name="aEntity">Entity component.</param>
-		public void AddEntity(AntEntity aEntity)
+		public static void AddEntity(AntEntity aEntity)
 		{
 			foreach (var pair in _families)
 			{
@@ -165,7 +178,7 @@ namespace Anthill.Core
 		/// Removes specified entity from the ECS.
 		/// </summary>
 		/// <param name="aEntity">Entity Component.</param>
-		public void RemoveEntity(AntEntity aEntity)
+		public static void RemoveEntity(AntEntity aEntity)
 		{
 			foreach (var pair in _families)
 			{
@@ -179,11 +192,11 @@ namespace Anthill.Core
 		}
 
 		/// <summary>
-		/// Returns node list.
+		/// Returns list of nodes by Type.
 		/// </summary>
 		/// <typeparam name="T">Type of the node list.</typeparam>
 		/// <returns>List of nodes by type.</returns>
-		public AntNodeList<T> GetNodes<T>()
+		public static AntNodeList<T> GetNodes<T>()
 		{
 			var type = typeof(T);
 			AntFamily<T> family;
@@ -205,11 +218,11 @@ namespace Anthill.Core
 		}
 
 		/// <summary>
-		/// Releases node list.
+		/// Releases list of nodes by Type.
 		/// </summary>
 		/// <param name="aNodes">List of nodes for relese.</param>
 		/// <typeparam name="T">Type of nodes.</typeparam>
-		public void ReleaseNodes<T>(AntNodeList<T> aNodes)
+		public static void ReleaseNodes<T>(AntNodeList<T> aNodes)
 		{
 			var type = typeof(T);
 			if (_families.ContainsKey(type))
@@ -219,116 +232,125 @@ namespace Anthill.Core
 		}
 
 		/// <summary>
-		/// Processing of all entities.
+		/// Creates and adds new system into engine with priority.
 		/// </summary>
-		public override void Execute()
+		/// <param name="aPriority">Value of the priority (lower value means higher priority).</param>
+		/// <typeparam name="T">Type of the system.</typeparam>
+		/// <returns>Reference on the new system.</returns>
+		public static T AddSystem<T>(int aPriority = 0) where T : ISystem
 		{
-			base.Execute();
-			float dt = Time.deltaTime;
-			for (int i = _delayedCalls.Count - 1; i >= 0; i--)
-			{
-				if (_delayedCalls[i].Update(dt))
-				{
-					_delayedCalls.RemoveAt(i);
-				}
-			}
+			return Current.Add<T>(aPriority);
 		}
 
 		/// <summary>
-		/// Sets delayed call of specified action without arguments.
+		/// Adds new system into engine with priority.
 		/// </summary>
-		/// <param name="aDelay">Delay in secodns before calling.</param>
-		/// <param name="aFunc">Reference to the method to call.</param>
-		public void DelayedCall(float aDelay, Action aFunc)
+		/// <param name="aSystem">Reference on the system.</param>
+		/// <param name="aPriority">Value of the priority (lower value means higher priority).</param>
+		/// <returns>Reference on the added system.</returns>
+		public static ISystem AddSystem(ISystem aSystem, int aPriority = 0)
 		{
-			var call = new DelayedCall();
-			call.SetProcess(aFunc);
-			call.delay = aDelay;
-			_delayedCalls.Add(call);
+			return (ISystem) Current.Add(aSystem, aPriority);
+		}
+
+		/// <summary>
+		/// Removes system from the scenario by Type.
+		/// </summary>
+		/// <typeparam name="T">Type of the system that need to remove.</typeparam>
+		/// <returns>Reference on the removed system.</returns>
+		public static T RemoveSystem<T>() where T : ISystem
+		{
+			return Current.Remove<T>();
+		}
+
+		/// <summary>
+		/// Removes system from the scenario.
+		/// </summary>
+		/// <param name="aSystem">Reference on the system that need to remove.</param>
+		/// <returns>Reference on the removed system.</returns>
+		public static ISystem RemoveSystem(ISystem aSystem)
+		{
+			return Current.Remove(aSystem);
+		}
+
+		/// <summary>
+		/// Gets system from the scenario by Type.
+		/// </summary>
+		/// <typeparam name="T">Type of the system that need to extract.</typeparam>
+		/// <returns>Reference on the system.</returns>
+		public static T GetSystem<T>() where T : ISystem
+		{
+			return Current.Get<T>();
+		}
+
+		/// <summary>
+		/// Initializes all IInitializeSystem systems.
+		/// </summary>
+		public static void InitializeSystems()
+		{
+			Current.Initialize();
+		}
+
+		/// <summary>
+		/// Deinitializes all IDeinitializeSystem systems.
+		/// </summary>
+		public static void DeinitializeSystems()
+		{
+			Current.Deinitialize();
 		}
 		
 		/// <summary>
-		/// Sets delayed call of specified action with one argument.
+		/// Executes all IExecuteSystem systems.
 		/// </summary>
-		/// <param name="aDelay">Delay in secodns before calling.</param>
-		/// <param name="aFunc">Reference to the method to call.</param>
-		/// <param name="aArg1">Argument for method.</param>
-		/// <typeparam name="T1">Type of the argument.</typeparam>
-		public void DelayedCall<T1>(float aDelay, Action<T1> aFunc, T1 aArg1)
+		public static void ExecuteSystems()
 		{
-			var call = new DelayedCall<T1>();
-			call.SetProcess(aFunc);
-			call.SetArgumens(aArg1);
-			call.delay = aDelay;
-			_delayedCalls.Add(call);
+			Current.Execute();
 		}
 		
 		/// <summary>
-		/// Sets delayed call of specified action with two arguments.
+		/// Executes all IExecuteFixedSystem systems.
 		/// </summary>
-		/// <param name="aDelay">Delay in secodns before calling.</param>
-		/// <param name="aFunc">Reference to the method to call.</param>
-		/// <param name="aArg1">Argument one.</param>
-		/// <param name="aArg2">Argument two.</param>
-		/// <typeparam name="T1">Type of the first argument.</typeparam>
-		/// <typeparam name="T2">Type of the second argument.</typeparam>
-		public void DelayedCall<T1, T2>(float aDelay, Action<T1, T2> aFunc, T1 aArg1, T2 aArg2)
+		public static void ExecuteFixedSystems()
 		{
-			var call = new DelayedCall<T1, T2>();
-			call.SetProcess(aFunc);
-			call.SetArgumens(aArg1, aArg2);
-			call.delay = aDelay;
-			_delayedCalls.Add(call);
+			Current.ExecuteFixed();
 		}
 
 		/// <summary>
-		/// Sets delayed call of specified action with three arguments.
+		/// Cleanups all ICleanupSystem systems.
 		/// </summary>
-		/// <param name="aDelay">Delay in secodns before calling.</param>
-		/// <param name="aFunc">Reference to the method to call.</param>
-		/// <param name="aArg1">Argument one.</param>
-		/// <param name="aArg2">Argument two.</param>
-		/// <param name="aArg3"></param>
-		/// <typeparam name="T1">Type of the first argument.</typeparam>
-		/// <typeparam name="T2">Type of the second argument.</typeparam>
-		/// <typeparam name="T3">Type of the third argument.</typeparam>
-		/// <returns></returns>
-		public void DelayedCall<T1, T2, T3>(float aDelay, Action<T1, T2, T3> aFunc, T1 aArg1, T2 aArg2, T3 aArg3)
+		public static void CleanupSystems()
 		{
-			var call = new DelayedCall<T1, T2, T3>();
-			call.SetProcess(aFunc);
-			call.SetArgumens(aArg1, aArg2, aArg3);
-			call.delay = aDelay;
-			_delayedCalls.Add(call);
+			Current.Cleanup();
 		}
 
 		/// <summary>
-		/// Sets delayed call of specified action with four arguments.
+		/// Disable all IDisableSystem systems.
 		/// </summary>
-		/// <param name="aDelay">Delay in secodns before calling.</param>
-		/// <param name="aFunc">Reference to the method to call.</param>
-		/// <param name="aArg1">Argument one.</param>
-		/// <param name="aArg2">Argument two.</param>
-		/// <param name="aArg3">Argument three.</param>
-		/// <param name="aArg4">Argument four.</param>
-		/// <typeparam name="T1">Type of the first argument.</typeparam>
-		/// <typeparam name="T2">Type of the second argument.</typeparam>
-		/// <typeparam name="T3">Type of the third argument.</typeparam>
-		/// <typeparam name="T4">Type of the fourth argument.</typeparam>
-		/// <returns></returns>
-		public void DelayedCall<T1, T2, T3, T4>(float aDelay, Action<T1, T2, T3, T4> aFunc, T1 aArg1, T2 aArg2, T3 aArg3, T4 aArg4)
+		public static void DisableSystems()
 		{
-			var call = new DelayedCall<T1, T2, T3, T4>();
-			call.SetProcess(aFunc);
-			call.SetArgumens(aArg1, aArg2, aArg3, aArg4);
-			call.delay = aDelay;
-			_delayedCalls.Add(call);
+			Current.Disable();
+		}
+
+		/// <summary>
+		/// Enable all IEnableSystem systems.
+		/// </summary>
+		public static void EnableSystems()
+		{
+			Current.Enable();
+		}
+		
+		/// <summary>
+		/// Reset all IResetSystem systems.
+		/// </summary>
+		public static void ResetSystems()
+		{
+			Current.Reset();
 		}
 
 		#endregion
 		#region Event Handlers
 
-		private void OnComponentAdded(AntEntity aEntity, Type aComponent)
+		private static void OnComponentAdded(AntEntity aEntity, Type aComponent)
 		{
 			foreach (var pair in _families)
 			{
@@ -336,7 +358,7 @@ namespace Anthill.Core
 			}
 		}
 
-		private void OnComponentRemoved(AntEntity aEntity, Type aComponent)
+		private static void OnComponentRemoved(AntEntity aEntity, Type aComponent)
 		{
 			foreach (var pair in _families)
 			{

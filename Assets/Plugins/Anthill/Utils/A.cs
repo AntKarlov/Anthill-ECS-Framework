@@ -134,10 +134,13 @@ public static class A
 
 			if (aSender != null)
 			{
-				_stringBuilder.Append(aSender)
+				_stringBuilder.Append("<b>")
+					.Append(aSender)
+					.Append("</b>")
 					.Append(" ► ");
 			}
 
+			_stringBuilder.Append(aMessage);
 			string finalLog = (stripHtmlTags)
 				? _tagRegex.Replace(_stringBuilder.ToString(), "")
 				: _stringBuilder.ToString();

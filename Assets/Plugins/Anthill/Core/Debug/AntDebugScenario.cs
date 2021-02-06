@@ -94,7 +94,7 @@ namespace Anthill.Core
 			UpdateName();
 		}
 
-		public override void Add(ISystem aSystem, int aPriority = 0)
+		public override ISystem Add(ISystem aSystem, int aPriority = 0)
 		{
 			var debugScenario = aSystem as AntDebugScenario;
 			if (debugScenario != null)
@@ -113,10 +113,10 @@ namespace Anthill.Core
 				_executeSystemsInfos.Add(systemInfo);
 			}
 
-			base.Add(aSystem, aPriority);
+			return base.Add(aSystem, aPriority);
 		}
 
-		public override void Remove(ISystem aSystem)
+		public override ISystem Remove(ISystem aSystem)
 		{
 			var debugScenario = aSystem as AntDebugScenario;
 			if (debugScenario != null)
@@ -127,7 +127,7 @@ namespace Anthill.Core
 			_initializeSystemsInfos.RemoveAll(x => System.Object.ReferenceEquals(x.System, aSystem));
 			_executeSystemsInfos.RemoveAll(x => System.Object.ReferenceEquals(x.System, aSystem));
 
-			base.Remove(aSystem);
+			return base.Remove(aSystem);
 		}
 
 		public override void Initialize()

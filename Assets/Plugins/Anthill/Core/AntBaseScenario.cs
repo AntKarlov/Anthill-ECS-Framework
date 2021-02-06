@@ -13,12 +13,9 @@ namespace Anthill.Core
 			Add,
 			Remove
 		}
-
-		public string Name { get; private set; }
 		
 		private int _lockCount;
 		protected bool _enabled;
-		protected AntEngine _engine;
 
 		protected List<AntPriorityPair<ISystem>> _systems;
 		protected List<AntPriorityPair<IInitializeSystem>> _initializeSystems;
@@ -30,6 +27,21 @@ namespace Anthill.Core
 		protected List<AntPriorityPair<ICleanupSystem>> _cleanupSystems;
 		protected List<AntPriorityPair<IResetSystem>> _resetSystems;
 		protected List<KeyValuePair<AntPriorityPair<ISystem>, PendingChange>> _pending;
+
+		#region Getters Setters
+
+		/// <summary>
+		/// Name of the scenario, uses for the debug states.
+		/// </summary>
+		public string Name { get; private set; }
+
+		/// <summary>
+		/// Count of the locks.
+		/// </summary>
+		public bool IsLocked { get => (_lockCount > 0); }
+
+		#endregion
+		#region Public Methods
 
 		public AntBaseScenario(string aName)
 		{
@@ -49,18 +61,28 @@ namespace Anthill.Core
 			_enabled = true;
 		}
 
-		#region Public Methods
-
-		public virtual void Add<T>(int aPriority = 0)
+		/// <summary>
+		/// Creates and adds new system into engine with priority.
+		/// </summary>
+		/// <param name="aPriority">Value of the priority (lower value means higher priority).</param>
+		/// <typeparam name="T">Type of the system.</typeparam>
+		/// <returns>Reference on the new system.</returns>
+		public virtual T Add<T>(int aPriority = 0) where T : ISystem
 		{
 			Type type = typeof(T);
 			ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
 			var system = (ISystem) constructor.Invoke(null);
-			A.Assert(system == null, $"Class `{type.ToString()}` not implemented <b>ISystem</b> interface!");
-			Add(system, aPriority);
+			// A.Assert(system == null, $"Class `{type.ToString()}` not implemented <b>ISystem</b> interface!");
+			return (T) Add(system, aPriority);
 		}
 
-		public virtual void Add(ISystem aSystem, int aPriority = 0)
+		/// <summary>
+		/// Adds new system into engine with priority.
+		/// </summary>
+		/// <param name="aSystem">Reference on the system.</param>
+		/// <param name="aPriority">Value of the priority (lower value means higher priority).</param>
+		/// <returns>Reference on the added system.</returns>
+		public virtual ISystem Add(ISystem aSystem, int aPriority = 0)
 		{
 			if (IsLocked)
 			{
@@ -70,7 +92,7 @@ namespace Anthill.Core
 						PendingChange.Add
 					)
 				);
-				return;
+				return aSystem;
 			}
 
 			_systems.Add(new AntPriorityPair<ISystem>(aSystem, aPriority));
@@ -132,10 +154,16 @@ namespace Anthill.Core
 				_resetSystems = _resetSystems.OrderBy(x => x.Priority).ToList();
 			}
 			
-			aSystem.AddedToEngine(_engine);
+			aSystem.AddedToEngine();
+			return aSystem;
 		}
 
-		public virtual void Remove(ISystem aSystem)
+		/// <summary>
+		/// Removes system from the scenario.
+		/// </summary>
+		/// <param name="aSystem">Reference on the system that need to remove.</param>
+		/// <returns>Reference on the removed system.</returns>
+		public virtual ISystem Remove(ISystem aSystem)
 		{
 			if (IsLocked)
 			{
@@ -145,7 +173,7 @@ namespace Anthill.Core
 						PendingChange.Remove
 					)
 				);
-				return;
+				return aSystem;
 			}
 
 			_systems.RemoveAll(x => Object.ReferenceEquals(x.System, aSystem));
@@ -198,20 +226,31 @@ namespace Anthill.Core
 				_resetSystems.RemoveAll(x => Object.ReferenceEquals(x.System, resetSystem));
 			}
 
-			aSystem.RemovedFromEngine(_engine);
+			aSystem.RemovedFromEngine();
+			return aSystem;
 		}
 
-		public T Remove<T>()
+		/// <summary>
+		/// Removes system from the scenario by Type.
+		/// </summary>
+		/// <typeparam name="T">Type of the system that need to remove.</typeparam>
+		/// <returns>Reference on the removed system.</returns>
+		public T Remove<T>() where T : ISystem
 		{
-			T sys = Get<T>();
-			if (sys != null)
+			var system = Get<T>();
+			if (system != null)
 			{
-				Remove((ISystem) sys);
+				Remove((ISystem) system);
 			}
-			return sys;
+			return system;
 		}
 
-		public T Get<T>()
+		/// <summary>
+		/// Gets system from the scenario by Type.
+		/// </summary>
+		/// <typeparam name="T">Type of the system that need to extract.</typeparam>
+		/// <returns>Reference on the system.</returns>
+		public T Get<T>() where T : ISystem
 		{
 			int index = _systems.FindIndex(x => x.System is T);
 			return (index >= 0 && index < _systems.Count)
@@ -259,19 +298,22 @@ namespace Anthill.Core
 		#endregion
 		#region ISystem Implementation
 
-		public virtual void AddedToEngine(AntEngine aEngine)
+		public virtual void AddedToEngine()
 		{
-			_engine = aEngine;
+			// ..
 		}
 
-		public virtual void RemovedFromEngine(AntEngine aEngine)
+		public virtual void RemovedFromEngine()
 		{
-			_engine = null;
+			// ..
 		}
 
 		#endregion
 		#region IInitializeSystem Implementation
 
+		/// <summary>
+		/// Initializes all IInitializeSystem systems.
+		/// </summary>
 		public virtual void Initialize()
 		{
 			for (int i = _initializeSystems.Count - 1; i >= 0; i--)
@@ -283,6 +325,9 @@ namespace Anthill.Core
 		#endregion
 		#region IDeinitializeSystem Implementation
 
+		/// <summary>
+		/// Deinitializes all IDeinitializeSystem systems.
+		/// </summary>
 		public virtual void Deinitialize()
 		{
 			for (int i = _deinitializeSystems.Count - 1; i >= 0; i--)
@@ -294,6 +339,9 @@ namespace Anthill.Core
 		#endregion
 		#region IExecuteSystem Implementation
 		
+		/// <summary>
+		/// Executes all IExecuteSystem systems.
+		/// </summary>
 		public virtual void Execute()
 		{
 			if (_enabled)
@@ -308,6 +356,9 @@ namespace Anthill.Core
 		#endregion
 		#region IExecuteFixed Implementation
 		
+		/// <summary>
+		/// Executes all IExecuteFixedSystem systems.
+		/// </summary>
 		public virtual void ExecuteFixed()
 		{
 			if (_enabled)
@@ -322,6 +373,9 @@ namespace Anthill.Core
 		#endregion
 		#region ICleanupSystem Implementation
 
+		/// <summary>
+		/// Cleanups all ICleanupSystem systems.
+		/// </summary>
 		public virtual void Cleanup()
 		{
 			if (_enabled)
@@ -336,6 +390,9 @@ namespace Anthill.Core
 		#endregion
 		#region IDisableSystem Implementation
 
+		/// <summary>
+		/// Disable all IDisableSystem systems.
+		/// </summary>
 		public virtual void Disable()
 		{
 			for (int i = _disableSystems.Count - 1; i >= 0; i--)
@@ -349,6 +406,9 @@ namespace Anthill.Core
 		#endregion
 		#region IEnableSystem Implementation
 
+		/// <summary>
+		/// Enable all IEnableSystem systems.
+		/// </summary>
 		public virtual void Enable()
 		{
 			for (int i = _enableSystems.Count - 1; i >= 0; i--)
@@ -362,6 +422,9 @@ namespace Anthill.Core
 		#endregion
 		#region IResetSystem Implementation
 		
+		/// <summary>
+		/// Reset all IResetSystem systems.
+		/// </summary>
 		public virtual void Reset()
 		{
 			for (int i = _resetSystems.Count - 1; i >= 0; i--)
@@ -370,11 +433,6 @@ namespace Anthill.Core
 			}
 		}
 		
-		#endregion
-		#region Getters Setters
-
-		public bool IsLocked { get => (_lockCount > 0); }
-
 		#endregion
 	}
 }
