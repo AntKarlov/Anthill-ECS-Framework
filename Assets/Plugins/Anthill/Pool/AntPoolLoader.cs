@@ -51,7 +51,7 @@ namespace Anthill.Pool
 				return this;
 			}
 
-			A.Assert((pools == null || pools.Length == 0), "[PoolLoader] Nothing for loading!");
+			A.Assert((pools == null || pools.Length == 0), "Nothing for pooling!", this);
 
 			var root = new GameObject();
 			root.name = "Pools";

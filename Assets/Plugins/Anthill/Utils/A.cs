@@ -1,214 +1,394 @@
 using System.Text;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
-/// <summary>
-///	Helper for logging messages into console.
-///
-/// Examples of use.
-/// A.Log("Its a number", value);
-/// A.Error("<color=red>Fatal Error:</color>: File", fileName, "not found");
-/// A.Error("{0}: File `{1}` not found!, A.Colored("Fatal Error", A.Red), fileName);
-/// A.Warning("Warning: `{0}` argument not found in `{1}`.", valueName, rootObject);
-/// </summary>
+public enum Verbosity
+{
+	None,              // No logs.
+	Verbose,           // Log everything, verbose logs included.
+	Normal,            // Log everything except logs marked as verbose.
+	ErrorsAndWarnings, // Log only errors and warnings.
+	Errors             // Log only errors.
+}
+
 public static class A
 {
-	public enum Color
+	private enum LogKind
 	{
-		Aqua,
-		Black,
-		Blue,
-		Brown,
-		Darkblue,
-		Fuchsia,
-		Green,
-		Grey,
-		Lightblue,
-		Lime,
-		Maroon,
-		Navy,
-		Olive,
-		Orange,
-		Purple,
-		Red,
-		Silver,
-		Teal,
-		White,
-		Yellow
+		Normal,
+		Warning,
+		Error
 	}
+
+	private struct LogResult
+	{
+		public bool success;
+		public string message;
+	}
+
+	/// <summary>
+	/// Sets the runtime verbosity value, which indicates the type of messages that will be logged.
+	/// </summary>
+	public static Verbosity verbosity = Verbosity.Normal;
+
+	/// <summary>
+	/// Sets the editor verbosity value, witch indicates the type of messages that will be logged.
+	/// </summary>
+	public static Verbosity editorVerbosity = Verbosity.Normal;
+
+	/// <summary>
+	/// If FALSE doesn't log anything, nothing in editor and runtime.
+	/// </summary>
+	public static bool enabled = true;
+
+	/// <summary>
+	/// If TRUE strips all HTML tags from the logs.
+	/// </summary>
+	public static bool stripHtmlTags = false;
+
+	private const string _editorPrefix = "[Editor] ";
+	private const string _verboseColor = "<color=#666666>";
+	private const string _senderColor = "<color=#6b854a>";
+	private const string _senderColorImportant = "<color=#785814>";
+	private const string _verboseSenderColor = "<color=#6b854a>";
+	private static readonly Regex _tagRegex = new Regex(@"<[^>]*>", RegexOptions.Multiline);
+	private static readonly StringBuilder _stringBuilder = new StringBuilder();
 
 	#region Public Methods
 
 	/// <summary>
-	/// Outputs simple message to the console.
+	/// Logs the given message.
 	/// </summary>
-	/// <param name="aArgs">Array of the arguments.</param>
-	public static void Log(params object[] aArgs)
+	public static void Log(object aMessage, object aSender = null, Object aContext = null, string aHexColor = null)
 	{
-		Debug.Log(Message(aArgs));
+		var result = CompileMessage(-1, false, LogKind.Normal, aSender, aMessage, false, aHexColor, false);
+		if (result.success)
+		{
+			Debug.Log(result.message, aContext);
+		}
 	}
 
 	/// <summary>
-	/// Outputs warning message to the console.
+	/// Logs the given message. Force message will log if <see cref="verbosity"/> is set to None
+	/// but force message won't log if the logger is not enabled.
 	/// </summary>
-	/// <param name="aArgs">Array of the arguments.</param>
-	public static void Warning(params object[] aArgs)
+	public static void LogForce(object aMessage, object aSender = null, Object aContext = null, string aHexColor = null)
 	{
-		Debug.LogWarning(Message(aArgs));
+		var result = CompileMessage(-1, false, LogKind.Normal, aSender, aMessage, false, aHexColor, true);
+		if (result.success)
+		{
+			Debug.Log(result.message, aContext);
+		}
 	}
 
 	/// <summary>
-	/// Outputs error message to the console.
+	/// Logs the given message.
 	/// </summary>
-	/// <param name="aArgs">Array of the arguments.</param>
-	public static void Error(params object[] aArgs)
+	public static void Verbose(object aMessage, object aSender = null, Object aContext = null)
 	{
-		Debug.LogError(Message(aArgs));
+		var result = CompileMessage(-1, false, LogKind.Normal, aSender, aMessage, true, null, false);
+		if (result.success)
+		{
+			Debug.Log(result.message, aContext);
+		}
 	}
 
 	/// <summary>
-	/// Outputs assert message to the console.
+	/// Logs the given warning message.
 	/// </summary>
-	/// <param name="aCondition">Condition of the assertion. If true, then method throws error.</param>
-	/// <param name="aMessage">Message.</param>
-	/// <param name="aArgs">Optional arguments for the message.</param>
-	public static void Assert(bool aCondition, string aMessage, params object[] aArgs)
+	public static void Warning(object aMessage, object aSender = null, Object aContext = null)
+	{
+		var result = CompileMessage(-1, false, LogKind.Warning, aSender, aMessage, false, null, false);
+		if (result.success)
+		{
+			Debug.LogWarning(result.message, aContext);
+		}
+	}
+	
+	/// <summary>
+	/// Logs the given error message.
+	/// </summary>
+	public static void Error(object aMessage, object aSender = null, Object aContext = null)
+	{
+		var result = CompileMessage(-1, false, LogKind.Error, aSender, aMessage, false, null, false);
+		if (result.success)
+		{
+			Debug.LogError(result.message, aContext);
+		}
+	}
+	
+	/// <summary>
+	/// Logs checks condition and log assertion if condition is TRUE.
+	/// </summary>
+	/// <param name="aCondition"></param>
+	/// <param name="aMessage"></param>
+	/// <param name="aBreak"></param>
+	public static void Assert(bool aCondition, string aMessage, object aSender = null, Object aContext = null, bool aBreak = true)
 	{
 		if (aCondition)
 		{
-			var args = new object[aArgs.Length + 1];
-			args[0] = string.Concat("[Assert Failed] ", aMessage);
-			for (int i = 0, n = aArgs.Length; i < n; i++)
+			if (!enabled)
 			{
-				args[i + 1] = aArgs[i];
+				return;
 			}
-			string str = Message(args);
-			Debug.Assert(!aCondition, str);
-			Debug.Break();
+
+			if (aSender != null)
+			{
+				_stringBuilder.Append(aSender)
+					.Append(" ► ");
+			}
+
+			string finalLog = (stripHtmlTags)
+				? _tagRegex.Replace(_stringBuilder.ToString(), "")
+				: _stringBuilder.ToString();
+
+			_stringBuilder.Length = 0;
+			Debug.Assert(!aCondition, finalLog, aContext);
+
+			if (aBreak)
+			{
+				Debug.Break();
+			}
 		}
-	}
-
-	public static void Assert(bool aCondition, string aMessage)
-	{
-		if (aCondition)
-		{
-			Debug.Assert(!aCondition, aMessage);
-			Debug.Break();
-		}
-	}
-
-	/// <summary>
-	/// Adds color tags to the message text.
-	/// </summary>
-	/// <param name="aText">Text.</param>
-	/// <param name="aColor">Color.</param>
-	/// <returns>String with colored tags.</returns>
-	public static string Colored(string aText, Color aColor)
-	{
-		return $"<color={aColor}>{aText}</color>";
-	}
-
-	/// <summary>
-	/// Adds color tags to the message text.
-	/// </summary>
-	/// <param name="aText">Text.</param>
-	/// <param name="aColor">Color.</param>
-	/// <returns>String with colored tags.</returns>
-	public static string Colored(string aText, string aColorName)
-	{
-		return $"<color={aColorName}>{aText}</color>";
-	}
-
-	/// <summary>
-	/// Adds size tags to the message.
-	/// </summary>
-	/// <param name="aText">Text.</param>
-	/// <param name="aSize">Size.</param>
-	/// <returns>String with size tags.</returns>
-	public static string Sized(string aText, int aSize)
-	{
-		return $"<size={aSize}>{aText}</size>";
-	}
-
-	/// <summary>
-	/// Adds bold tags to the message.
-	/// </summary>
-	/// <param name="aText">Text.</param>
-	/// <returns>String with the bold tags.</returns>
-	public static string Bold(string aText)
-	{
-		return $"<b>{aText}</b>";
-	}
-
-	/// <summary>
-	/// Adds italic tags to the message.
-	/// </summary>
-	/// <param name="aText">Text.</param>
-	/// <returns>String with the italic tags.</returns>
-	public static string Italic(string aText)
-	{
-		return $"<i>{0}</i>";
 	}
 
 	#endregion
 	#region Private Methods
-	
-	private static string Message(params object[] aArgs)
+
+	private static LogResult CompileMessage(
+		int aImportance, bool aIsEditor, LogKind aLogKind, object aSender, object aMessage,
+		bool aIsVerbose, string aHexColor, bool aForce)
 	{
-		string result = null;
-		if (aArgs[0] is string && CountOfBrackets((string) aArgs[0]) == aArgs.Length - 1)
+		// Logging is disabled.
+		if (!enabled)
 		{
-			var args = new object[aArgs.Length - 1];
-			for (int i = 1, n = aArgs.Length; i < n; i++)
-			{
-				args[i - 1] = aArgs[i];
-			}
-			result = string.Format((string) aArgs[0], args);
+			return new LogResult { success = false, message = null };
 		}
 
-		if (result == null)
+		// Logging is disabled for editor.
+		if (!aForce && aIsEditor && editorVerbosity == Verbosity.None)
 		{
-			var sb = new StringBuilder();
-			for (int i = 0, n = aArgs.Length; i < n; i++)
-			{
-				if (aArgs[i] != null)
-				{
-					sb.Append(aArgs[i].ToString());
-				}
-				else
-				{
-					sb.Append("Null");
-				}
-				sb.Append(" ");
-			}
-			result = sb.ToString();
+			return new LogResult { success = false, message = null };
 		}
 
-		return result;
+		// Logging is disabled for production.
+		if (!aForce && !aIsEditor && verbosity == Verbosity.None)
+		{
+			return new LogResult { success = false, message = null };
+		}
+
+		Verbosity targetVerbosity = (aIsEditor) ? editorVerbosity : verbosity;
+		switch (targetVerbosity)
+		{
+			case Verbosity.Errors :
+				if (!aForce && aLogKind != LogKind.Error)
+				{
+					return new LogResult { success = false, message = null };
+				}
+				break;
+
+			case Verbosity.ErrorsAndWarnings :
+				if (!aForce && aLogKind != LogKind.Error && aLogKind != LogKind.Warning)
+				{
+					return new LogResult { success = false, message = null };
+				}
+				break;
+
+			case Verbosity.Normal :
+				if (aIsVerbose)
+				{
+					return new LogResult { success = false, message = null };
+				}
+				break;
+		}
+
+		bool isImportant = (aImportance > -1);
+		bool isColored = (aIsVerbose || !string.IsNullOrEmpty(aHexColor));
+		string importantLogEnd = "";
+		if (isImportant)
+		{
+			_stringBuilder.Append("<b><color=#f4c560><size=14>★ </size></color></b>");
+			switch (aImportance)
+			{
+				case 1 :
+					_stringBuilder.Append("<b>");
+					importantLogEnd = "</b>";
+					break;
+
+				default :
+					_stringBuilder.Append("<size=14><b>");
+					importantLogEnd = "</b></size>";
+					break;
+			}
+		}
+
+		if (aIsVerbose)
+		{
+			_stringBuilder.Append(_verboseColor);
+		}
+		else if (isColored)
+		{
+			_stringBuilder.Append("<color=");
+			if (aHexColor[0] != '#')
+			{
+				_stringBuilder.Append('#');
+			}
+			_stringBuilder.Append(aHexColor).Append(">");
+		}
+
+		if (aIsEditor)
+		{
+			_stringBuilder.Append(_editorPrefix);
+		}
+
+		if (aSender != null)
+		{
+			_stringBuilder.Append((aIsVerbose)
+				? _verboseSenderColor 
+				: (isImportant)
+					? _senderColorImportant
+					: _senderColor)
+				.Append(aSender)
+				.Append("</color> ► ");
+		}
+
+		_stringBuilder.Append(aMessage);
+		if (isColored)
+		{
+			_stringBuilder.Append("</color>");
+		}
+
+		if (isImportant)
+		{
+			_stringBuilder.Append(importantLogEnd);
+		}
+
+		string finalLog = (stripHtmlTags)
+			? _tagRegex.Replace(_stringBuilder.ToString(), "")
+			: _stringBuilder.ToString();
+
+		_stringBuilder.Length = 0;
+		return new LogResult { success = true, message = finalLog };
 	}
 
-	private static int CountOfBrackets(string aStr)
-	{
-		int count = 0;
-		bool opened = false;
-		for (int i = 0, n = aStr.Length; i < n; i++)
-		{
-			switch (aStr[i])
-			{
-				case '{' : 
-					opened = true;
-					break;
+	#endregion
+	#region Internal Classes
 
-				case '}' :
-					if (opened)
-					{
-						count++;
-						opened = false;
-					}
-					break;
+	public static class Important
+	{
+		/// <summary>
+		/// Logs the important message.
+		/// </summary>
+		public static void Log(object aMessage, object aSender = null, Object aContext = null, string aHexColor = null)
+		{
+			var result = A.CompileMessage(1, false, LogKind.Normal, aSender, aMessage, false, aHexColor, false);
+			if (result.success)
+			{
+				Debug.Log(result.message, aContext);
 			}
 		}
 
-		return count;
+		/// <summary>
+		/// Logs the important message. Force message will log if <see cref="verbosity"/> is set to None
+		/// but force message won't log if the logger is not enabled.
+		/// </summary>
+		public static void LogForce(object aMessage, object aSender = null, Object aContext = null, string aHexColor = null)
+		{
+			var result = A.CompileMessage(1, false, LogKind.Normal, aSender, aMessage, false, aHexColor, true);
+			if (result.success)
+			{
+				Debug.Log(result.message, aContext);
+			}
+		}
+
+		/// <summary>
+		/// Logs the very important message.
+		/// </summary>
+		public static void High(object aMessage, object aSender = null, Object aContext = null, string aHexColor = null)
+		{
+			var result = A.CompileMessage(0, false, LogKind.Normal, aSender, aMessage, false, aHexColor, false);
+			if (result.success)
+			{
+				Debug.Log(result.message, aContext);
+			}
+		}
+
+		/// <summary>
+		/// Logs the very important message. Force message will log if <see cref="verbosity"/> is set to None
+		/// but force message won't log if the logger is not enabled.
+		/// </summary>
+		public static void HighForce(object aMessage, object aSender = null, Object aContext = null, string aHexColor = null)
+		{
+			var result = A.CompileMessage(0, false, LogKind.Normal, aSender, aMessage, false, aHexColor, true);
+			if (result.success)
+			{
+				Debug.Log(result.message, aContext);
+			}
+		}
+	}
+
+	public static class Editor
+	{
+		/// <summary>
+		/// Logs the given editor-only message.
+		/// </summary>
+		public static void Log(object aMessage, object aSender = null, Object aContext = null, string aHexColor = null)
+		{
+			var result = A.CompileMessage(-1, true, LogKind.Normal, aSender, aMessage, false, aHexColor, false);
+			if (result.success)
+			{
+				Debug.Log(result.message, aContext);
+			}
+		}
+
+		/// <summary>
+		/// Logs the given editor-only message with the give options. Force message will log 
+		/// if <see cref="verbosity"/> is set to None but force message won't log if the logger is not enabled.
+		/// </summary>
+		public static void LogForce(object aMessage, object aSender = null, Object aContext = null, string aHexColor = null)
+		{
+			var result = A.CompileMessage(-1, true, LogKind.Normal, aSender, aMessage, false, aHexColor, true);
+			if (result.success)
+			{
+				Debug.Log(result.message, aContext);
+			}
+		}
+
+		/// <summary>
+		/// Logs the given editor-only message.
+		/// </summary>
+		public static void Verbose(object aMessage, object aSender = null, Object aContext = null, string aHexColor = null)
+		{
+			var result = A.CompileMessage(-1, true, LogKind.Normal, aSender, aMessage, true, aHexColor, false);
+			if (result.success)
+			{
+				Debug.Log(result.message, aContext);
+			}
+		}
+
+		/// <summary>
+		/// Logs the given editor-only warning message.
+		/// </summary>
+		public static void Warning(object aMessage, object aSender = null, Object aContext = null)
+		{
+			var result = A.CompileMessage(-1, true, LogKind.Warning, aSender, aMessage, false, null, false);
+			if (result.success)
+			{
+				Debug.LogWarning(result.message, aContext);
+			}
+		}
+
+		/// <summary>
+		/// Logs the given editor-only error message.
+		/// </summary>
+		public static void Error(object aMessage, object aSender = null, Object aContext = null)
+		{
+			var result = A.CompileMessage(-1, true, LogKind.Error, aSender, aMessage, false, null, false);
+			if (result.success)
+			{
+				Debug.LogError(result.message, aContext);
+			}
+		}
 	}
 	
 	#endregion

@@ -6,12 +6,15 @@ namespace Anthill.Core
 
 	public class AntEngine : AntScenario
 	{
-		public static AntEngine Current { get; private set; }
-
 		private readonly Dictionary<Type, IFamily> _families;
 		private List<AntEntity> _entities;
 		private List<DelayedCall> _delayedCalls;
 
+		#region Getters / Setters
+		
+		public static AntEngine Current { get; private set; }
+		
+		#endregion
 		#region Public Methods
 
 		public AntEngine()
@@ -221,9 +224,10 @@ namespace Anthill.Core
 		public override void Execute()
 		{
 			base.Execute();
+			float dt = Time.deltaTime;
 			for (int i = _delayedCalls.Count - 1; i >= 0; i--)
 			{
-				if (_delayedCalls[i].Update(Time.deltaTime))
+				if (_delayedCalls[i].Update(dt))
 				{
 					_delayedCalls.RemoveAt(i);
 				}

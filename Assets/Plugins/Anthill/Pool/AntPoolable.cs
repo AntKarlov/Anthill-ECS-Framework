@@ -43,7 +43,7 @@ namespace Anthill.Pool
 		{
 			if (Pool == null)
 			{
-				A.Warning($"Object `{name}` is not polled and trying to returning to the pool.");
+				A.Editor.Warning($"Object `{name}` is not polled and trying to returning to the pool.", this);
 				return this;
 			}
 

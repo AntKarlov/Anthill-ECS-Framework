@@ -165,7 +165,7 @@ namespace Anthill.Pool
 						te.SelectAll();
 						te.Copy();
 
-						A.Log("Enum copied into clip board!");
+						Debug.Log("Enum copied into clip board!");
 					}
 				}
 				EditorGUILayout.EndHorizontal();

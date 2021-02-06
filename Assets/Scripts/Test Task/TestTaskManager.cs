@@ -1,4 +1,4 @@
-namespace Anthill.Test
+namespace Anthill
 {
 	using UnityEngine;
 	using System.Collections;
@@ -19,13 +19,15 @@ namespace Anthill.Test
 	
 		private void Awake()
 		{
+			A.verbosity = Verbosity.Verbose;
+			A.editorVerbosity = Verbosity.Verbose;
 			_t = GetComponent<Transform>();
-			_tm = AntTaskManager.Do()
+			_tm = AntTaskManager.Do(true)
 				.Delay(1.5f, true)
 				.Task<Vector3, Vector3>(MoveTo, fromRef.position, toRef.position)
 				.Task<Vector3, Vector3>(MoveTo, toRef.position, fromRef.position)
 				.InstantTask(Track)
-				.OnComplete(() => A.Log("Queue completed!"));
+				.OnComplete(() => A.Editor.Verbose("Queue completed!", this));
 		}
 
 		private void Update()
@@ -38,8 +40,8 @@ namespace Anthill.Test
 
 		private void Track()
 		{
-			A.Log("Track!");
-			_tm.UrgentInstantTask(() => A.Log($"Urgent! {_tm.TaskCount}"), true);
+			A.Editor.Warning("Track!", this, this);
+			_tm.UrgentInstantTask(() => A.Editor.Verbose($"Urgent! {_tm.TaskCount}"), true);
 		}
 		
 		private bool MoveTo(Vector3 aFrom, Vector3 aTo)

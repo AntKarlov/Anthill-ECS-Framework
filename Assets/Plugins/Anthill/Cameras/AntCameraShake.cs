@@ -167,7 +167,7 @@ namespace Anthill.Cameras
 
 				if (cameras.Count < 1)
 				{
-					A.Warning("AntCameraShake can't find the Camera!");
+					A.Editor.Warning("Can't find the Cameras!", this);
 				}
 
 				_components.Add(this);
@@ -202,7 +202,7 @@ namespace Anthill.Cameras
 			}
 			else 
 			{
-				A.Warning($"AntCameraShake can't find `{aPresetName}` preset!");
+				A.Warning($"Can't find `{aPresetName}` preset!", this);
 			}
 		}
 

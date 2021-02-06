@@ -38,7 +38,7 @@ namespace Anthill.Pool
 		public AntPoolLoaderSystem AddPreset(string aFileName)
 		{
 			var list = (AntPoolPreset) Resources.Load(aFileName);
-			A.Assert(list == null, $"[PoolLoader] Can't load `{aFileName}` pool asset!", true);
+			A.Assert(list == null, $"Can't load `{aFileName}` pool asset!", this);
 			pools.Add(list);
 			return this;
 		}
@@ -47,11 +47,11 @@ namespace Anthill.Pool
 		{
 			if (_isStarted)
 			{
-				A.Warning("[PoolLoader] Already started!");
+				A.Editor.Warning("Already started!", this);
 				return this;
 			}
 
-			A.Assert((pools == null || pools.Count == 0), "[PoolLoader] Nothig for loading!", true);
+			A.Assert((pools == null || pools.Count == 0), "Nothig for loading!", this);
 
 			var root = new GameObject();
 			root.name = "Pools";

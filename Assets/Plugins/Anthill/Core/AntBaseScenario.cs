@@ -56,7 +56,7 @@ namespace Anthill.Core
 			Type type = typeof(T);
 			ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
 			var system = (ISystem) constructor.Invoke(null);
-			A.Assert(system == null, "Class `" + A.Bold(type.ToString()) + "` not implemented ISystem interface!");
+			A.Assert(system == null, $"Class `{type.ToString()}` not implemented <b>ISystem</b> interface!");
 			Add(system, aPriority);
 		}
 

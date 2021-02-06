@@ -145,7 +145,7 @@ namespace Anthill.Pool
 					: null;
 			}
 			
-			A.Warning($"[PoolManager] Can't find the `{aName}` in the pool!");
+			A.Editor.Warning($"Can't find the `{aName}` in the pool!", "AntPool");
 			return null;
 		}
 
@@ -163,7 +163,7 @@ namespace Anthill.Pool
 			{
 				if (_pools[i].GrowCount > 0)
 				{
-					A.Log($"Pool `{_pools[i].name}` grew by {_pools[i].GrowCount}");
+					A.LogForce($"Pool `{_pools[i].name}` grew by {_pools[i].GrowCount}", "AntPool");
 				}
 			}
 		}

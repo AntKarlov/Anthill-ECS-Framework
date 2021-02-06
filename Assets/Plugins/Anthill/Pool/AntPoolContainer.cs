@@ -59,7 +59,7 @@ namespace Anthill.Pool
 				return po;
 			}
 
-			A.Warning($"[PoolContainer] Component `AntPoolable` not found for the prefab `{go.name}`.");
+			A.Editor.Warning($"Component `AntPoolable` not found for the prefab `{go.name}`.", this);
 			return null;
 		}
 
@@ -67,7 +67,7 @@ namespace Anthill.Pool
 		{
 			if (aPoolable == null)
 			{
-				A.Warning($"[PoolContainer] Can't add object into pool because it is null!");
+				A.Editor.Warning($"Can't add object into pool because it is null!", this);
 				return;
 			}
 
