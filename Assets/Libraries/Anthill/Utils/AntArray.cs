@@ -145,18 +145,18 @@ namespace Anthill.Utils
 			}
 		}
 
-		public static void Swap<T>(ref T[] aList, int aIndexA, int aIndexB)
+		public static void Swap<T>(ref T[] aSource, int aIndexA, int aIndexB)
 		{
 			if (aIndexA < 0 || aIndexB < 0 ||
 				aIndexA == aIndexB ||
-				aIndexA >= aList.Length || aIndexB >= aList.Length)
+				aIndexA >= aSource.Length || aIndexB >= aSource.Length)
 			{
 				return;
 			}
 
-			T temp = aList[aIndexA];
-			aList[aIndexA] = aList[aIndexB];
-			aList[aIndexB] = temp;
+			T temp = aSource[aIndexA];
+			aSource[aIndexA] = aSource[aIndexB];
+			aSource[aIndexB] = temp;
 		}
 	}
 }

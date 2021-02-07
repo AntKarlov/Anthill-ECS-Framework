@@ -4,6 +4,7 @@ namespace Anthill
 	using System.Collections;
 	using Anthill.Tasks;
 	using Anthill.Core;
+	using Anthill.Extensions;
 	
 	public class TestTaskManager : MonoBehaviour
 	{
