@@ -1,0 +1,64 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 79dc1d7b9bfed4c61b16c49d75cc00ab, type: 3}
+  m_Name: BuildManagerData
+  m_EditorClassIdentifier: 
+  settingsFoldout: 0
+  version: 1.2
+  build: 4
+  prefixesFoldout: 0
+  suffixesFoldout: 0
+  prefixes: []
+  suffixes:
+  - enabled: 1
+    enabledForInnerExecutable: 0
+    text: -v
+  - enabled: 1
+    enabledForInnerExecutable: 0
+    text: '{version}'
+  - enabled: 1
+    enabledForInnerExecutable: 0
+    text: -b
+  - enabled: 1
+    enabledForInnerExecutable: 0
+    text: '{build}'
+  builds:
+  - buildTarget: 13
+    foldout: 1
+    enabled: 1
+    buildFolder: Builds
+    buildName: AnthillGame
+    clearBuildFolder: 1
+    bundleIdentifier: ru.antkarlov.anthillgame
+    key: 
+    buildAppBundle: 0
+    increaseInternalBuildNumber: 0
+  - buildTarget: 9
+    foldout: 0
+    enabled: 0
+    buildFolder: Builds
+    buildName: AnthillGame
+    clearBuildFolder: 1
+    bundleIdentifier: ru.antkarlov.anthillgame
+    key: 
+    buildAppBundle: 0
+    increaseInternalBuildNumber: 0
+  - buildTarget: 13
+    foldout: 0
+    enabled: 0
+    buildFolder: Builds
+    buildName: AnthillGame
+    clearBuildFolder: 1
+    bundleIdentifier: ru.antkarlov.anthillgame
+    key: 
+    buildAppBundle: 1
+    increaseInternalBuildNumber: 0
