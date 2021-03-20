@@ -4,18 +4,22 @@ namespace Anthill.Core
 	
 	public static class AntDelayed
 	{
+	#region Private Variables
+
 		private static bool _isInitialized = false;
 		private static AntDelayedCallScenario _scenario = null;
 
-		#region Getters / Setters
+	#endregion
+
+	#region Getters / Setters
 		
-		private static AntDelayedCallScenario Scenario
+		public static AntDelayedCallScenario Scenario
 		{
 			get
 			{
 				if (!_isInitialized)
 				{
-					_scenario = AntEngine.AddSystem<AntDelayedCallScenario>(-1);
+					_scenario = AntEngine.Add<AntDelayedCallScenario>(-1);
 					_isInitialized = true;
 				}
 
@@ -23,20 +27,22 @@ namespace Anthill.Core
 			}
 		}
 
-		#endregion
-		#region Public Methods
+	#endregion
+
+	#region Public Methods
 
 		/// <summary>
 		/// Sets delayed call of specified action without arguments.
 		/// </summary>
 		/// <param name="aDelay">Delay in secodns before calling.</param>
 		/// <param name="aFunc">Reference to the method to call.</param>
-		public static void Call(float aDelay, Action aFunc)
+		public static DelayedCall Call(float aDelay, Action aFunc)
 		{
 			var call = new DelayedCall();
 			call.SetProcess(aFunc);
 			call.delay = aDelay;
 			Scenario.Add(call);
+			return call;
 		}
 		
 		/// <summary>
@@ -46,13 +52,14 @@ namespace Anthill.Core
 		/// <param name="aFunc">Reference to the method to call.</param>
 		/// <param name="aArg1">Argument for method.</param>
 		/// <typeparam name="T1">Type of the argument.</typeparam>
-		public static void Call<T1>(float aDelay, Action<T1> aFunc, T1 aArg1)
+		public static DelayedCall Call<T1>(float aDelay, Action<T1> aFunc, T1 aArg1)
 		{
 			var call = new DelayedCall<T1>();
 			call.SetProcess(aFunc);
 			call.SetArgumens(aArg1);
 			call.delay = aDelay;
 			Scenario.Add(call);
+			return call;
 		}
 		
 		/// <summary>
@@ -64,13 +71,14 @@ namespace Anthill.Core
 		/// <param name="aArg2">Argument two.</param>
 		/// <typeparam name="T1">Type of the first argument.</typeparam>
 		/// <typeparam name="T2">Type of the second argument.</typeparam>
-		public static void Call<T1, T2>(float aDelay, Action<T1, T2> aFunc, T1 aArg1, T2 aArg2)
+		public static DelayedCall Call<T1, T2>(float aDelay, Action<T1, T2> aFunc, T1 aArg1, T2 aArg2)
 		{
 			var call = new DelayedCall<T1, T2>();
 			call.SetProcess(aFunc);
 			call.SetArgumens(aArg1, aArg2);
 			call.delay = aDelay;
 			Scenario.Add(call);
+			return call;
 		}
 
 		/// <summary>
@@ -85,13 +93,14 @@ namespace Anthill.Core
 		/// <typeparam name="T2">Type of the second argument.</typeparam>
 		/// <typeparam name="T3">Type of the third argument.</typeparam>
 		/// <returns></returns>
-		public static void Call<T1, T2, T3>(float aDelay, Action<T1, T2, T3> aFunc, T1 aArg1, T2 aArg2, T3 aArg3)
+		public static DelayedCall Call<T1, T2, T3>(float aDelay, Action<T1, T2, T3> aFunc, T1 aArg1, T2 aArg2, T3 aArg3)
 		{
 			var call = new DelayedCall<T1, T2, T3>();
 			call.SetProcess(aFunc);
 			call.SetArgumens(aArg1, aArg2, aArg3);
 			call.delay = aDelay;
 			Scenario.Add(call);
+			return call;
 		}
 
 		/// <summary>
@@ -108,16 +117,17 @@ namespace Anthill.Core
 		/// <typeparam name="T3">Type of the third argument.</typeparam>
 		/// <typeparam name="T4">Type of the fourth argument.</typeparam>
 		/// <returns></returns>
-		public static void Call<T1, T2, T3, T4>(float aDelay, Action<T1, T2, T3, T4> aFunc, T1 aArg1, T2 aArg2, T3 aArg3, T4 aArg4)
+		public static DelayedCall Call<T1, T2, T3, T4>(float aDelay, Action<T1, T2, T3, T4> aFunc, T1 aArg1, T2 aArg2, T3 aArg3, T4 aArg4)
 		{
 			var call = new DelayedCall<T1, T2, T3, T4>();
 			call.SetProcess(aFunc);
 			call.SetArgumens(aArg1, aArg2, aArg3, aArg4);
 			call.delay = aDelay;
 			Scenario.Add(call);
+			return call;
 		}
 
-		#endregion
+	#endregion
 	}
 
 	/// <summary>
@@ -143,6 +153,11 @@ namespace Anthill.Core
 		public void SetProcess(Action aProcess)
 		{
 			_process = aProcess;
+		}
+
+		public void Kill()
+		{
+			AntDelayed.Scenario.Remove(this);
 		}
 	}
 
