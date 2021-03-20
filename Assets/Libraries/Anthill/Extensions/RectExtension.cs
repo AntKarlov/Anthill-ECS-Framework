@@ -4,7 +4,7 @@ namespace Anthill.Extensions
 
 	public static class RectExtension
 	{
-		#region Public Methods
+	#region Public Methods
 
 		/// <summary>
 		/// Adds one rect into another, and returns the resulting RectA.
@@ -249,6 +249,6 @@ namespace Anthill.Extensions
 			return aRect;
 		}
 
-		#endregion
+	#endregion
 	}
 }

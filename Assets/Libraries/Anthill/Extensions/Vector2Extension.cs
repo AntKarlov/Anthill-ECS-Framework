@@ -4,7 +4,7 @@ namespace Anthill.Extensions
 	
 	public static class Vector2Extension
 	{
-		#region Public Methods
+	#region Public Methods
 
 		/// <summary>
 		/// Returns a copy of the vector with its X set to the given value.
@@ -39,6 +39,6 @@ namespace Anthill.Extensions
 			return new Vector2((int) aVector.x, (int) aVector.y);
 		}
 
-		#endregion
+	#endregion
 	}
 }

@@ -2,14 +2,20 @@ namespace Anthill.Extensions
 {
 	using System;
 	using System.Globalization;
+	using System.Reflection;
 	using System.Text;
 	using UnityEngine;
+	// using Object = UnityEngine.Object;
 
 	public static class StringExtension
 	{
+	#region Private Variables
+
 		private static readonly StringBuilder _stringBuilder = new StringBuilder();
 
-		#region Public Methods
+	#endregion
+	
+	#region Public Methods
 
 		/// <summary>
 		/// Returns TRUE if the string is null or empty.
@@ -142,52 +148,165 @@ namespace Anthill.Extensions
 		}
 
 		/// <summary>
-		/// Compares a version string (in format #.#.###) with another of the same format,
-		/// and return TRUE if this one is minor. Boths trings must have the same number of dot separators.
-		/// </summary>
-		public static bool VersionIsMinorThan(this string aStr, string aVersion)
-		{
-			string[] thisV = aStr.Split('.');
-			string[] otherV = aVersion.Split('.');
-			if (thisV.Length != otherV.Length)
+        /// If the given string is a directory path, returns its parent
+        /// with or without final slash depending on the original directory format.
+        /// </summary>
+        public static string Parent(this string aDir)
+        {
+            if (aDir.Length <= 1)
 			{
-				throw new ArgumentException("Invalid");
+				return aDir;
 			}
 
-			for (int i = 0, n = thisV.Length; i < n; ++i)
+            string slashType = aDir.IndexOf("/") == -1 ? "\\" : "/";
+            int index = aDir.LastIndexOf(slashType);
+            if (index == -1)
 			{
-				int thisInt = Convert.ToInt32(thisV[i]);
-				int otherInt = Convert.ToInt32(otherV[i]);
-				if (i == thisV.Length - 1)
-				{
-					return thisInt < otherInt;
-				}
-				else if (thisInt == otherInt)
-				{
-					continue;
-				}
-				else if (thisInt < otherInt)
-				{
-					return true;
-				}
-				else if (thisInt > otherInt)
-				{
-					return false;
-				}
+				// Not a directory path.
+				return aDir; 
 			}
 
-			throw new ArgumentException("Invalid");
-		}
+            if (index == aDir.Length - 1)
+			{
+                // Had final slash
+                index = aDir.LastIndexOf(slashType, index - 1);
+                return (index == -1) ? aDir : aDir.Substring(0, index + 1);
+            }
 
-		#endregion
+            // No final slash
+            return aDir.Substring(0, index);
+        }
 
-		#region Private Methods
+        /// <summary>
+        /// If the string is a directory, returns the directory name,
+        /// if instead it's a file returns its name without extension.
+        /// </summary>
+        public static string FileOrDirectoryName(this string aPath)
+        {
+            if (aPath.Length <= 1) return aPath;
+            int slashIndex = aPath.LastIndexOfAnySlash();
+            int dotIndex = aPath.LastIndexOf('.');
+            if (dotIndex != -1 && dotIndex > slashIndex)
+			{
+				// Remove extension if present.
+				aPath = aPath.Substring(0, dotIndex); 
+			}
+
+            if (slashIndex == -1)
+			{
+				return aPath;
+			}
+
+            if (slashIndex == aPath.Length - 1)
+			{
+				// Remove final slash.
+                aPath = aPath.Substring(0, slashIndex); 
+                slashIndex = aPath.LastIndexOfAnySlash();
+                if (slashIndex == -1)
+				{
+					return aPath;
+				}
+            }
+
+            return aPath.Substring(slashIndex + 1);
+        }
+
+        /// <summary>
+        /// Evaluates the string as a property or field and returns its value.
+        /// </summary>
+        /// <param name="aObj">If NULL considers the string as a static property, 
+		/// otherwise uses obj as the starting instance.</param>
+        public static T EvalAsProperty<T>(this string aStr, object aObj = null, bool aLogErrors = false)
+        {
+            try
+			{
+                Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
+                string[] split = aStr.Split('.');
+                if (aObj == null)
+				{
+                    // Static.
+                    string typeS = split[0];
+                    for (int i = 1, n = split.Length - 1; i < n; ++i)
+					{
+						typeS += '.' + split[i];
+					}
+
+                    Type t = null;
+                    for (int i = 0, n = assemblies.Length; i < n; ++i)
+					{
+                        t = assemblies[i].GetType(typeS);
+                        if (t != null)
+						{
+							break;
+						}
+                    }
+
+                    if (t == null)
+					{
+						throw new NullReferenceException($"Type {typeS} could not be found in any of the domain assemblies");
+					}
+
+                    PropertyInfo pInfo = t.GetProperty(split[split.Length - 1]);
+                    if (pInfo != null)
+					{
+                        return (T)pInfo.GetValue(
+                            null, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic,
+                            null, null, CultureInfo.InvariantCulture
+                        );
+                    }
+					else
+					{
+                        return (T)t.GetField(split[split.Length - 1]).GetValue(null);
+                    }
+                }
+				else
+				{    
+                    foreach (string part in split)
+					{
+                        Type t = aObj.GetType();
+                        PropertyInfo pInfo = t.GetProperty(part);
+                        if (pInfo != null)
+						{
+							aObj = pInfo.GetValue(aObj, null);
+						}
+                        else
+						{
+							aObj = t.GetField(part).GetValue(aObj);
+						}
+                    }
+                    return (T) aObj;
+                }
+            }
+			catch (Exception aException)
+			{
+                if (aLogErrors)
+				{
+					A.Error($"EvalAsProperty error ({aException.Message})\n{aException.StackTrace}", "StringExtension");
+				}
+                return default(T);
+            }
+        }
+
+	#endregion
+
+	#region Private Methods
 
 		private static int HexToInt(char aHexValue)
 		{
 			return int.Parse(aHexValue.ToString(), System.Globalization.NumberStyles.HexNumber);
 		}
 
-		#endregion
+		/// <summary>
+		/// Returns the last index of any slash occurrence, either \ or /.
+		/// </summary>
+        static int LastIndexOfAnySlash(this string aStr)
+        {
+            int index = aStr.LastIndexOf('/');
+            return (index == -1)
+				? aStr.LastIndexOf('\\')
+				: index;
+        }
+
+	#endregion
 	}
 }

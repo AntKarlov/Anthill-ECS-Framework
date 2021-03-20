@@ -4,7 +4,7 @@ namespace Anthill.Extensions
 
 	public static class TransformExtension
 	{
-		#region Public Methods
+	#region Public Methods
 
 		public static void SetX(this Transform aTransform, float aValue)
 		{
@@ -73,6 +73,6 @@ namespace Anthill.Extensions
 			aTransform.localScale = v;
 		}
 
-		#endregion
+	#endregion
 	}
 }

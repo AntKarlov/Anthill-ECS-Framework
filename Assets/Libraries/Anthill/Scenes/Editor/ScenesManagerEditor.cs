@@ -9,7 +9,7 @@ namespace Anthill.Scenes
 	using UnityEditor.SceneManagement;
 	using Anthill.Utils;
 
-	// ■
+	// ■█
 
 	public class ScenesManagerEditor : EditorWindow
 	{

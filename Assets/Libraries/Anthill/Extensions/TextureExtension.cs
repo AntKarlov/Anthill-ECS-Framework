@@ -4,7 +4,7 @@ namespace Anthill.Extensions
 
 	public static class TextureExtension
 	{
-		#region Public Methods
+	#region Public Methods
 
 		/// <summary>
 		/// Returns the full Rect of this texture, with options for position and scale.
@@ -14,6 +14,6 @@ namespace Anthill.Extensions
 			return new Rect(aX, aY, aTexture.width * aScale, aTexture.height * aScale);
 		}
 
-		#endregion
+	#endregion
 	}
 }

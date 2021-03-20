@@ -4,7 +4,7 @@ namespace Anthill.Extensions
 
 	public static class Vector3Extension
 	{
-		#region Public Methods
+	#region Public Methods
 
 		/// <summary>
 		/// Rotates the given vector around the given pivot by the given angles
@@ -69,6 +69,6 @@ namespace Anthill.Extensions
             return (cross < 0.0f) ? -angle : angle;
         }
 
-		#endregion
+	#endregion
 	}
 }

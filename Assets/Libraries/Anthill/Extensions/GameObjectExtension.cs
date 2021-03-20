@@ -5,7 +5,7 @@ namespace Anthill.Extensions
 
 	public static class GameObjectExtension
 	{
-		#region Public Methods
+	#region Public Methods
 
 		/// <summary>
 		/// Activates then immediately deactivates the target gameObject.
@@ -135,8 +135,9 @@ namespace Anthill.Extensions
 			return result;
 		}
 
-		#endregion
-		#region Private Methods
+	#endregion
+
+	#region Private Methods
 
 		private static bool HasOrIsChildOfComponentInternal<T>(
 			GameObject aGo, bool aIncludeSelf = false) where T : Component
@@ -177,6 +178,6 @@ namespace Anthill.Extensions
 			return false;
 		}
 
-		#endregion
+	#endregion
 	}
 }
