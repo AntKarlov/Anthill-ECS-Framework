@@ -26,7 +26,7 @@ namespace Anthill.Core
 		private List<AntSystemInfo> _initializeSystemsInfos;
 		private List<AntSystemInfo> _executeSystemsInfos;
 
-		#region Getters / Setters
+	#region Getters / Setters
 
 		public GameObject Container { get => _container; }
 		public int InitializeSystemsCount {	get => _initializeSystems.Count; }
@@ -79,8 +79,9 @@ namespace Anthill.Core
 		public List<AntSystemInfo> InitializeSystemsInfos { get => _initializeSystemsInfos; }
 		public List<AntSystemInfo> ExecuteSystemInfos { get => _executeSystemsInfos; }
 
-		#endregion
-		#region Public Methods
+	#endregion
+
+	#region Public Methods
 
 		public AntDebugScenario(string aName) : base(aName)
 		{
@@ -198,8 +199,9 @@ namespace Anthill.Core
 			}
 		}
 
-		#endregion
-		#region Private Methods
+	#endregion
+
+	#region Private Methods
 
 		private void UpdateName()
 		{
@@ -233,6 +235,6 @@ namespace Anthill.Core
 			return _stopwatch.Elapsed.TotalMilliseconds;
 		}
 
-		#endregion
+	#endregion
 	}
 }

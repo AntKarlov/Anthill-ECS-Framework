@@ -7,20 +7,25 @@ namespace Anthill.Core
 
 	public class AntFamily<T> : IFamily<T>
 	{
+	#region Private Variables
+
 		private AntNodeList<T> _nodes;
 		private Dictionary<AntEntity, T> _entities;
 		private Dictionary<Type, PropertyInfo> _components;
 		private AntNodePool<T> _pool;
 
-		#region Getters / Setters
+	#endregion
+
+	#region Getters / Setters
 
 		/// <summary>
 		/// List of nodes.
 		/// </summary>
 		public AntNodeList<T> Nodes { get => _nodes; }
 
-		#endregion
-		#region Public Methods
+	#endregion
+
+	#region Public Methods
 
 		public AntFamily(AntNodePool<T> aPool = null)
 		{
@@ -64,8 +69,9 @@ namespace Anthill.Core
 			}
 		}
 
-		#endregion
-		#region Private Methods
+	#endregion
+
+	#region Private Methods
 
 		private void AddEntity(AntEntity aEntity)
 		{
@@ -96,6 +102,6 @@ namespace Anthill.Core
 			_nodes.Remove(node);
 		}
 
-		#endregion
+	#endregion
 	}
 }

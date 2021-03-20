@@ -134,7 +134,7 @@ namespace Anthill.Core
 					_systemNameSearchTerm = EditorGUILayout.TextField("Search", _systemNameSearchTerm);
 					const string clearButtonControlName = "Clear Button";
 					GUI.SetNextControlName(clearButtonControlName);
-					if (GUILayout.Button("x", GUILayout.Width(18.0f), GUILayout.Height(14.0f)))
+					if (GUILayout.Button("×", GUILayout.Width(18.0f), GUILayout.Height(14.0f)))
 					{
 						_systemNameSearchTerm = string.Empty;
 						GUI.FocusControl(clearButtonControlName);

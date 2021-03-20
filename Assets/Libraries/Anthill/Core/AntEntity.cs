@@ -5,6 +5,8 @@ namespace Anthill.Core
 
 	public class AntEntity : MonoBehaviour
 	{
+	#region Public Variables
+	
 		public delegate void ComponentChangeDelegate(AntEntity aEntity, Type aComponentType);
 		public delegate void EntityDelegate(AntEntity aEntity);
 
@@ -27,10 +29,16 @@ namespace Anthill.Core
 		/// Called when entity removed from the ECS engine.
 		/// </summary>
 		public event EntityDelegate EventEntityRemovedFromEngine;
+	
+	#endregion
+
+	#region Private Variables
 
 		protected Transform _transform;
 
-		#region Getters Setters
+	#endregion
+
+	#region Getters Setters
 
 		/// <summary>
 		/// Determines is added into ECS engine.
@@ -60,16 +68,18 @@ namespace Anthill.Core
 			set => _transform.rotation = value;
 		}
 
-		#endregion
-		#region Unity Calls
+	#endregion
+
+	#region Unity Calls
 
 		private void Awake()
 		{
 			_transform = GetComponent<Transform>();
 		}
 
-		#endregion
-		#region Public Methods
+	#endregion
+
+	#region Public Methods
 
 		/// <summary>
 		/// Checks specified component on entity.
@@ -148,8 +158,9 @@ namespace Anthill.Core
 			return comp;
 		}
 
-		#endregion
-		#region Protected Methods
+	#endregion
+
+	#region Protected Methods
 
 		internal void OnAddedToEngine()
 		{
@@ -168,6 +179,6 @@ namespace Anthill.Core
 			Destroy(aComponent);
 		}
 
-		#endregion
+	#endregion
 	}
 }

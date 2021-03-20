@@ -1,10 +1,8 @@
 namespace Anthill
 {
 	using UnityEngine;
-	using System.Collections;
 	using Anthill.Tasks;
 	using Anthill.Core;
-	using Anthill.Extensions;
 	
 	public class TestTaskManager : MonoBehaviour
 	{
@@ -16,8 +14,9 @@ namespace Anthill
 		private Transform _t;
 		private float _time;
 		private AntTaskManager _tm;
+		private DelayedCall _call;
 	
-		#region Unity Calls
+	#region Unity Calls
 	
 		private void Awake()
 		{
@@ -43,20 +42,24 @@ namespace Anthill
 				.Task(MoveTo, toRef.position, fromRef.position)
 				.InstantTask(Track)
 				.OnComplete(() => A.Editor.Verbose("Queue completed!", this));
+
+			AntDelayed.Call(5.25f, () => { A.Log("Call One!"); _call?.Kill(); });
+			_call = AntDelayed.Call(10.0f, () => { A.Log("Call Two!"); });
 		}
 
 		private void Update()
 		{
-			AntEngine.ExecuteSystems();
+			AntEngine.Execute();
 		}
 
 		private void FixedUpdate()
 		{
-			AntEngine.ExecuteFixedSystems();
+			AntEngine.ExecuteFixed();
 		}
 	
-		#endregion
-		#region Private Methods
+	#endregion
+
+	#region Private Methods
 
 		private void Track()
 		{
@@ -88,6 +91,6 @@ namespace Anthill
 			// }
 		}
 		
-		#endregion
+	#endregion
 	}
 }

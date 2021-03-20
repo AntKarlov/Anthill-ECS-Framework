@@ -4,40 +4,27 @@ namespace Anthill.Core
 	using System.Collections.Generic;
 	using UnityEngine;
 
-	public class AntEngine : AntScenario
+	public class AntEngine
 	{
+	#region Private Variables
+
 		private static readonly Dictionary<Type, IFamily> _families = new Dictionary<Type, IFamily>();
 		private static List<AntEntity> _entities = new List<AntEntity>();
+		private static AntScenario _scenario = new AntScenario();
 
-		private static bool _isInitialized = false; 
-		private static AntEngine _current = null;
+	#endregion
 
-		#region Getters / Setters
+	#region Getters / Setters
 		
-		public static AntEngine Current
+		public static AntScenario Scenario
 		{
-			get
-			{
-				if (!_isInitialized)
-				{
-					A.Assert(true, "Not initialized yet!", "AntEngine");
-				}
-				return _current;
-			} 
-			private set
-			{
-				_isInitialized = true;
-				_current = value;
-			}
+			get => _scenario;
+			set => _scenario = value;
 		}
 		
-		#endregion
-		#region Public Methods
+	#endregion
 
-		public AntEngine()
-		{
-			Current = this;
-		}
+	#region Public Methods
 
 		/// <summary>
 		/// Adds all entities from existing GameObject on the scene.
@@ -237,9 +224,9 @@ namespace Anthill.Core
 		/// <param name="aPriority">Value of the priority (lower value means higher priority).</param>
 		/// <typeparam name="T">Type of the system.</typeparam>
 		/// <returns>Reference on the new system.</returns>
-		public static T AddSystem<T>(int aPriority = 0) where T : ISystem
+		public static T Add<T>(int aPriority = 0) where T : ISystem
 		{
-			return Current.Add<T>(aPriority);
+			return Scenario.Add<T>(aPriority);
 		}
 
 		/// <summary>
@@ -248,9 +235,9 @@ namespace Anthill.Core
 		/// <param name="aSystem">Reference on the system.</param>
 		/// <param name="aPriority">Value of the priority (lower value means higher priority).</param>
 		/// <returns>Reference on the added system.</returns>
-		public static ISystem AddSystem(ISystem aSystem, int aPriority = 0)
+		public static ISystem Add(ISystem aSystem, int aPriority = 0)
 		{
-			return (ISystem) Current.Add(aSystem, aPriority);
+			return (ISystem) Scenario.Add(aSystem, aPriority);
 		}
 
 		/// <summary>
@@ -258,9 +245,9 @@ namespace Anthill.Core
 		/// </summary>
 		/// <typeparam name="T">Type of the system that need to remove.</typeparam>
 		/// <returns>Reference on the removed system.</returns>
-		public static T RemoveSystem<T>() where T : ISystem
+		public static T Remove<T>() where T : ISystem
 		{
-			return Current.Remove<T>();
+			return Scenario.Remove<T>();
 		}
 
 		/// <summary>
@@ -268,9 +255,9 @@ namespace Anthill.Core
 		/// </summary>
 		/// <param name="aSystem">Reference on the system that need to remove.</param>
 		/// <returns>Reference on the removed system.</returns>
-		public static ISystem RemoveSystem(ISystem aSystem)
+		public static ISystem Remove(ISystem aSystem)
 		{
-			return Current.Remove(aSystem);
+			return Scenario.Remove(aSystem);
 		}
 
 		/// <summary>
@@ -278,65 +265,65 @@ namespace Anthill.Core
 		/// </summary>
 		/// <typeparam name="T">Type of the system that need to extract.</typeparam>
 		/// <returns>Reference on the system.</returns>
-		public static T GetSystem<T>() where T : ISystem
+		public static T Get<T>() where T : ISystem
 		{
-			return Current.Get<T>();
+			return Scenario.Get<T>();
 		}
 
 		/// <summary>
 		/// Initializes all IInitializeSystem systems.
 		/// </summary>
-		public static void InitializeSystems()
+		public static void Initialize()
 		{
-			Current.Initialize();
+			Scenario.Initialize();
 		}
 
 		/// <summary>
 		/// Deinitializes all IDeinitializeSystem systems.
 		/// </summary>
-		public static void DeinitializeSystems()
+		public static void Deinitialize()
 		{
-			Current.Deinitialize();
+			Scenario.Deinitialize();
 		}
 		
 		/// <summary>
 		/// Executes all IExecuteSystem systems.
 		/// </summary>
-		public static void ExecuteSystems()
+		public static void Execute()
 		{
-			Current.Execute();
+			Scenario.Execute();
 		}
 		
 		/// <summary>
 		/// Executes all IExecuteFixedSystem systems.
 		/// </summary>
-		public static void ExecuteFixedSystems()
+		public static void ExecuteFixed()
 		{
-			Current.ExecuteFixed();
+			Scenario.ExecuteFixed();
 		}
 
 		/// <summary>
 		/// Cleanups all ICleanupSystem systems.
 		/// </summary>
-		public static void CleanupSystems()
+		public static void Cleanup()
 		{
-			Current.Cleanup();
+			Scenario.Cleanup();
 		}
 
 		/// <summary>
 		/// Disable all IDisableSystem systems.
 		/// </summary>
-		public static void DisableSystems()
+		public static void Disable()
 		{
-			Current.Disable();
+			Scenario.Disable();
 		}
 
 		/// <summary>
 		/// Enable all IEnableSystem systems.
 		/// </summary>
-		public static void EnableSystems()
+		public static void Enable()
 		{
-			Current.Enable();
+			Scenario.Enable();
 		}
 		
 		/// <summary>
@@ -344,11 +331,12 @@ namespace Anthill.Core
 		/// </summary>
 		public static void ResetSystems()
 		{
-			Current.Reset();
+			Scenario.Reset();
 		}
 
-		#endregion
-		#region Event Handlers
+	#endregion
+
+	#region Event Handlers
 
 		private static void OnComponentAdded(AntEntity aEntity, Type aComponent)
 		{
@@ -366,6 +354,6 @@ namespace Anthill.Core
 			}
 		}
 
-		#endregion
+	#endregion
 	}
 }

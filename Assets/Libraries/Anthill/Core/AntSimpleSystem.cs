@@ -5,7 +5,7 @@ namespace Anthill.Core
 		public AntEngine Engine { get; set; }
 		public int Priority { get; set; }
 
-		#region ISystem Implementation
+	#region ISystem Implementation
 
 		public virtual void AddedToEngine()
 		{
@@ -17,15 +17,16 @@ namespace Anthill.Core
 			// ..
 		}
 
-		#endregion
-		#region IExecuteSystem Implementation
+	#endregion
+
+	#region IExecuteSystem Implementation
 		
 		public virtual void Execute()
 		{
 			// ..
 		}
 
-		#endregion
+	#endregion
 	}
 
 	public class AntSimpleSystem<T1> : AntSimpleSystem

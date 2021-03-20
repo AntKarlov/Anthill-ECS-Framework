@@ -4,12 +4,18 @@ namespace Anthill.Core
 	
 	public class AntSystemInfo
 	{
+	#region Public Variables
+
 		public bool isActive;
 
 		public ISystem System { get; private set; }
 		public string Name { get; private set; }
 		public bool IsInitializeSystem { get; private set; }
 		public bool IsExecuteSystem { get; private set; }
+
+	#endregion
+
+	#region Private Variables
 
 		private double _accumulatedExecutionDuration;
 		private double _minExecutionDuration;
@@ -18,7 +24,9 @@ namespace Anthill.Core
 
 		private const string SYSTEM_SUFFIX = "System";
 
-		#region Getters / Setters
+	#endregion
+
+	#region Getters / Setters
 
 		public double AverageExecutionDuration 
 		{
@@ -28,8 +36,9 @@ namespace Anthill.Core
 		public double MinExecutionDuration { get => _minExecutionDuration; }
 		public double MaxExecutionDuration { get => _maxExecutionDuration; }
 
-		#endregion
-		#region Public Methods
+	#endregion
+
+	#region Public Methods
 
 		public AntSystemInfo(ISystem aSystem)
 		{
@@ -86,6 +95,6 @@ namespace Anthill.Core
 			debugScenario?.ResetDurations();
 		}
 
-		#endregion
+	#endregion
 	}
 }

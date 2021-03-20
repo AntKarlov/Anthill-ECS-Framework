@@ -13,10 +13,16 @@ namespace Anthill.Tasks
 
 	public class AntTaskManager
 	{
+	#region Public Variables
+
 		public delegate void TaskManagerDelegate(AntTaskManager aTaskManager);
 		public event TaskManagerDelegate EventFinished;
 
 		public delegate void TaskManagerCompleteDelegate();
+
+	#endregion
+
+	#region Private Variables
 
 		private static AntTaskManagerScenario _scenario;
 		private static bool _isInitialized;
@@ -28,7 +34,9 @@ namespace Anthill.Tasks
 		protected float _delay;
 		protected UpdateMode _updateMode = UpdateMode.Auto;
 
-		#region Getters / Setters
+	#endregion
+
+	#region Getters / Setters
 
 		private static AntTaskManagerScenario Scenario
 		{
@@ -36,7 +44,7 @@ namespace Anthill.Tasks
 			{
 				if (!_isInitialized)
 				{
-					_scenario = AntEngine.AddSystem<AntTaskManagerScenario>(-1);
+					_scenario = AntEngine.Add<AntTaskManagerScenario>(-1);
 					_isInitialized = true;
 				}
 
@@ -49,8 +57,9 @@ namespace Anthill.Tasks
 		public bool IsStarted { get; protected set; }
 		public int TaskCount { get => _queue.Count; }
 		
-		#endregion
-		#region Public Methods
+	#endregion
+
+	#region Public Methods
 
 		public static AntTaskManager Do(bool aIsCycled = false)
 		{
@@ -767,8 +776,9 @@ namespace Anthill.Tasks
 			}
 		}
 		
-		#endregion
-		#region Private Methods
+	#endregion
+
+	#region Private Methods
 
 		private bool DelayProcess(float aTime)
 		{
@@ -832,6 +842,6 @@ namespace Anthill.Tasks
 			}
 		}
 		
-		#endregion
+	#endregion
 	}
 }

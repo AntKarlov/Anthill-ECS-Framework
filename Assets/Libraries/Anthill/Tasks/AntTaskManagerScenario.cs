@@ -7,7 +7,7 @@ namespace Anthill.Tasks
 	{
 		private List<AntTaskManager> _managers;
 
-		#region Public Methods
+	#region Public Methods
 
 		public AntTaskManagerScenario() : base("Task Manager Scenario")
 		{
@@ -54,11 +54,12 @@ namespace Anthill.Tasks
 			_managers.Remove(aTaskManager);
 		}
 
-		#endregion
-		#region Private Methods
+	#endregion
+
+	#region Private Methods
 		
 		// ..
 		
-		#endregion
+	#endregion
 	}
 }

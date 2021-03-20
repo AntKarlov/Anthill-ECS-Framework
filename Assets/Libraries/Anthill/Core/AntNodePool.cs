@@ -5,14 +5,18 @@ namespace Anthill.Core
 
 	public class AntNodePool<T>
 	{
+	#region Private Variables
+
 		private List<T> _availList;
+
+	#endregion
+	
+	#region Public Methods
 
 		public AntNodePool()
 		{
 			_availList = new List<T>();
 		}
-
-		#region Public Methods
 
 		public void Add(T aNode)
 		{
@@ -34,6 +38,6 @@ namespace Anthill.Core
 			return result;
 		}
 
-		#endregion
+	#endregion
 	}
 }

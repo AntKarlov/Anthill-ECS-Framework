@@ -10,6 +10,8 @@ namespace Anthill.Core
 			Remove
 		}
 
+	#region Public Variables
+
 		public delegate void NodeChangeDelegate(T aNode);
 
 		/// <summary>
@@ -22,12 +24,18 @@ namespace Anthill.Core
 		/// </summary>
 		public event NodeChangeDelegate EventNodeRemoved;
 
+	#endregion
+
+	#region Private Variables
+
 		private List<T> _nodes;
 		private int _count;
 		private List<KeyValuePair<T, PendingChange>> _pending;
 		private int _lockCount;
 
-		#region Getters / Setters
+	#endregion
+
+	#region Getters / Setters
 
 		public T this[int aIndex] { get => _nodes[aIndex]; }
 
@@ -41,8 +49,9 @@ namespace Anthill.Core
 		/// </summary>
 		public bool IsLocked { get => (_lockCount > 0); }
 
-		#endregion
-		#region Public Methods
+	#endregion
+
+	#region Public Methods
 
 		public AntNodeList()
 		{
@@ -105,8 +114,9 @@ namespace Anthill.Core
 			}
 		}
 
-		#endregion
-		#region Private Methods
+	#endregion
+
+	#region Private Methods
 
 		private void ApplyPending()
 		{
@@ -126,6 +136,6 @@ namespace Anthill.Core
 			_pending.Clear();
 		}
 
-		#endregion
+	#endregion
 	}
 }
