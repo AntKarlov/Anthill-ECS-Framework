@@ -36,22 +36,30 @@ MonoBehaviour:
     foldout: 1
     enabled: 1
     buildFolder: Builds
-    buildName: AnthillGame
+    buildName: AnthillGame-RC
     clearBuildFolder: 1
     bundleIdentifier: ru.antkarlov.anthillgame
+    defineSymbols:
+    - kind: 0
+      value: FINAL_BUILD
+    - kind: 1
+      value: DebugLog
     key: 
     buildAppBundle: 0
-    increaseInternalBuildNumber: 0
   - buildTarget: 9
-    foldout: 0
-    enabled: 0
+    foldout: 1
+    enabled: 1
     buildFolder: Builds
-    buildName: AnthillGame
+    buildName: AnthillGame-Dev
     clearBuildFolder: 1
     bundleIdentifier: ru.antkarlov.anthillgame
+    defineSymbols:
+    - kind: 1
+      value: FINAL_BUILD
+    - kind: 0
+      value: DebugLog
     key: 
     buildAppBundle: 0
-    increaseInternalBuildNumber: 0
   - buildTarget: 13
     foldout: 0
     enabled: 0
@@ -59,6 +67,6 @@ MonoBehaviour:
     buildName: AnthillGame
     clearBuildFolder: 1
     bundleIdentifier: ru.antkarlov.anthillgame
+    defineSymbols: []
     key: 
     buildAppBundle: 1
-    increaseInternalBuildNumber: 0

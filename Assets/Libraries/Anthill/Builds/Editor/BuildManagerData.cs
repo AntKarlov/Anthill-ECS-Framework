@@ -62,6 +62,19 @@ namespace Anthill.Builds
 		[Serializable]
 		public class Build
 		{
+			public enum DefineKind
+			{
+				AddIfNotExists,
+				RemoveIfExists
+			}
+
+			[Serializable]
+			public struct DefineSymbol
+			{
+				public DefineKind kind;
+				public string value;
+			}
+
 			public BuildTarget buildTarget;
 			public bool foldout = true;
 			public bool enabled = true;
@@ -75,10 +88,12 @@ namespace Anthill.Builds
 			public bool clearBuildFolder = true;
 			public string bundleIdentifier;
 
+			public List<DefineSymbol> defineSymbols = new List<DefineSymbol>();
+
 			// Android/iOS only
 			public string key;
 			public bool buildAppBundle = false;
-			public bool increaseInternalBuildNumber = false;
+			// public bool increaseInternalBuildNumber = false;
 
 			public Build(BuildTarget buildTarget)
 			{

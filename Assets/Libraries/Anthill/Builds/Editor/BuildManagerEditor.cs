@@ -390,33 +390,33 @@ namespace Anthill.Builds
 				EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 				{
 					// Special Android/iOS behaviour
-					bool hasIncreaseInternalBuildNumberOption = false;
-					string increaseInternalBuildNumberOptionButton = "";
-					string increaseInternalBuildNumberOptionDescr = "";
+					// bool hasIncreaseInternalBuildNumberOption = false;
+					// string increaseInternalBuildNumberOptionButton = "";
+					// string increaseInternalBuildNumberOptionDescr = "";
 
-					switch (build.buildTarget)
-					{
-						case BuildTarget.Android:
-							hasIncreaseInternalBuildNumberOption = true;
-							increaseInternalBuildNumberOptionButton = "Auto-increase bundleVersionCode";
-							increaseInternalBuildNumberOptionDescr = "If selected auto-increases the Android \"bundleVersionCode\" at each build";
-							break;
+					// switch (build.buildTarget)
+					// {
+					// 	case BuildTarget.Android:
+					// 		// hasIncreaseInternalBuildNumberOption = true;
+					// 		increaseInternalBuildNumberOptionButton = "Auto-increase bundleVersionCode";
+					// 		increaseInternalBuildNumberOptionDescr = "If selected auto-increases the Android \"bundleVersionCode\" at each build";
+					// 		break;
 						
-						case BuildTarget.iOS:
-							hasIncreaseInternalBuildNumberOption = true;
-							increaseInternalBuildNumberOptionButton = "Auto-increase buildNumber";
-							increaseInternalBuildNumberOptionDescr = "If selected auto-increases the iOS \"buildNumber\" at each build";
-							break;
-					}
+					// 	case BuildTarget.iOS:
+					// 		// hasIncreaseInternalBuildNumberOption = true;
+					// 		increaseInternalBuildNumberOptionButton = "Auto-increase buildNumber";
+					// 		increaseInternalBuildNumberOptionDescr = "If selected auto-increases the iOS \"buildNumber\" at each build";
+					// 		break;
+					// }
 
-					if (hasIncreaseInternalBuildNumberOption)
-					{
-						build.increaseInternalBuildNumber = GUILayout.Toggle(
-							build.increaseInternalBuildNumber,
-							new GUIContent(increaseInternalBuildNumberOptionButton, increaseInternalBuildNumberOptionDescr),
-							GUILayout.ExpandWidth(false)
-						);
-					}
+					// if (hasIncreaseInternalBuildNumberOption)
+					// {
+					// 	build.increaseInternalBuildNumber = GUILayout.Toggle(
+					// 		build.increaseInternalBuildNumber,
+					// 		new GUIContent(increaseInternalBuildNumberOptionButton, increaseInternalBuildNumberOptionDescr),
+					// 		GUILayout.ExpandWidth(false)
+					// 	);
+					// }
 
 					build.buildFolder = EditorGUILayout.TextField(new GUIContent("Build Folder", _buildFolderComment), build.buildFolder);
 
@@ -434,6 +434,59 @@ namespace Anthill.Builds
 							build.buildAppBundle = EditorGUILayout.Toggle("Build App Bundle", build.buildAppBundle);
 							break;
 					}
+
+					EditorGUILayout.BeginHorizontal();
+					{
+						EditorGUILayout.LabelField("Define Symbols", EditorStyles.boldLabel);
+						if (GUILayout.Button("", "OL Plus", GUILayout.MaxWidth(18.0f), GUILayout.MaxHeight(18.0f)))
+						{
+							build.defineSymbols.Add(new BuildManagerData.Build.DefineSymbol
+							{
+								kind = BuildManagerData.Build.DefineKind.AddIfNotExists,
+								value = ""
+							});
+						}
+					}
+					EditorGUILayout.EndHorizontal();
+
+					EditorGUILayout.BeginVertical();
+					{
+						if (build.defineSymbols == null)
+						{
+							build.defineSymbols = new List<BuildManagerData.Build.DefineSymbol>();
+						}
+
+						if (build.defineSymbols.Count > 0)
+						{
+							int delSymbolIndex = -1;
+							for (int i = 0, n = build.defineSymbols.Count; i < n; i++)
+							{
+								var item = build.defineSymbols[i];
+								EditorGUILayout.BeginHorizontal();
+								{
+									item.kind = (BuildManagerData.Build.DefineKind) EditorGUILayout.EnumPopup(item.kind);
+									item.value = EditorGUILayout.TextField(item.value);
+									if (GUILayout.Button("", "OL Minus", GUILayout.MaxWidth(18.0f), GUILayout.MaxHeight(18.0f)))
+									{
+										delSymbolIndex = i;
+									}
+									build.defineSymbols[i] = item;
+								}
+								EditorGUILayout.EndHorizontal();
+							}
+
+							if (delSymbolIndex > -1)
+							{
+								build.defineSymbols.RemoveAt(delSymbolIndex);
+							}
+						}
+						else
+						{
+							EditorGUILayout.LabelField("No Define Symbols", EditorStyles.centeredGreyMiniLabel);
+						}
+						EditorGUILayout.Space(2.0f);
+					}
+					EditorGUILayout.EndVertical();
 				}
 				EditorGUILayout.EndVertical();
 				GUILayout.Space(10.0f);
@@ -642,6 +695,19 @@ namespace Anthill.Builds
 				}
 			}
 
+			// Set define symbols
+			for (int i = 0, n = aBuild.defineSymbols.Count; i < n; i++)
+			{
+				if (aBuild.defineSymbols[i].kind == BuildManagerData.Build.DefineKind.AddIfNotExists)
+				{
+					AntEditorUtils.AddGlobalDefine(aBuild.defineSymbols[i].value);
+				}
+				else if (aBuild.defineSymbols[i].kind == BuildManagerData.Build.DefineKind.RemoveIfExists)
+				{
+					AntEditorUtils.RemoveGlobalDefine(aBuild.defineSymbols[i].value);
+				}
+			}
+
 			// Build
 			PlayerSettings.bundleVersion = _src.version;
 			switch (aBuild.buildTarget)
@@ -656,7 +722,7 @@ namespace Anthill.Builds
 
 				case BuildTarget.Android:
 					PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.Android, aBuild.bundleIdentifier);
-					_src.build = _src.build + (aBuild.increaseInternalBuildNumber ? 1 : 0);
+					// _src.build = _src.build + (aBuild.increaseInternalBuildNumber ? 1 : 0);
 					PlayerSettings.Android.bundleVersionCode = _src.build;
 					// PlayerSettings.Android.bundleVersionCode = PlayerSettings.Android.bundleVersionCode + (aBuild.increaseInternalBuildNumber ? 1 : 0);
 					PlayerSettings.Android.keystorePass = PlayerSettings.Android.keyaliasPass = aBuild.key;
@@ -665,7 +731,7 @@ namespace Anthill.Builds
 
 				case BuildTarget.iOS:
 					PlayerSettings.SetApplicationIdentifier(BuildTargetGroup.iOS, aBuild.bundleIdentifier);
-					_src.build = _src.build + (aBuild.increaseInternalBuildNumber ? 1 : 0);
+					// _src.build = _src.build + (aBuild.increaseInternalBuildNumber ? 1 : 0);
 					// PlayerSettings.iOS.buildNumber = PlayerSettings.iOS.buildNumber + (aBuild.increaseInternalBuildNumber ? 1 : 0);
 					PlayerSettings.iOS.buildNumber = _src.build.ToString();
 					break;

@@ -171,7 +171,7 @@ PlayerSettings:
     Android: ru.antkarlov.anthillgame
     iPhone: ru.antkarlov.anthillgame
   buildNumber:
-    iPhone: 1
+    iPhone: 4
   AndroidBundleVersionCode: 4
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 0
@@ -669,7 +669,19 @@ PlayerSettings:
   webGLLinkerTarget: 1
   webGLThreadsSupport: 0
   webGLWasmStreaming: 0
-  scriptingDefineSymbols: {}
+  scriptingDefineSymbols:
+    1: FINAL_BUILD
+    4: FINAL_BUILD
+    7: FINAL_BUILD
+    13: FINAL_BUILD
+    14: FINAL_BUILD
+    19: FINAL_BUILD
+    21: FINAL_BUILD
+    25: FINAL_BUILD
+    27: FINAL_BUILD
+    28: FINAL_BUILD
+    29: FINAL_BUILD
+    30: FINAL_BUILD
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}
