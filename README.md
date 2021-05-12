@@ -16,12 +16,12 @@
 
 * 📦 [Установка](#-установка)
 * 🔖 [Введение](#-введение)
-	* 🎯 [Базовая концепция ECS](#-базовая-концепция-ecs)
-	* 🚀 [Быстрый старт](#-быстрый-старт)
-	* 🌼 [Типы систем](#-типы-систем)
-	* 🗿 [Отладка](#-отладка)
-	* ⏲ [Отложенные вызовы](#-отложенные-вызовы)
-	* 🍀 [Внедрение зависимостей](#-внедрение-зависимостей)
+    * 🎯 [Базовая концепция ECS](#-базовая-концепция-ecs)
+    * 🚀 [Быстрый старт](#-быстрый-старт)
+    * 🌼 [Типы систем](#-типы-систем)
+    * 🗿 [Отладка](#-отладка)
+    * ⏲ [Отложенные вызовы](#-отложенные-вызовы)
+    * 🍀 [Внедрение зависимостей](#-внедрение-зависимостей)
 * 📝 [Лицензия](#лицензия)
 * 💬 [Контакты](#контакты) 
 
@@ -41,7 +41,7 @@
 
 ## 🔖 Введение
 
-Anthill — это коллекция различных решений для разных задач, где каждый класс это муравей (Ant) способный делать что-то 
+**Anthill** — это коллекция различных решений для разных задач, где каждый класс это муравей (Ant) способный делать что-то 
 полезное.
 
 В состав Anthill входит много интересных вещей разработанных по ходу создания игр с Unity. К сожалению, данная 
@@ -51,7 +51,7 @@ Anthill — это коллекция различных решений для �
 
 ### 🎯 Базовая концепция ECS
 
-Entity Component System — это сущности состоящих из набора компонентов логика которых определяется системами. Где под 
+**Entity Component System** — это сущности состоящих из набора компонентов логика которых определяется системами. Где под 
 каждой сущностью скрывается любой игровой объект, например персонаж, монстр или монеты с которыми может 
 взаимодействовать игрок. 
 
@@ -77,7 +77,7 @@ using Anthill.Core;
 
 public class Health : MonoBehaviour
 {
-	public float health = 1.0f;
+    public float health = 1.0f;
 }
 ```
 
@@ -101,7 +101,7 @@ using Anthill.Core;
 
 public class HealthNode : AntNode
 {
-	public HealthNode Health { get; set; }
+    public HealthNode Health { get; set; }
 }
 ```
 
@@ -120,37 +120,37 @@ using Anthill.Core;
 
 public class HealthSystem : ISystem, IExecuteSystem
 {
-	private AntNodeList<HealthNode> _healthNodes;
+    private AntNodeList<HealthNode> _healthNodes;
 
 #region ISystem Implementation
 
-	public void AddedToEngine()
-	{
-		_healthNodes = AntEngine.GetNodes<HealthNode>();
-	}
+    public void AddedToEngine()
+    {
+        _healthNodes = AntEngine.GetNodes<HealthNode>();
+    }
 
-	public void RemovedFromEngine()
-	{
-		_healthNodes = null;
-	}
+    public void RemovedFromEngine()
+    {
+        _healthNodes = null;
+    }
 
 #endregion
 
 #region IExecuteSystem Implementation
 
-	public void Execute()
-	{
-		HealthNode node;
-		for (i = _healthNodes.Count - 1; i >= 0; i--)
-		{
-			node = _healthNodes[i];
-			node.Health.health -= 0.1f * Time.deltaTime;
-			if (node.Health.health <= 0.0f)
-			{
-				AntEngine.RemoveEntity(node.Entity);
-			}
-		}
-	}
+    public void Execute()
+    {
+        HealthNode node;
+        for (i = _healthNodes.Count - 1; i >= 0; i--)
+        {
+            node = _healthNodes[i];
+            node.Health.health -= 0.1f * Time.deltaTime;
+            if (node.Health.health <= 0.0f)
+            {
+                AntEngine.RemoveEntity(node.Entity);
+            }
+        }
+    }
 
 #endregion
 }
@@ -168,11 +168,11 @@ public class HealthSystem : ISystem, IExecuteSystem
 Рекомендуется придерживаться следующей иерархии проекта в рамках использования Anthill:
 
 * Assets
-	* Scripts
-		* Core — содержит различные игровые менеджеры
-		* Components — содержит все компоненты
-		* Nodes — содержит все ноды
-		* Systems — содержит все системы.
+    * Scripts
+        * Core — содержит различные игровые менеджеры
+        * Components — содержит все компоненты
+        * Nodes — содержит все ноды
+        * Systems — содержит все системы.
 
 Вы можете свободно использовать подпапки, если у вас много систем, компонентов или узлов.
 
@@ -187,7 +187,7 @@ using UnityEngine;
 
 public class Health : MonoBehaviour
 {
-	public float health = 1.0f;
+    public float health = 1.0f;
 }
 ```
 
@@ -207,7 +207,7 @@ using Anthill.Core;
 
 public class HealthNode : AntNode
 {
-	public Health Health { get; set; }
+    public Health Health { get; set; }
 }
 ```
 
@@ -220,47 +220,48 @@ public class HealthNode : AntNode
 2. Вставьте в него код приведенный ниже:
 
 ```c#
+using UnityEngine;
 using Anthill.Core;
 
 public class HealthSystem : ISystem, IExecuteSystem
 {
-	private AntNodeList<HealthNode> _healthNodes;
+    private AntNodeList<HealthNode> _healthNodes;
 
-	public void AddedToEngine()
-	{
-		_healthNodes = AntEngine.GetNodes<HealthNode>();
-		_healthNodes.EventNodeAdded += HealthNodeAddedHandler;
-		_healthNodes.EventNodeRemoved += HealthNodeRemovedHandler;
-	}
+    public void AddedToEngine()
+    {
+        _healthNodes = AntEngine.GetNodes<HealthNode>();
+        _healthNodes.EventNodeAdded += HealthNodeAddedHandler;
+        _healthNodes.EventNodeRemoved += HealthNodeRemovedHandler;
+    }
 
-	public void RemovedFromEngine()
-	{
-		_healthNodes = null;
-	}
+    public void RemovedFromEngine()
+    {
+        _healthNodes = null;
+    }
 
-	public void Execute()
-	{
-		HealthNode node;
-		for (i = _healthNodes.Count - 1; i >= 0; i--)
-		{
-			node = _healthNodes[i];
-			node.Health.health -= 0.1f * Time.deltaTime;
-			if (node.Health.health <= 0.0f)
-			{
-				AntEngine.RemoveEntity(node.Entity);
-			}
-		}
-	}
+    public void Execute()
+    {
+        HealthNode node;
+        for (int i = _healthNodes.Count - 1; i >= 0; i--)
+        {
+            node = _healthNodes[i];
+            node.Health.health -= 0.1f * Time.deltaTime;
+            if (node.Health.health <= 0.0f)
+            {
+                AntEngine.RemoveEntity(node.Entity);
+            }
+        }
+    }
 
-	public void HealthNodeAddedHandler(HealthNode aNode)
-	{
-		Debug.Log($"Added `{aNode.Entity.gameObject.name}` node!");
-	}
+    public void HealthNodeAddedHandler(HealthNode aNode)
+    {
+        Debug.Log($"Added `{aNode.Entity.gameObject.name}` node!");
+    }
 
-	public void HealthNodeRemovedHandler(HealthNode aNode)
-	{
-		Debug.Log($"Rmoved `{aNode.Entity.gameObject.name}` node!");
-	}
+    public void HealthNodeRemovedHandler(HealthNode aNode)
+    {
+        Debug.Log($"Removed `{aNode.Entity.gameObject.name}` node!");
+    }
 }
 ```
 
@@ -292,23 +293,23 @@ using Anthill.Core;
 
 public class Gameplay : AntScenario
 {
-	public Gameplay() : base("Gameplay")
-	{
-		// ...
-	}
+    public Gameplay() : base("Gameplay")
+    {
+        // ...
+    }
 
-	public override void AddedToEngine()
-	{
-		base.AddedToEngine();
-		Add<HealthSystem>();
-		// .. добавляйте здесь любые системы в рамках геймплея
-	}
+    public override void AddedToEngine()
+    {
+        base.AddedToEngine();
+        Add<HealthSystem>();
+        // .. добавляйте здесь любые системы в рамках геймплея
+    }
 
-	public override void RemovedFromEngine()
-	{
-		Remove<HealthSystem>();
-		base.RemovedFromEngine();
-	}
+    public override void RemovedFromEngine()
+    {
+        Remove<HealthSystem>();
+        base.RemovedFromEngine();
+    }
 }
 ```
 
@@ -329,52 +330,52 @@ public class Gameplay : AntScenario
 using UnityEngine;
 using Anthill.Core;
 
-public enum Priority
+public static class Priority
 {
-	Gameplay = 0
+    public const int Gameplay = 0;
 }
 
 public class Game : AntAbstractBootstrapper
 {
 #region AntAbstractBootstrapper Implementation
-		
-	public override void Configure(IInjectContainer aContainer)
-	{
-		aContainer.RegisterSingleton<Game>(this);
-		// .. конфигурация DI Container.
-	}
-		
+        
+    public override void Configure(IInjectContainer aContainer)
+    {
+        aContainer.RegisterSingleton<Game>(this);
+        // .. конфигурация DI Container.
+    }
+        
 #endregion
 
 #region Unity Calls
-		
-	private void Start()
-	{
-		InitializeSystems();
-		
-		// Добавляем все сущности в игровой движок.
-		AntEngine.AddEntitiesFromHierarchy("WorldRoot");
-	}
+        
+    private void Start()
+    {
+        InitializeSystems();
+        
+        // Добавляем все сущности в игровой движок.
+        AntEngine.AddEntitiesFromHierarchy("world_root");
+    }
 
-	private void Update()
-	{
-		AntEngine.Execute();
-	}
+    private void Update()
+    {
+        AntEngine.Execute();
+    }
 
-	private void FixedUpdate()
-	{
-		AntEngine.ExecuteFixed();
-	}
-		
+    private void FixedUpdate()
+    {
+        AntEngine.ExecuteFixed();
+    }
+        
 #endregion
 
 #region Private Methods
-		
-	private void InitializeSystems()
-	{
-		Engine.Add<Gameplay>(Priority.Gameplay);
-		// .. инициализация других систем
-	}
+        
+    private void InitializeSystems()
+    {
+        AntEngine.Add<Gameplay>(Priority.Gameplay);
+        // .. инициализация других систем
+    }
 
 #endregion
 }
@@ -410,11 +411,11 @@ GameObject.Destroy(node.Entity.gameObject);
 получить компонент AntEntity с созданного игрового объекта и добавить его в AntEngine следующим образом:
 
 ```c#
-var go = Instantiate(prefabRef);
+var go = GameObject.Instantiate(prefabRef);
 var entity = go.GetComponent<AntEntity>();
 if (entity != null)
 {
-	AntEngine.AddEntity(entity);
+    AntEngine.AddEntity(entity);
 }
 ```
 
@@ -432,7 +433,7 @@ AntEngine.AddEntitiesFromHierarchy("NameOfParentObject");
 или
 
 ```c#
-AntEngine.AddEntitiesFromHierarch(parentTransform);
+AntEngine.AddEntitiesFromHierarchy(parentTransform);
 ```
 
 При таком способе добавления будет произведен поиск сущностей внутри указанного Transform и каждый найденный AntEntity 
@@ -463,12 +464,12 @@ node.Entity.EventComponentRemoved += RemovedComponentHandler;
 
 private void AddedComponentHandler(AntEntity aEntity, Type aComponentType)
 {
-	Debug.Log("Component added!");
+    Debug.Log("Component added!");
 }
 
 private void RemovedComponentHandler(AntEntity aEntity, Type aComponentType)
 {
-	Debug.Log("Component removed!");
+    Debug.Log("Component removed!");
 }
 ```
 
@@ -537,26 +538,26 @@ public class SomeSystem : ISystem, IResetSystem, IExecuteSystem, ICleanupSystem
 {
 #region ISystem Implementation
 
-	public void AddedToEngine() { .. }
-	public void RemovedFromEngine() { .. }
+    public void AddedToEngine() { .. }
+    public void RemovedFromEngine() { .. }
 
 #endregion
 
 #region IResetSystem Implementation
 
-	public void Reset() { .. }
+    public void Reset() { .. }
 
 #endregion
 
 #region IExecuteSystem Implementation
 
-	public void Execute() { .. }
+    public void Execute() { .. }
 
 #endregion
 
 #region ICleanupSystem Implementation
 
-	public void Cleanup() { .. }
+    public void Cleanup() { .. }
 
 #endregion
 }
@@ -620,17 +621,17 @@ Anthill имеет встроенную реализацию паттерна De
 ```c#
 public class Game : AntAbstractBootstrapper
 {
-	public override void Configure(IInjectContainer aContainer)
-	{
-		aContainer.RegisterSingleton(new MyGameEngine());
-		aContainer.RegisterSingleton(GetComponent<TextLoader>());
-		aContainer.RegisterSingleton(new LevelManager());
-	}
+    public override void Configure(IInjectContainer aContainer)
+    {
+        aContainer.RegisterSingleton(new MyGameEngine());
+        aContainer.RegisterSingleton(GetComponent<TextLoader>());
+        aContainer.RegisterSingleton(new LevelManager());
+    }
 
-	private void Start()
-	{
-		// ...
-	}
+    private void Start()
+    {
+        // ...
+    }
 }
 ```
 
@@ -646,13 +647,13 @@ Game — это скрипт который прикрепляется на ос
 ```c#
 public class SomeClass : MonoBehaviour
 {
-	[Inject] public LevelManager LevelManager { get; set; }
+    [Inject] public LevelManager LevelManager { get; set; }
 
-	private void Start()
-	{
-		AntInject.Inject<SomeClass>(this);
-		LevelManager.LoadLevel("Level1");
-	}
+    private void Start()
+    {
+        AntInject.Inject<SomeClass>(this);
+        LevelManager.LoadLevel("Level1");
+    }
 }
 ```
 
@@ -671,5 +672,5 @@ public class SomeClass : MonoBehaviour
 
 ## 💬 Контакты
 
-Telegram: [AntKarlov](https://t.me/AntKarlov)
+Telegram: [AntKarlov](https://t.me/AntKarlov)  
 E-mail: [ant.anthill@gmail.com](ant.anthill@gmail.com)
