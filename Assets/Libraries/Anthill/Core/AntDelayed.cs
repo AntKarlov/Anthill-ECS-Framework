@@ -136,6 +136,7 @@ namespace Anthill.Core
 	public class DelayedCall
 	{
 		public float delay;
+		public bool isUnscaledTime;
 		private Action _process;
 
 		public virtual bool Update(float aDeltaTime)
@@ -158,6 +159,11 @@ namespace Anthill.Core
 		public void Kill()
 		{
 			AntDelayed.Scenario.Remove(this);
+		}
+
+		public void SetUpdate(bool aIsUnscaledTime)
+		{
+			isUnscaledTime = aIsUnscaledTime;
 		}
 	}
 

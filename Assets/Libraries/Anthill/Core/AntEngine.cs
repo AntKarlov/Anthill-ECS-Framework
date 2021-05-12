@@ -329,7 +329,7 @@ namespace Anthill.Core
 		/// <summary>
 		/// Reset all IResetSystem systems.
 		/// </summary>
-		public static void ResetSystems()
+		public static void Reset()
 		{
 			Scenario.Reset();
 		}

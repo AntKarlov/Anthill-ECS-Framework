@@ -43,9 +43,19 @@ namespace Anthill.Core
 			Lock();
 
 			float dt = Time.deltaTime;
+			float undt = Time.unscaledDeltaTime;
+			DelayedCall call;
 			for (int i = _delayedCalls.Count - 1; i >= 0; i--)
 			{
-				if (_delayedCalls[i].Update(dt))
+				call = _delayedCalls[i];
+				if (call.isUnscaledTime)
+				{
+					if (_delayedCalls[i].Update(undt))
+					{
+						_delayedCalls.RemoveAt(i);
+					}
+				}
+				else if (_delayedCalls[i].Update(dt))
 				{
 					_delayedCalls.RemoveAt(i);
 				}
