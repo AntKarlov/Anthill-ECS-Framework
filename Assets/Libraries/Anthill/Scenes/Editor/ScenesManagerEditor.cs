@@ -16,7 +16,7 @@ namespace Anthill.Scenes
 		private enum ScenesPanelState
 		{
 			Default,
-			Info
+			Tips
 		}
 
 		private const float _btnHeight = 20.0f;
@@ -41,7 +41,7 @@ namespace Anthill.Scenes
 			window.autoRepaintOnSceneChange = true;
 		}
 
-		#region Unity Calls
+	#region Unity Calls
 
 		private void OnHierarchyChange()
 		{
@@ -58,7 +58,7 @@ namespace Anthill.Scenes
 
 			_scrollPos = GUILayout.BeginScrollView(_scrollPos);
 
-			if (!Application.isPlaying && _state == ScenesPanelState.Info)
+			if (!Application.isPlaying && _state == ScenesPanelState.Tips)
 			{
 				DrawHelpState();
 			}
@@ -70,27 +70,13 @@ namespace Anthill.Scenes
 			GUILayout.EndScrollView();
 		}
 
-		#endregion
+	#endregion
 
-		#region Private Methods
+	#region Private Methods
 
 		private void DrawDefaultState()
 		{
 			var c = GUI.color;
-
-			if (!Application.isPlaying)
-			{
-				EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-				{
-					_enableDelete = GUILayout.Toggle(_enableDelete, "Enable Remove", EditorStyles.toolbarButton);
-					if (GUILayout.Button("Info", EditorStyles.toolbarButton, GUILayout.Width(46)))
-					{
-						_state = ScenesPanelState.Info;
-					}
-				}
-				EditorGUILayout.EndHorizontal();
-			}
-
 			int len = EditorBuildSettings.scenes.Length;
 
 			// Get and show total enabled + disabled scenes.
@@ -112,7 +98,18 @@ namespace Anthill.Scenes
 			_strb.Length = 0;
 			_strb.Append("Scenes In Build: ").Append(totEnabled).Append("/").Append(totEnabled + totDisabled);
 			EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
-			EditorGUILayout.LabelField(_strb.ToString(), EditorStyles.miniBoldLabel);
+			{
+				EditorGUILayout.LabelField(_strb.ToString(), EditorStyles.miniBoldLabel);
+
+				if (!Application.isPlaying)
+				{
+					_enableDelete = GUILayout.Toggle(_enableDelete, "× Mode", EditorStyles.toolbarButton);
+					if (GUILayout.Button("Tips", EditorStyles.toolbarButton, GUILayout.Width(40.0f)))
+					{
+						_state = ScenesPanelState.Tips;
+					}
+				}
+			}
 			EditorGUILayout.EndHorizontal();
 
 			EditorBuildSettingsScene[] scenes = EditorBuildSettings.scenes;
@@ -339,13 +336,13 @@ namespace Anthill.Scenes
 		{
 			EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 			GUILayout.FlexibleSpace();
-			var toggle = (_state == ScenesPanelState.Info);
+			var toggle = (_state == ScenesPanelState.Tips);
 			var prev = toggle;
-			toggle = GUILayout.Toggle(toggle, "Info", EditorStyles.toolbarButton);
+			toggle = GUILayout.Toggle(toggle, "Tips", EditorStyles.toolbarButton);
 			if (toggle != prev)
 			{
 				_state = (toggle)
-					? ScenesPanelState.Info
+					? ScenesPanelState.Tips
 					: ScenesPanelState.Default;
 			}
 			EditorGUILayout.EndHorizontal();
@@ -450,6 +447,6 @@ namespace Anthill.Scenes
 			return false;
 		}
 
-		#endregion
+	#endregion
 	}
 }
