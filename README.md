@@ -666,7 +666,7 @@ public class SomeClass : MonoBehaviour
 
 ## 📝 Лицензия
 
-[MIT License](license)
+[MIT License](https://github.com/AntKarlov/Anthill-ECS-Framework/blob/main/license.md)
 
 ---
 
