@@ -67,7 +67,6 @@ namespace Anthill.Builds
 		private const int _labelWidth = 116;
 		private string _buildFolderComment;
 		private string[] _buildPathsLabels;
-		private Color _delColor = "#FF6E2A".HexToColor();
 	
 	#endregion
 
@@ -282,7 +281,7 @@ namespace Anthill.Builds
 				BuildManagerData.Affix affix = aAffixes[i];
 				EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 				{	
-					GUI.color = (affix.enabled) ? Color.green : Color.white;
+					GUI.color = (affix.enabled) ? new Color(0.7f, 1f, 0.0f, 1f) : Color.white;
 					affix.enabled = GUILayout.Toggle(affix.enabled, "On", EditorStyles.toolbarButton, GUILayout.Width(30));
 					GUI.color = c;
 
@@ -305,7 +304,7 @@ namespace Anthill.Builds
 					GUI.enabled = true;
 
 					// GUILayout.FlexibleSpace();
-					GUI.color = _delColor;
+					GUI.color = new Color(1f, 0.7f, 0.0f, 1f);
 					if (GUILayout.Button("×", EditorStyles.toolbarButton, GUILayout.MaxWidth(16.0f)))
 					{
 						aAffixes.RemoveAt(i);
@@ -334,7 +333,7 @@ namespace Anthill.Builds
 			// ————————
 			EditorGUILayout.BeginHorizontal(EditorStyles.toolbar);
 			{
-				GUI.color = (build.enabled) ? Color.green : Color.white;
+				GUI.color = (build.enabled) ? new Color(0.7f, 1f, 0.0f, 1f) : Color.white;
 				build.enabled = GUILayout.Toggle(build.enabled, "On", EditorStyles.toolbarButton, GUILayout.Width(30));
 				GUI.color = Color.white;
 				
@@ -352,7 +351,7 @@ namespace Anthill.Builds
 					Build(build);
 				}
 
-				GUI.color = _delColor;
+				GUI.color = new Color(1f, 0.7f, 0.0f, 1f);
 				if (GUILayout.Button("×", EditorStyles.toolbarButton, GUILayout.MaxWidth(16.0f)))
 				{
 					_src.builds.RemoveAt(aIndex);

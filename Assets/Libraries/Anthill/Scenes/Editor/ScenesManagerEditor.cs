@@ -165,15 +165,15 @@ namespace Anthill.Scenes
 					? IsAdditiveSceneLoaded(scene.path) 
 					: SceneManager.GetActiveScene().path == scene.path;
 				
-				Color bgShade = (isCurrent) ? Color.green : Color.white;
+				Color bgShade = (isCurrent) ? new Color(0.7f, 1f, 0.0f, 1f) : Color.white;
 				Color labelColor = (isCurrent) ? Color.yellow : Color.black;
 
 				EditorGUI.BeginDisabledGroup(Application.isPlaying);
 				
 				if (_enableDelete)
 				{
-					GUI.color = Color.red;
-					if (GUILayout.Button("", "OL Minus", GUILayout.Width(16.0f)))
+					GUI.color = new Color(1f, 0.7f, 0.0f, 1f);
+					if (GUILayout.Button("×", EditorStyles.toolbarButton, GUILayout.Width(16.0f)))
 					{
 						// Remove scene from build.
 						scenesMod = CloneAndRemove(scenes, i);
@@ -189,7 +189,7 @@ namespace Anthill.Scenes
 				}
 				else
 				{
-					GUI.color = (scene.enabled) ? Color.green : Color.white;
+					GUI.color = (scene.enabled) ? bgShade : Color.white;
 					var caption = (scene.enabled) ? sceneIndex.ToString() : "-";
 					if (_isMouseDown && i == _dragIndex)
 					{
