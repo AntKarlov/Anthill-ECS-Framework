@@ -18,6 +18,8 @@ namespace Anthill.Pools
 		{
 			base.OnInspectorGUI();
 
+			EditorGUI.BeginChangeCheck();
+
 			GUILayout.BeginVertical(EditorStyles.helpBox);
 			{
 				AntPoolPreset newPool = null;
@@ -71,6 +73,11 @@ namespace Anthill.Pools
 			EditorGUILayout.LabelField("Initialize Settings", EditorStyles.boldLabel);
 			_self.loadOnStart = EditorGUILayout.Toggle("Load On Start", _self.loadOnStart);
 			_self.countPerStep = EditorGUILayout.IntField("Populate Per Step", _self.countPerStep);
+
+			if (EditorGUI.EndChangeCheck())
+			{
+				EditorUtility.SetDirty(target);
+			}
 		}
 
 		private bool IsExists(AntPoolPreset aObject)

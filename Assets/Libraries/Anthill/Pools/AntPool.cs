@@ -5,10 +5,14 @@ namespace Anthill.Pools
 
 	public static class AntPool
 	{
+	#region Private Variables
+
 		private static Transform _parent;
 		private readonly static List<AntPoolContainer> _pools = new List<AntPoolContainer>();
 
-		#region Public Methods
+	#endregion
+
+	#region Public Methods
 
 		public static void SetParent(Transform aParent)
 		{
@@ -168,6 +172,6 @@ namespace Anthill.Pools
 			}
 		}
 
-		#endregion
+	#endregion
 	}
 }

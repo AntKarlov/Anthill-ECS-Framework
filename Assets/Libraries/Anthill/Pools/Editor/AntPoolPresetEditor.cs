@@ -8,12 +8,16 @@ namespace Anthill.Pools
 	[CustomEditor(typeof(AntPoolPreset))]
 	public class AntPoolPresetEditor : Editor
 	{
+	#region Private Variables
+
 		private AntPoolPreset _self;
 		private string _searchQuery = string.Empty;
 		private int _removeIndex = -1;
 		private bool _confirmRemove;
 
-		#region Unity Calls
+	#endregion
+
+	#region Unity Calls
 
 		private void OnEnable()
 		{
@@ -22,16 +26,21 @@ namespace Anthill.Pools
 
 		public override void OnInspectorGUI()
 		{
+			EditorGUI.BeginChangeCheck();
 			serializedObject.Update();
 
 			DrawPoolList();
 
-			EditorUtility.SetDirty(_self);
-			serializedObject.ApplyModifiedProperties();
+			if (EditorGUI.EndChangeCheck())
+			{
+				EditorUtility.SetDirty(_self);
+				serializedObject.ApplyModifiedProperties();
+			}
 		}
 
-		#endregion
-		#region Private Methods
+	#endregion
+
+	#region Private Methods
 
 		private void DrawPoolList()
 		{
@@ -201,6 +210,6 @@ namespace Anthill.Pools
 			return str;
 		}
 
-		#endregion
+	#endregion
 	}
 }

@@ -162,14 +162,14 @@ namespace Anthill.Scenes
 					? IsAdditiveSceneLoaded(scene.path) 
 					: SceneManager.GetActiveScene().path == scene.path;
 				
-				Color bgShade = (isCurrent) ? new Color(0.7f, 1f, 0.0f, 1f) : Color.white;
+				Color bgShade = (isCurrent) ? new Color(0.7f, 1.0f, 0.0f, 1.0f) : Color.white;
 				Color labelColor = (isCurrent) ? Color.yellow : Color.black;
 
 				EditorGUI.BeginDisabledGroup(Application.isPlaying);
 				
 				if (_enableDelete)
 				{
-					GUI.color = new Color(1f, 0.7f, 0.0f, 1f);
+					GUI.color = new Color(1.0f, 0.7f, 0.0f, 1.0f);
 					if (GUILayout.Button("×", EditorStyles.toolbarButton, GUILayout.Width(16.0f)))
 					{
 						// Remove scene from build.
@@ -361,10 +361,10 @@ namespace Anthill.Scenes
 		private void DrawDragDropSceneArea()
 		{
 			Event e = Event.current;
-			Rect dropRect = GUILayoutUtility.GetRect(0, 44, GUILayout.ExpandWidth(true));
-			dropRect.x += 3;
-			dropRect.y += 3;
-			dropRect.width -= 6;
+			Rect dropRect = GUILayoutUtility.GetRect(0.0f, 44.0f, GUILayout.ExpandWidth(true));
+			dropRect.x += 3.0f;
+			dropRect.y += 3.0f;
+			dropRect.width -= 6.0f;
 			EditorGUI.HelpBox(dropRect, "Drop Scenes here to add them to the build list.", MessageType.Info);
 
 			switch (e.type)

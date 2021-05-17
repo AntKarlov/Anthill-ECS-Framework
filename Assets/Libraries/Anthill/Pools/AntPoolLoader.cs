@@ -31,7 +31,7 @@ namespace Anthill.Pools
 		private PoolLoaderDelegate _startCallback;
 		private PoolLoaderDelegate _completeCallback;
 
-		#region Unity Calls
+	#region Unity Calls
 		
 		private void Start()
 		{
@@ -41,8 +41,9 @@ namespace Anthill.Pools
 			}
 		}
 		
-		#endregion
-		#region Public Methods
+	#endregion
+
+	#region Public Methods
 
 		public AntPoolLoader StartLoading()
 		{
@@ -84,8 +85,9 @@ namespace Anthill.Pools
 			return this;
 		}
 
-		#endregion
-		#region Private Methods
+	#endregion
+
+	#region Private Methods
 		
 		private IEnumerator DoProgress()
 		{
@@ -133,7 +135,6 @@ namespace Anthill.Pools
 			_isStarted = false;
 		}
 
-		#endregion
-
+	#endregion
 	}
 }

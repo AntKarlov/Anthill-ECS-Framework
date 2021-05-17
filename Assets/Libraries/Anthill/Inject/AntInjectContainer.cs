@@ -4,7 +4,6 @@ namespace Anthill.Inject
 	using System.Collections.Generic;
 	using System.Linq;
 	using System.Reflection;
-	//using UnityEngine;
 
 	public class AntInjectContainer : IInjectContainer, IServiceLocator, IInjector
 	{
@@ -50,17 +49,21 @@ namespace Anthill.Inject
 				return typeData;
 			}
 		}
+	
+	#region Private Variables
 
 		//private string singletonGameObjectName;
 		private readonly Dictionary<Type, Dictionary<string, Type>> types = new Dictionary<Type, Dictionary<string, Type>>();
 		private readonly Dictionary<Type, TypeData> typeDatas = new Dictionary<Type, TypeData>();
 
+	#endregion
+
+	#region Public Methods
+
 		public AntInjectContainer()
 		{
 			RegisterSingleton<IServiceLocator>(this);
 		}
-
-		#region InjectContainer Members
 
 		public void Register<T>() where T : class
 		{
@@ -162,7 +165,9 @@ namespace Anthill.Inject
 			return Setup(foundType);
 		}
 
-		#endregion
+	#endregion
+
+	#region Private Methods
 
 		/*public void SetSingletonGameObject(string aName)
 		{
@@ -197,4 +202,6 @@ namespace Anthill.Inject
 			}
 		}
 	}
+
+	#endregion
 }

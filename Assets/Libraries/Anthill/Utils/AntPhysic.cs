@@ -15,8 +15,8 @@ namespace Anthill.Utils
 		public static void AddExplosionForce(Rigidbody2D aBody, Vector3 aPosition, float aForce, float aRadius)
 		{
 			var dir = aBody.transform.position - aPosition;
-			float calc = 1 - (dir.magnitude / aRadius);
-			calc = (calc <= 0f) ? 0f : calc;
+			float calc = 1.0f - (dir.magnitude / aRadius);
+			calc = (calc <= 0.0f) ? 0.0f : calc;
 			aBody.AddForce(dir.normalized * aForce * calc);
 		}
 
@@ -32,7 +32,7 @@ namespace Anthill.Utils
 			float impactVelocityY = aBody.velocity.y;
 			float impactVelocity;
 			float impactForce;
-			float impactMass = 1f;
+			float impactMass = 1.0f;
 
 			if (aCollider.attachedRigidbody != null)
 			{

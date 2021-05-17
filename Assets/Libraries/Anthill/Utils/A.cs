@@ -1,5 +1,5 @@
-using System.Text;
 using System.Text.RegularExpressions;
+using System.Text;
 using UnityEngine;
 
 public enum Verbosity
@@ -54,7 +54,7 @@ public static class A
 	private static readonly Regex _tagRegex = new Regex(@"<[^>]*>", RegexOptions.Multiline);
 	private static readonly StringBuilder _stringBuilder = new StringBuilder();
 
-	#region Public Methods
+#region Public Methods
 
 	/// <summary>
 	/// Logs the given message.
@@ -155,8 +155,9 @@ public static class A
 		}
 	}
 
-	#endregion
-	#region Private Methods
+#endregion
+
+#region Private Methods
 
 	private static LogResult CompileMessage(
 		int aImportance, bool aIsEditor, LogKind aLogKind, object aSender, object aMessage,
@@ -274,8 +275,9 @@ public static class A
 		return new LogResult { success = true, message = finalLog };
 	}
 
-	#endregion
-	#region Internal Classes
+#endregion
+
+#region Internal Classes
 
 	public static class Important
 	{
@@ -394,5 +396,5 @@ public static class A
 		}
 	}
 	
-	#endregion
+#endregion
 }

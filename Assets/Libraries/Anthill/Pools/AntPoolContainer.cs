@@ -16,12 +16,13 @@ namespace Anthill.Pools
 		protected bool _isLimitCapactiy;
 		protected int _maxCapacity;
 
-		#region Getters / Setters
+	#region Getters / Setters
 
 		public int GrowCount { get; private set; } = 0;
 
-		#endregion
-		#region Public Methods
+	#endregion
+
+	#region Public Methods
 
 		public AntPoolContainer(AntPoolPreset.Item aSource, Transform aParent = null)
 		{
@@ -129,6 +130,6 @@ namespace Anthill.Pools
 				: false;
 		}
 
-		#endregion
+	#endregion
 	}
 }

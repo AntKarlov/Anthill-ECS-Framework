@@ -27,7 +27,7 @@ namespace Anthill.Pools
 		private PoolLoaderDelegate _startCallback;
 		private PoolLoaderDelegate _completeCallback;
 
-		#region Public Methods
+	#region Public Methods
 
 		public AntPoolLoaderSystem()
 		{
@@ -87,8 +87,9 @@ namespace Anthill.Pools
 			return this;
 		}
 
-		#endregion
-		#region ISystem Implementation
+	#endregion
+
+	#region ISystem Implementation
 		
 		public void AddedToEngine()
 		{
@@ -100,8 +101,9 @@ namespace Anthill.Pools
 			// ..
 		}
 
-		#endregion
-		#region IExecuteSystem Implementation
+	#endregion
+
+	#region IExecuteSystem Implementation
 
 		public void Execute()
 		{
@@ -137,6 +139,6 @@ namespace Anthill.Pools
 			}
 		}
 
-		#endregion
+	#endregion
 	}
 }

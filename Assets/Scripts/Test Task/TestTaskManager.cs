@@ -24,7 +24,6 @@ namespace Anthill
 			A.editorVerbosity = Verbosity.Verbose;
 			_t = GetComponent<Transform>();
 
-			var engine = new AntEngine();
 			AntDelayed.Call(1.0f, () =>
 			{
 				A.Editor.Verbose("Test");

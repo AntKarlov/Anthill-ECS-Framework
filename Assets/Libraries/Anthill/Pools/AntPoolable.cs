@@ -2,6 +2,7 @@ namespace Anthill.Pools
 {
 	using UnityEngine;
 	
+	[AddComponentMenu("Anthill/Pools/Poolable")]
 	public class AntPoolable : MonoBehaviour
 	{
 		public delegate void PoolableDelegate();
@@ -24,20 +25,22 @@ namespace Anthill.Pools
 		private PoolableDelegate _extractedCallback;
 		private PoolableDelegate _returnedCallback;
 
-		#region Getters / Setters
+	#region Getters / Setters
 
 		public AntPoolContainer Pool { get; set; }
 
-		#endregion
-		#region Unity Calls
+	#endregion
+
+	#region Unity Calls
 
 		private void OnDestroy()
 		{
 			Pool = null;
 		}
 
-		#endregion
-		#region Public Methods
+	#endregion
+
+	#region Public Methods
 
 		public AntPoolable ReturnToPool()
 		{
@@ -63,8 +66,9 @@ namespace Anthill.Pools
 			return this;
 		}
 
-		#endregion
-		#region Protected Methods
+	#endregion
+
+	#region Protected Methods
 
 		internal void ExtractedFromPool()
 		{
@@ -84,6 +88,6 @@ namespace Anthill.Pools
 			gameObject.SetActive(false);
 		}
 
-		#endregion
+	#endregion
 	}
 }

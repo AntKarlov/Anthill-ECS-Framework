@@ -15,16 +15,6 @@ namespace Anthill.Utils
 		// }
 
 		/// <summary>
-		/// Возвращает координаты мыши на экране.
-		/// </summary>
-		// public static Vector3 GetMouseWorldPosition()
-		// {
-		// 	_mouseHelper.x = Input.mousePosition.x;
-		// 	_mouseHelper.y = Input.mousePosition.y;
-		// 	return Camera.main.ScreenToWorldPoint(_mouseHelper);
-		// }
-
-		/// <summary>
 		/// Определяет попадает ли указанный объект в область видимости камеры.
 		/// </summary>
 		// public static bool IsVisibleFrom(Renderer aRenderer, Camera aCamera)

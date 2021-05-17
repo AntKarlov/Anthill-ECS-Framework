@@ -57,13 +57,14 @@ namespace Anthill.Scene
 		private SceneLoaderDelegate _beginUnloadingCallback;
 		private SceneLoaderDelegate _finishUnloadingCallback;
 
-		#region Getters / Setters
+	#region Getters / Setters
 
 		public string CurrentScene { get; private set; }
 		public bool HasScene { get; private set; }
 		
-		#endregion
-		#region Public Methods
+	#endregion
+
+	#region Public Methods
 
 		/// <summary>
 		/// Unloads current scene and loads given scene.
@@ -151,8 +152,9 @@ namespace Anthill.Scene
 			return this;
 		}
 
-		#endregion
-		#region Private Methods
+	#endregion
+
+	#region Private Methods
 
 		private IEnumerator AsyncLoading(string aSceneName)
 		{
@@ -249,8 +251,9 @@ namespace Anthill.Scene
 			_finishUnloadingCallback = null;
 		}
 		
-		#endregion
-		#region Event Handlers
+	#endregion
+
+	#region Event Handlers
 		
 		private void UnloadedHandler(string aSceneName)
 		{
@@ -258,6 +261,6 @@ namespace Anthill.Scene
 			LoadScene(_nextScene);
 		}
 		
-		#endregion
+	#endregion
 	}
 }
