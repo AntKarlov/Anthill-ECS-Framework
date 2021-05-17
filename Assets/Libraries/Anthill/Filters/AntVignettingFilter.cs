@@ -6,16 +6,24 @@ namespace Anthill.Filters
 	[AddComponentMenu("Anthill/Filters/Vignetting Filter")]
 	public class AntVignettingFilter : MonoBehaviour
 	{
+	#region Public Variables
+
 		public Shader shader;
 		public Texture2D texture;
 
 		[Range(0.0f, 1.0f)]
 		public float vignetting = 1.0f;
+		
 		[Range(0.0f, 1.0f)]
 		public float vignettingFull;
+
 		[Range(0.0f, 1.0f)]
 		public float vignettingDirt;
 		public Color vignettingColor = new Color(0.0f, 0.0f, 0.0f);
+
+	#endregion
+
+	#region Private Variables
 
 		private const string SHADER_NAME = "Anthill/Vignetting";
 		private const string TEXTURE_NAME = "VignettingTexture";
@@ -23,7 +31,15 @@ namespace Anthill.Filters
 		private Material _material;
 		private bool _isInitialized;
 
-		#region Unity Calls
+		private readonly int Vignette = Shader.PropertyToID("Vignette");
+		private readonly int _Vignetting = Shader.PropertyToID("_Vignetting");
+		private readonly int _Vignetting2 = Shader.PropertyToID("_Vignetting2");
+		private readonly int _VignettingColor = Shader.PropertyToID("_VignettingColor");
+		private readonly int _VignettingDirt = Shader.PropertyToID("_VignettingDirt");
+
+	#endregion
+
+	#region Unity Calls
 
 		private void Start()
 		{
@@ -60,11 +76,11 @@ namespace Anthill.Filters
 					_time = 0.0f;
 				}
 
-				_material.SetTexture("Vignette", texture);
-				_material.SetFloat("_Vignetting", vignetting);
-				_material.SetFloat("_Vignetting2", vignettingFull);
-				_material.SetColor("_VignettingColor", vignettingColor);
-				_material.SetFloat("_VignettingDirt", vignettingDirt);
+				_material.SetTexture(Vignette, texture);
+				_material.SetFloat(_Vignetting, vignetting);
+				_material.SetFloat(_Vignetting2, vignettingFull);
+				_material.SetColor(_VignettingColor, vignettingColor);
+				_material.SetFloat(_VignettingDirt, vignettingDirt);
 				Graphics.Blit(aSourceTexture, aTargetTexture, _material);
 			}
 			else
@@ -83,6 +99,6 @@ namespace Anthill.Filters
 		}
 #endif
 
-		#endregion
+	#endregion
 	}
 }

@@ -10,6 +10,8 @@ namespace Anthill.Filters
 	[AddComponentMenu("Anthill/Filters/LUT Filter")]
 	public class AntLutFilter : MonoBehaviour
 	{
+	#region Public Variables
+
 		public Shader shader;
 		public Texture2D lutTexture;
 		[Range(0.0f, 1.0f)]
@@ -21,6 +23,10 @@ namespace Anthill.Filters
 		[Range(-1.0f, 1.0f)]
 		public float finalIntensity;
 
+	#endregion
+
+	#region Private Variables
+
 		private const string SHADER_NAME = "Anthill/LutFilter";
 		private float _time;
 		private Material _material;
@@ -28,7 +34,15 @@ namespace Anthill.Filters
 		private string _memoPath;
 		private bool _isInitialized;
 
-		#region Unity Calls
+		private readonly int _LutTex = Shader.PropertyToID("_LutTex");
+		private readonly int _Blend = Shader.PropertyToID("_Blend");
+		private readonly int _Intensity = Shader.PropertyToID("_Intensity");
+		private readonly int _Extra = Shader.PropertyToID("_Extra");
+		private readonly int _Extra2 = Shader.PropertyToID("_Extra2");
+
+	#endregion
+
+	#region Unity Calls
 
 		private void Start()
 		{
@@ -83,11 +97,11 @@ namespace Anthill.Filters
 
 				// int lutSize = _3Dlut.width;
 				_3Dlut.wrapMode = TextureWrapMode.Clamp;
-				_material.SetTexture("_LutTex", _3Dlut);
-				_material.SetFloat("_Blend", blend);
-				_material.SetFloat("_Intensity", originalIntensity);
-				_material.SetFloat("_Extra", resultIntensity);
-				_material.SetFloat("_Extra2", finalIntensity);
+				_material.SetTexture(_LutTex, _3Dlut);
+				_material.SetFloat(_Blend, blend);
+				_material.SetFloat(_Intensity, originalIntensity);
+				_material.SetFloat(_Extra, resultIntensity);
+				_material.SetFloat(_Extra2, finalIntensity);
 				Graphics.Blit(aSourceTexture, aTargetTexture, _material, QualitySettings.activeColorSpace == ColorSpace.Linear ? 1 : 0);
 			}
 			else
@@ -96,8 +110,9 @@ namespace Anthill.Filters
 			}
 		}
 		
-		#endregion
-		#region Private Methods
+	#endregion
+
+	#region Private Methods
 
 		private void SetIdentityLut()
 		{
@@ -188,6 +203,6 @@ namespace Anthill.Filters
 			}
 		}
 
-		#endregion
+	#endregion
 	}
 }

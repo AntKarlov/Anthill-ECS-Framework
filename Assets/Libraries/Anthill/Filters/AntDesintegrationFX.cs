@@ -6,6 +6,8 @@
 	[System.Serializable]
 	public class AntDesintegrationFX : MonoBehaviour
 	{
+	#region Public Variables
+
 		public Material forceMaterial;
 		public bool activeChange = true;
 		private string shader = "Anthill/DesintegrationFX";
@@ -21,14 +23,24 @@
 		[Range(0, 1)]
 		public float desintegration = 0.5f;
 
+	#endregion
+
+	#region Private Variables
+
 		private int _shaderChange = 0;
 		private Material _tempMaterial;
 		private Material _defaultMaterial;
 		private SpriteRenderer _spriteRenderer;
 		private bool _isHasSprite;
 
+		private readonly int _Alpha = Shader.PropertyToID("_Alpha");
+		private readonly int _Distortion = Shader.PropertyToID("_Distortion");
+		private readonly int _ColorX = Shader.PropertyToID("_ColorX");
+		private readonly int _Size = Shader.PropertyToID("_Size");
 
-		#region Unity Calls
+	#endregion
+
+	#region Unity Calls
 
 		private void Start()
 		{  
@@ -103,10 +115,10 @@
 			{
 				if (_isHasSprite)
 				{
-					_spriteRenderer.sharedMaterial.SetFloat("_Alpha", 1 - _alpha);
-					_spriteRenderer.sharedMaterial.SetFloat("_Distortion", desintegration);
-					_spriteRenderer.sharedMaterial.SetColor("_ColorX", _color);
-					_spriteRenderer.sharedMaterial.SetFloat("_Size", seed);
+					_spriteRenderer.sharedMaterial.SetFloat(_Alpha, 1 - _alpha);
+					_spriteRenderer.sharedMaterial.SetFloat(_Distortion, desintegration);
+					_spriteRenderer.sharedMaterial.SetColor(_ColorX, _color);
+					_spriteRenderer.sharedMaterial.SetFloat(_Size, seed);
 				}
 			}
 		}
@@ -174,8 +186,9 @@
 			}
 		}
 
-		#endregion
-		#region Getters / Setters
+	#endregion
+
+	#region Getters / Setters
 
 		public float Desintegration
 		{
@@ -190,6 +203,6 @@
 			}
 		}
 
-		#endregion
+	#endregion
 	}
 }

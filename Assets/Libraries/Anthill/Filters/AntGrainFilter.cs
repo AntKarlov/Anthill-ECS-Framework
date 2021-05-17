@@ -6,16 +6,27 @@ namespace Anthill.Filters
 	[AddComponentMenu("Anthill/Filters/Grain")]
 	public class AntGrainFilter : MonoBehaviour
 	{
+	#region Public Variables
+
 		public Shader shader;
 		[Range(-64.0f, 64.0f)]
 		public float value;
+
+	#endregion
+
+	#region Private Variables
 
 		private const string SHADER_NAME = "Anthill/Grain";
 		private float _time = 1.0f;
 		private Material _material;
 		private bool _isInitialized;
 
-		#region Unity Calls
+		private readonly int _TimeX = Shader.PropertyToID("_TimeX");
+		private readonly int _Value = Shader.PropertyToID("_Value");
+
+	#endregion
+
+	#region Unity Calls
 
 		private void Start()
 		{
@@ -54,8 +65,8 @@ namespace Anthill.Filters
 					_time = 0.0f;
 				}
 
-				_material.SetFloat("_TimeX", _time);
-				_material.SetFloat("_Value", value);
+				_material.SetFloat(_TimeX, _time);
+				_material.SetFloat(_Value, value);
 				//_material.SetFloat("_Smooth", smooth);
 				//_material.SetFloat("_Value3", stretchX);
 				//_material.SetFloat("_Value4", stretchY);
@@ -68,6 +79,6 @@ namespace Anthill.Filters
 			}
 		}
 		
-		#endregion
+	#endregion
 	}
 }

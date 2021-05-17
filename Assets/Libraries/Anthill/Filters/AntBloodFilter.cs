@@ -7,6 +7,8 @@ namespace Anthill.Filters
 	[AddComponentMenu("Anthill/Filters/Blood Filter")]
 	public class AntBloodFilter : MonoBehaviour
 	{
+	#region Public Variables
+
 		public Shader shader;
 		public Texture2D texture;
 
@@ -40,13 +42,35 @@ namespace Anthill.Filters
 		[Range(0.0f, 1.0f)]
 		public float lightReflect = 0.5f;
 
+	#endregion
+
+	#region Private Variables
+
 		private const string SHADER_NAME = "Anthill/BloodFade";
 		private const string TEXTURE_NAME = "BloodFadeTexture";
 		private float _time = 1.0f;
 		private Material _material;
 		private bool _isInitialized;
 
-		#region Unity Calls
+		private readonly int _TimeX = Shader.PropertyToID("_TimeX");
+		private readonly int _Value = Shader.PropertyToID("_Value");
+		private readonly int _Value2 = Shader.PropertyToID("_Value2");
+		private readonly int _Value3 = Shader.PropertyToID("_Value3");
+		private readonly int _Value4 = Shader.PropertyToID("_Value4");
+		private readonly int _Value5 = Shader.PropertyToID("_Value5");
+		private readonly int _Value6 = Shader.PropertyToID("_Value6");
+		private readonly int _Value7 = Shader.PropertyToID("_Value7");
+		private readonly int _Value8 = Shader.PropertyToID("_Value8");
+		private readonly int _Value9 = Shader.PropertyToID("_Value9");
+		private readonly int _Value10 = Shader.PropertyToID("_Value10");
+		private readonly int _Value11 = Shader.PropertyToID("_Value11");
+		private readonly int _Value12 = Shader.PropertyToID("_Value12");
+		private readonly int _Value13 = Shader.PropertyToID("_Value13");
+		private readonly int _MainTex2 = Shader.PropertyToID("_MainTex2");
+
+	#endregion
+
+	#region Unity Calls
 
 		private void Start()
 		{
@@ -83,21 +107,21 @@ namespace Anthill.Filters
 					_time = 0.0f;
 				}
 
-				_material.SetFloat("_TimeX", _time);
-				_material.SetFloat("_Value", lightReflect);
-				_material.SetFloat("_Value2", Mathf.Clamp(hitLeft, 0.0f, 1.0f));
-				_material.SetFloat("_Value3", Mathf.Clamp(hitUp, 0, 1));
-				_material.SetFloat("_Value4", Mathf.Clamp(hitRight, 0, 1));
-				_material.SetFloat("_Value5", Mathf.Clamp(hitDown, 0, 1));
-				_material.SetFloat("_Value6", Mathf.Clamp(bloodHitLeft, 0, 1));
-				_material.SetFloat("_Value7", Mathf.Clamp(bloodHitUp, 0, 1));
-				_material.SetFloat("_Value8", Mathf.Clamp(bloodHitRight, 0, 1));
-				_material.SetFloat("_Value9", Mathf.Clamp(bloodHitDown, 0, 1));
-				_material.SetFloat("_Value10", Mathf.Clamp(hitFull, 0, 1));
-				_material.SetFloat("_Value11", Mathf.Clamp(bloodHitFull1, 0, 1));
-				_material.SetFloat("_Value12", Mathf.Clamp(bloodHitFull2, 0, 1));
-				_material.SetFloat("_Value13",Mathf.Clamp(bloodHitFull3, 0, 1));
-				_material.SetTexture("_MainTex2", texture);
+				_material.SetFloat(_TimeX, _time);
+				_material.SetFloat(_Value, lightReflect);
+				_material.SetFloat(_Value2, Mathf.Clamp(hitLeft, 0.0f, 1.0f));
+				_material.SetFloat(_Value3, Mathf.Clamp(hitUp, 0, 1));
+				_material.SetFloat(_Value4, Mathf.Clamp(hitRight, 0, 1));
+				_material.SetFloat(_Value5, Mathf.Clamp(hitDown, 0, 1));
+				_material.SetFloat(_Value6, Mathf.Clamp(bloodHitLeft, 0, 1));
+				_material.SetFloat(_Value7, Mathf.Clamp(bloodHitUp, 0, 1));
+				_material.SetFloat(_Value8, Mathf.Clamp(bloodHitRight, 0, 1));
+				_material.SetFloat(_Value9, Mathf.Clamp(bloodHitDown, 0, 1));
+				_material.SetFloat(_Value10, Mathf.Clamp(hitFull, 0, 1));
+				_material.SetFloat(_Value11, Mathf.Clamp(bloodHitFull1, 0, 1));
+				_material.SetFloat(_Value12, Mathf.Clamp(bloodHitFull2, 0, 1));
+				_material.SetFloat(_Value13,Mathf.Clamp(bloodHitFull3, 0, 1));
+				_material.SetTexture(_MainTex2, texture);
 				Graphics.Blit(aSourceTexture, aTargetTexture, _material);
 			}
 			else
@@ -117,14 +141,13 @@ namespace Anthill.Filters
 		}
 #endif
 
-		#endregion
-		#region Getters / Setters
+	#endregion
+
+	#region Getters / Setters
 
 		private bool IsActive
 		{
-			get
-			{
-				return (hitLeft > 0.0f ||
+			get => (hitLeft > 0.0f ||
 					hitUp > 0.0f ||
 					hitRight > 0.0f ||
 					hitDown > 0.0f ||
@@ -136,7 +159,6 @@ namespace Anthill.Filters
 					bloodHitFull1 > 0.0f ||
 					bloodHitFull2 > 0.0f ||
 					bloodHitFull3 > 0.0f);
-			}
 		}
 
 		private float WarningLevel
@@ -152,6 +174,6 @@ namespace Anthill.Filters
 			}
 		}
 
-		#endregion
+	#endregion
 	}
 }

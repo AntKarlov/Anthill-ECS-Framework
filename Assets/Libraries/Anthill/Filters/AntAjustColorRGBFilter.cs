@@ -6,22 +6,40 @@ namespace Anthill.Filters
 	[AddComponentMenu("Anthill/Filters/Ajust Color RGB Filter")]
 	public class AntAjustColorRGBFilter : MonoBehaviour
 	{
+	#region Public Variables
+
 		public Shader shader;
+
 		[Range(-200.0f, 200.0f)]
 		public float red;
+
 		[Range(-200.0f, 200.0f)]
 		public float green;
+
 		[Range(-200.0f, 200.0f)]
 		public float blue;
+		
 		[Range(-100.0f, 100.0f)]
 		public float brightness;
+
+	#endregion
+
+	#region Private Variables
 
 		private const string SHADER_NAME = "Anthill/AdjustColorRGB";
 		private float _time = 1.0f;
 		private Material _material;
 		private bool _isInitialized;
 
-		#region Unity Calls
+		private readonly int _TimeX = Shader.PropertyToID("_TimeX");
+		private readonly int _Red = Shader.PropertyToID("_Red");
+		private readonly int _Green = Shader.PropertyToID("_Green");
+		private readonly int _Blue = Shader.PropertyToID("_Blue");
+		private readonly int _Bright = Shader.PropertyToID("_Bright");
+
+	#endregion
+
+	#region Unity Calls
 
 		private void Start()
 		{
@@ -60,11 +78,11 @@ namespace Anthill.Filters
 					_time = 0.0f;
 				}
 
-				_material.SetFloat("_TimeX", _time);
-				_material.SetFloat("_Red", red / 100.0f);
-				_material.SetFloat("_Green", green / 100.0f);
-				_material.SetFloat("_Blue", blue / 100.0f);
-				_material.SetFloat("_Bright", brightness / 100.0f);
+				_material.SetFloat(_TimeX, _time);
+				_material.SetFloat(_Red, red / 100.0f);
+				_material.SetFloat(_Green, green / 100.0f);
+				_material.SetFloat(_Blue, blue / 100.0f);
+				_material.SetFloat(_Bright, brightness / 100.0f);
 				Graphics.Blit(aSourceTexture, aTargetTexture, _material);
 			}
 			else
@@ -73,6 +91,6 @@ namespace Anthill.Filters
 			}
 		}
 		
-		#endregion
+	#endregion
 	}
 }

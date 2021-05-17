@@ -6,6 +6,8 @@ namespace Anthill.Filters
 	[AddComponentMenu("Anthill/Filters/Blur Movie Filter")]
 	public class AntBlurMovieFilter : MonoBehaviour
 	{
+	#region Public Variables
+
 		public Shader shader;
 		public bool fixedResolution;
 		public Vector2 resolution = new Vector2(1024.0f, 768.0f);
@@ -16,12 +18,23 @@ namespace Anthill.Filters
 		[RangeAttribute(1, 8)]
 		public int fastFilter = 2;
 
+	#endregion
+
+	#region Private Variables
+
 		private const string SHADER_NAME = "Anthill/BlurMovie";
 		private float _time = 1.0f;
 		private Material _material;
 		private bool _isInitialized;
 
-		#region Unity Calls
+		private readonly int _TimeX = Shader.PropertyToID("_TimeX");
+		private readonly int _Radius = Shader.PropertyToID("_Radius");
+		private readonly int _Factor = Shader.PropertyToID("_Factor");
+		private readonly int _ScreenResolution = Shader.PropertyToID("_ScreenResolution");
+
+	#endregion
+
+	#region Unity Calls
 
 		private void Start()
 		{
@@ -58,10 +71,10 @@ namespace Anthill.Filters
 					res.y = aSourceTexture.height;
 				}
 				
-				_material.SetFloat("_TimeX", _time);
-				_material.SetFloat("_Radius", radius / downScale);
-				_material.SetFloat("_Factor", factor);
-				_material.SetVector("_ScreenResolution", res);
+				_material.SetFloat(_TimeX, _time);
+				_material.SetFloat(_Radius, radius / downScale);
+				_material.SetFloat(_Factor, factor);
+				_material.SetVector(_ScreenResolution, res);
 				
 				if (fastFilter > 1)
 				{
@@ -93,6 +106,6 @@ namespace Anthill.Filters
 		}
 #endif
 
-		#endregion
+	#endregion
 	}
 }
