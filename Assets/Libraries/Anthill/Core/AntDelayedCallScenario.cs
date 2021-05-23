@@ -13,7 +13,7 @@ namespace Anthill.Core
 
 	#endregion
 
-	#region Public Variables
+	#region Public Methods
 
 		public AntDelayedCallScenario() : base("Delayed Call Scenario")
 		{

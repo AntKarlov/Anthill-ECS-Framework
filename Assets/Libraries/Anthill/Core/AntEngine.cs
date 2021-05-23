@@ -303,6 +303,14 @@ namespace Anthill.Core
 		}
 
 		/// <summary>
+		/// Executes all IExecuteLateSystem systems.
+		/// </summary>
+		public static void ExecuteLate()
+		{
+			Scenario.ExecuteLate();
+		}
+
+		/// <summary>
 		/// Cleanups all ICleanupSystem systems.
 		/// </summary>
 		public static void Cleanup()

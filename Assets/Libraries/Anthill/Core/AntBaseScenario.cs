@@ -6,7 +6,7 @@ namespace Anthill.Core
 	using System.Collections.Generic;
 
 	public class AntBaseScenario : ISystem, IInitializeSystem, IDeinitializeSystem, IExecuteSystem,
-		IExecuteFixedSystem, ICleanupSystem, IEnableSystem, IDisableSystem, IResetSystem
+		IExecuteFixedSystem, IExecuteLateSystem, ICleanupSystem, IEnableSystem, IDisableSystem, IResetSystem
 	{
 		protected enum PendingChange
 		{
@@ -24,6 +24,7 @@ namespace Anthill.Core
 		protected List<AntPriorityPair<IDeinitializeSystem>> _deinitializeSystems;
 		protected List<AntPriorityPair<IExecuteSystem>> _executeSystems;
 		protected List<AntPriorityPair<IExecuteFixedSystem>> _executeFixedSystems;
+		protected List<AntPriorityPair<IExecuteLateSystem>> _executeLateSystems;
 		protected List<AntPriorityPair<IEnableSystem>> _enableSystems;
 		protected List<AntPriorityPair<IDisableSystem>> _disableSystems;
 		protected List<AntPriorityPair<ICleanupSystem>> _cleanupSystems;
@@ -57,6 +58,7 @@ namespace Anthill.Core
 			_deinitializeSystems = new List<AntPriorityPair<IDeinitializeSystem>>();
 			_executeSystems = new List<AntPriorityPair<IExecuteSystem>>();
 			_executeFixedSystems = new List<AntPriorityPair<IExecuteFixedSystem>>();
+			_executeLateSystems = new List<AntPriorityPair<IExecuteLateSystem>>();
 			_enableSystems = new List<AntPriorityPair<IEnableSystem>>();
 			_disableSystems = new List<AntPriorityPair<IDisableSystem>>();
 			_cleanupSystems = new List<AntPriorityPair<ICleanupSystem>>();
@@ -145,6 +147,13 @@ namespace Anthill.Core
 				_executeFixedSystems = _executeFixedSystems.OrderBy(x => x.Priority).ToList();
 			}
 
+			var executeLateSystem = aSystem as IExecuteLateSystem;
+			if (executeLateSystem != null)
+			{
+				_executeLateSystems.Add(new AntPriorityPair<IExecuteLateSystem>(executeLateSystem, aPriority));
+				_executeLateSystems = _executeLateSystems.OrderBy(x => x.Priority).ToList();
+			}
+
 			var cleanupSystem = aSystem as ICleanupSystem;
 			if (cleanupSystem != null)
 			{
@@ -217,6 +226,12 @@ namespace Anthill.Core
 			if (executeFixedSystem != null)
 			{
 				_executeFixedSystems.RemoveAll(x => Object.ReferenceEquals(x.System, executeFixedSystem));
+			}
+
+			var executeLateSystem = aSystem as IExecuteLateSystem;
+			if (executeLateSystem != null)
+			{
+				_executeLateSystems.RemoveAll(x => Object.ReferenceEquals(x.System, executeLateSystem));
 			}
 
 			var cleanupSystem = aSystem as ICleanupSystem;
@@ -381,6 +396,24 @@ namespace Anthill.Core
 			}
 		}
 		
+	#endregion
+
+	#region IExecuteLate Implementation
+
+		/// <summary>
+		/// Executes all IExecuteLateSystem systems.
+		/// </summary>
+		public virtual void ExecuteLate()
+		{
+			if (_enabled)
+			{
+				for (int i = _executeLateSystems.Count - 1; i >= 0; i--)
+				{
+					_executeLateSystems[i].System.ExecuteLate();
+				}
+			}
+		}
+
 	#endregion
 
 	#region ICleanupSystem Implementation
