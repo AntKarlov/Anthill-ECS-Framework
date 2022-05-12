@@ -3,13 +3,15 @@ namespace Anthill.Prefs
 	using System;
 	using System.Linq;
 	using System.Reflection;
-	using System.Globalization;
 	using UnityEngine;
+
+	using System.Globalization;
+
 	using Anthill.Extensions;
 
 	public static class AntPlayerPrefs
 	{
-	#region Public Methods
+		#region Public Methods
 
 		/// <summary>
 		/// Saves data to the player prefs from the object fields marked as PlayerPrefs attributes.
@@ -47,6 +49,13 @@ namespace Anthill.Prefs
 					else if (f.FieldType == typeof(Single))
 					{
 						PlayerPrefs.SetFloat(attr.Key, (float) field.GetValue(aObject));
+					}
+
+					// Support of long.
+					// ----------------
+					else if (f.FieldType == typeof(long))
+					{
+						PlayerPrefs.SetString(attr.Key, ((long) field.GetValue(aObject)).ToString());
 					}
 
 					// Support of bool.
@@ -91,6 +100,13 @@ namespace Anthill.Prefs
 						PlayerPrefs.SetString(attr.Key, ((Enum) field.GetValue(aObject)).ToString());
 					}
 
+					// Support of string[].
+					// --------------------
+					else if (f.FieldType == typeof(string[]))
+					{
+						PlayerPrefs.SetString(attr.Key, string.Join("|", (string[]) field.GetValue(aObject)));
+					}
+
 					// Support of float[].
 					// -------------------
 					else if (f.FieldType == typeof(float[]))
@@ -106,7 +122,7 @@ namespace Anthill.Prefs
 						int[] values = (int[]) field.GetValue(aObject);
 						PlayerPrefs.SetString(attr.Key, string.Join(" ", values));
 					}
-				}
+                }
 			}
 		}
 
@@ -146,6 +162,16 @@ namespace Anthill.Prefs
 					else if (f.FieldType == typeof(Single))
 					{
 						field.SetValue(aObject, PlayerPrefs.GetFloat(attr.Key, (float) field.GetValue(aObject)));
+					}
+
+					// Support of long.
+					// ----------------
+					else if (f.FieldType == typeof(long))
+					{
+						var str = PlayerPrefs.GetString(attr.Key, ((long) field.GetValue(aObject)).ToString());
+						long val = 0;
+						long.TryParse(str, out val);
+						field.SetValue(aObject, val);
 					}
 
 					// Support of bool.
@@ -215,7 +241,7 @@ namespace Anthill.Prefs
 					else if (f.FieldType == typeof(string[]))
 					{
 						var defaultValues = (string[]) field.GetValue(aObject);
-						var value = PlayerPrefs.GetString(attr.Key, string.Join(" ", defaultValues));
+						var value = PlayerPrefs.GetString(attr.Key, string.Join("|", defaultValues));
 						field.SetValue(aObject, value.Split('|'));
 					}
 
@@ -225,18 +251,31 @@ namespace Anthill.Prefs
 					{
 						// Default value.
 						var defaultValues = (int[]) field.GetValue(aObject);
-						var value = PlayerPrefs.GetString(attr.Key, string.Join(" ", defaultValues));
+
+						var value = PlayerPrefs.GetString(attr.Key, defaultValues == null ? null : string.Join(" ", defaultValues));
+
+                        if (value == null)
+                        {
+                            return;
+                        }
 
 						// Parse read value.
-						var strValues = value.Split(' ');
-						var intValues = new int[strValues.Length];
-						int v = 0;
-						for (int i = 0, n = strValues.Length; i < n; i++)
-						{
-							intValues[i] = (Int32.TryParse(strValues[i], out v)) ? v : 0;
-						}
-						field.SetValue(aObject, intValues);
-					}
+                        if (value == string.Empty)
+                        {
+                            field.SetValue(aObject, new int[0]);
+                        }
+                        else
+                        {
+                            string[] strValues = value.Split(' ');
+                            int[] intValues = new int[strValues.Length];
+                            for (int i = 0, n = strValues.Length; i < n; i++)
+                            {
+                                intValues[i] = (int.TryParse(strValues[i], out int v)) ? v : 0;
+                            }
+
+                            field.SetValue(aObject, intValues);
+                        }
+                    }
 
 					// Support of float[].
 					// -------------------
@@ -259,9 +298,8 @@ namespace Anthill.Prefs
 			}
 		}
 
-	#endregion
-
-	#region Private Methods
+		#endregion
+		#region Private Methods
 
 		private static string Vec2ToStr(Vector2 aValue)
 		{
@@ -333,6 +371,6 @@ namespace Anthill.Prefs
 			return (double.TryParse(aValue.Replace(',', '.'), style, culture, out result)) ? result : 0.0;
 		}
 
-	#endregion
+		#endregion
 	}
 }
