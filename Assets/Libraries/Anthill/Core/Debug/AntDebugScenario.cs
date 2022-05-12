@@ -2,6 +2,7 @@ namespace Anthill.Core
 {
 	using System.Diagnostics;
 	using System.Collections.Generic;
+	using System.Text;
 	using UnityEngine;
 
 	public enum AvgResetDuration
@@ -16,9 +17,14 @@ namespace Anthill.Core
 
 	public class AntDebugScenario : AntBaseScenario
 	{
-		public static AvgResetDuration avgResetDuration = AvgResetDuration.Never;
+	#region Public Variables
 
+		public static AvgResetDuration avgResetDuration = AvgResetDuration.Never;
 		public bool isPaused;
+
+	#endregion
+
+	#region Private Variables
 
 		private GameObject _container;
 		private double _totalDuration;
@@ -26,12 +32,29 @@ namespace Anthill.Core
 		private List<AntSystemInfo> _initializeSystemsInfos;
 		private List<AntSystemInfo> _executeSystemsInfos;
 
+		private readonly StringBuilder _stringBuilder = new StringBuilder();
+		private readonly static string[] _numbers = new string[] 
+		{
+			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", 
+			"19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", 
+			"36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", 
+			"53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", 
+			"70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", 
+			"87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97", "98", "99", "100"
+		};
+
+		private float _lastUpdateTime = 0.0f;
+		private float _updateInterval = 0.25f;
+		private bool _isInit;
+
+	#endregion
+
 	#region Getters / Setters
 
-		public GameObject Container { get => _container; }
-		public int InitializeSystemsCount {	get => _initializeSystems.Count; }
-		public int ExecuteSystemsCount { get => _executeSystems.Count; }
-		public int SystemsCount { get => _systems.Count; }
+		public GameObject Container => _container;
+		public int InitializeSystemsCount => _initializeSystems.Count;
+		public int ExecuteSystemsCount => _executeSystems.Count;
+		public int SystemsCount => _systems.Count;
 
 		public int TotalInitializeSystemsCount
 		{
@@ -75,9 +98,9 @@ namespace Anthill.Core
 			}
 		}
 
-		public double TotalDuration { get => _totalDuration; }
-		public List<AntSystemInfo> InitializeSystemsInfos { get => _initializeSystemsInfos; }
-		public List<AntSystemInfo> ExecuteSystemInfos { get => _executeSystemsInfos; }
+		public double TotalDuration => _totalDuration;
+		public List<AntSystemInfo> InitializeSystemsInfos => _initializeSystemsInfos;
+		public List<AntSystemInfo> ExecuteSystemInfos => _executeSystemsInfos;
 
 	#endregion
 
@@ -91,6 +114,7 @@ namespace Anthill.Core
 			_stopwatch = new Stopwatch();
 			_initializeSystemsInfos = new List<AntSystemInfo>();
 			_executeSystemsInfos = new List<AntSystemInfo>();
+			_isInit = true;
 
 			UpdateName();
 		}
@@ -183,7 +207,11 @@ namespace Anthill.Core
 				}
 			}
 
-			UpdateName();
+			if (Time.time - _lastUpdateTime >= _updateInterval)
+			{
+				_lastUpdateTime = Time.time;
+				UpdateName();
+			}
 		}
 
 		public void ResetDurations()
@@ -205,16 +233,28 @@ namespace Anthill.Core
 
 		private void UpdateName()
 		{
-			if (_container != null)
-			{
-				_container.name = string.Format(
-					"{0} ({1} ini, {2} exe, {3:0.###} ms)", 
-					Name,
-					_initializeSystems.Count, 
-					_executeSystems.Count, 
-					_totalDuration
-				);
-			}
+			if (!_isInit) return;
+			
+			_stringBuilder.Append(Name)
+				.Append(" (")
+				.Append((_initializeSystems.Count <= 100) ? _numbers[_initializeSystems.Count] : ">100")
+				.Append(" ini, ")
+				.Append((_executeSystems.Count <= 100) ? _numbers[_executeSystems.Count] : ">100")
+				.Append(" exe, ")
+				.Append(_totalDuration.ToString("0.###"))
+				.Append(" ms)");
+
+			_container.name = _stringBuilder.ToString();
+			_stringBuilder.Length = 0;
+
+			// _container.name = $"{Name} ({_initializeSystems.Count} ini, {_executeSystems.Count} exe, {_totalDuration.ToString("0.###")} ms)";
+			// _container.name = string.Format(
+			// 	"{0} ({1} ini, {2} exe, {3:0.###} ms)", 
+			// 	Name,
+			// 	_initializeSystems.Count, 
+			// 	_executeSystems.Count, 
+			// 	_totalDuration
+			// );
 		}
 
 		private double MonitorInitializeSystemDuration(IInitializeSystem aSystem)

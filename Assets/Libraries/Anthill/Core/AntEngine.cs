@@ -34,10 +34,13 @@ namespace Anthill.Core
 		public static void AddEntitiesFromHierarchy(string aTransformName)
 		{
 			var go = GameObject.Find(aTransformName);
-			A.Assert(go == null, $"Can't find `{aTransformName}` object on scene.");
-			if (go != null)
+			if (go is object)
 			{
 				AddEntitiesFromHierarchy(go.transform);
+			}
+			else
+			{
+				A.Assert(true, $"Can't find `{aTransformName}` object on scene.");
 			}
 		}
 
@@ -47,22 +50,29 @@ namespace Anthill.Core
 		/// <param name="aParent">Transform of the GameObject.</param>
 		public static void AddEntitiesFromHierarchy(Transform aParent)
 		{
+			var entity = aParent.GetComponent<AntEntity>();
+			if (entity is object)
+			{
+				AddEntity(entity);
+			}
+
 			Transform child;
-			AntEntity entity;
 			for (int i = 0, n = aParent.childCount; i < n; i++)
 			{
 				child = aParent.GetChild(i);
 				if (child.gameObject.activeSelf)
 				{
-					entity = child.GetComponent<AntEntity>();
-					if (entity != null)
-					{
-						AddEntity(entity);
-					}
-
 					if (child.childCount > 0)
 					{
 						AddEntitiesFromHierarchy(child);
+					}
+					else
+					{
+						entity = child.GetComponent<AntEntity>();
+						if (entity is object)
+						{
+							AddEntity(entity);
+						}
 					}
 				}
 			}
@@ -76,10 +86,13 @@ namespace Anthill.Core
 		public static void RemoveEntitiesFromHierarchy(string aTransformName)
 		{
 			var go = GameObject.Find(aTransformName);
-			A.Assert(go == null, $"Can't find `{aTransformName}` object on scene.");
-			if (go != null)
+			if (go is object)
 			{
 				RemoveEntitiesFromHierarchy(go.transform);
+			}
+			else
+			{
+				A.Assert(true, $"Can't find `{aTransformName}` object on scene.");
 			}
 		}
 
@@ -89,22 +102,29 @@ namespace Anthill.Core
 		/// <param name="aParent">Transform of the GameObject.</param>
 		public static void RemoveEntitiesFromHierarchy(Transform aParent)
 		{
+			var entity = aParent.GetComponent<AntEntity>();
+			if (entity is object)
+			{
+				RemoveEntity(entity);
+			}
+
 			Transform child;
-			AntEntity entity;
 			for (int i = 0, n = aParent.childCount; i < n; i++)
 			{
 				child = aParent.GetChild(i);
 				if (child.gameObject.activeSelf)
 				{
-					entity = child.GetComponent<AntEntity>();
-					if (entity != null)
-					{
-						RemoveEntity(entity);
-					}
-
 					if (child.childCount > 0)
 					{
 						RemoveEntitiesFromHierarchy(child);
+					}
+					else
+					{
+						entity = child.GetComponent<AntEntity>();
+						if (entity is object)
+						{
+							RemoveEntity(entity);
+						}
 					}
 				}
 			}
@@ -127,19 +147,17 @@ namespace Anthill.Core
 		/// <param name="aIncludeChildren">Checks and adds children entities if true.</param>
 		public static void AddEntity(Transform aTransform, bool aIncludeChildren = false)
 		{
-			if (aTransform.gameObject.activeSelf)
+			var entity = aTransform.GetComponent<AntEntity>();
+			if (entity is object)
 			{
-				var entity = aTransform.GetComponent<AntEntity>();
-				if (entity != null)
+				AddEntity(entity);
+			}
+
+			if (aIncludeChildren && aTransform.childCount > 0)
+			{
+				for (int i = 0, n = aTransform.childCount; i < n; i++)
 				{
-					AddEntity(entity);
-					if (aIncludeChildren && aTransform.childCount > 0)
-					{
-						for (int i = 0, n = aTransform.childCount; i < n; i++)
-						{
-							AddEntity(aTransform.GetChild(i), aIncludeChildren);
-						}
-					}
+					AddEntity(aTransform.GetChild(i), aIncludeChildren);
 				}
 			}
 		}

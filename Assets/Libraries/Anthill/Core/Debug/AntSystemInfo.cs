@@ -28,13 +28,9 @@ namespace Anthill.Core
 
 	#region Getters / Setters
 
-		public double AverageExecutionDuration 
-		{
-			get => (_durationCount == 0) ? 0 : _accumulatedExecutionDuration / _durationCount;
-		}
-
-		public double MinExecutionDuration { get => _minExecutionDuration; }
-		public double MaxExecutionDuration { get => _maxExecutionDuration; }
+		public double AverageExecutionDuration => (_durationCount == 0) ? 0 : _accumulatedExecutionDuration / _durationCount;
+		public double MinExecutionDuration => _minExecutionDuration;
+		public double MaxExecutionDuration => _maxExecutionDuration;
 
 	#endregion
 

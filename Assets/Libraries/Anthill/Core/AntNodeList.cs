@@ -4,12 +4,6 @@ namespace Anthill.Core
 	
 	public class AntNodeList<T>
 	{
-		internal enum PendingChange
-		{
-			Add,
-			Remove
-		}
-
 	#region Public Variables
 
 		public delegate void NodeChangeDelegate(T aNode);
@@ -28,6 +22,12 @@ namespace Anthill.Core
 
 	#region Private Variables
 
+		internal enum PendingChange
+		{
+			Add,
+			Remove
+		}
+		
 		private List<T> _nodes;
 		private int _count;
 		private List<KeyValuePair<T, PendingChange>> _pending;
@@ -37,17 +37,30 @@ namespace Anthill.Core
 
 	#region Getters / Setters
 
-		public T this[int aIndex] { get => _nodes[aIndex]; }
+		/// <summary>
+		/// Returns first element of the list or null if list is empty.
+		/// </summary>
+		public T FirstOrNull => (_count > 0) ? _nodes[0] : default(T);
+
+		/// <summary>
+		/// Returns last element of the list or null if list is empty.
+		/// </summary>
+		public T LastOrNull => (_count > 0) ? _nodes[_count - 1] : default(T);
+
+		/// <summary>
+		/// Returns element of the list by index.
+		/// </summary>
+		public T this[int aIndex] => _nodes[aIndex];
 
 		/// <summary>
 		/// Returns count of nodes in the list.
 		/// </summary>
-		public int Count { get => _count; }
+		public int Count => _count;
 
 		/// <summary>
 		/// Returns true is list locked.
 		/// </summary>
-		public bool IsLocked { get => (_lockCount > 0); }
+		public bool IsLocked => (_lockCount > 0);
 
 	#endregion
 

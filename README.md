@@ -583,7 +583,7 @@ public class SomeSystem : ISystem, IResetSystem, IExecuteSystem, ICleanupSystem
 каждой системы и соотвествует ли это вашим ожиданиям.
 
 Объект `Systems` создается только при запуске проекта в редакторе и отсуствует в финальных билдах. Вы можете отключить
-отладочный режим для Anthill перейдя в Player Settings и добавив символ `ANTHILL_DISABLE_DEBUG` в Scripting Define 
+отладочный режим для Anthill перейдя в Player Settings и добавив символ `FINAL_BUILD` в Scripting Define 
 Symbols конкретной платформы.
 
 

@@ -109,7 +109,7 @@ namespace Anthill.Core
 
 		private void DrawSystemList()
 		{
-			EditorGUILayout.BeginVertical(GUI.skin.box);
+			EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 			{
 				EditorGUILayout.BeginHorizontal();
 				{
@@ -118,7 +118,7 @@ namespace Anthill.Core
 						AntDebugScenario.avgResetDuration
 					);
 
-					if (GUILayout.Button("Reset now!", GUILayout.Width(88.0f), GUILayout.Height(14.0f)))
+					if (GUILayout.Button("Reset now!", GUILayout.Width(88.0f)))
 					{
 						_self.Scenario.ResetDurations();
 					}
@@ -134,7 +134,7 @@ namespace Anthill.Core
 					_systemNameSearchTerm = EditorGUILayout.TextField("Search", _systemNameSearchTerm);
 					const string clearButtonControlName = "Clear Button";
 					GUI.SetNextControlName(clearButtonControlName);
-					if (GUILayout.Button("×", GUILayout.Width(18.0f), GUILayout.Height(14.0f)))
+					if (GUILayout.Button("×", GUILayout.Width(18.0f), GUILayout.Height(18.0f)))
 					{
 						_systemNameSearchTerm = string.Empty;
 						GUI.FocusControl(clearButtonControlName);
@@ -144,39 +144,45 @@ namespace Anthill.Core
 			}
 			EditorGUILayout.EndVertical();
 
-			_showInitializeSystems = EditorGUILayout.Foldout(
-				_showInitializeSystems,
-				$"Initialize Systems ({_self.Scenario.InitializeSystemsCount})"
-			);
-
-			if (_showInitializeSystems)
+			EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 			{
-				EditorGUILayout.BeginVertical(GUI.skin.box);
+				EditorGUI.indentLevel++;
+				_showInitializeSystems = EditorGUILayout.Foldout(
+					_showInitializeSystems,
+					$"Initialize Systems ({_self.Scenario.InitializeSystemsCount})",
+					true
+				);
+
+				if (_showInitializeSystems)
 				{
 					if (DrawSystemInfos(_self.Scenario, true, false) == 0)
 					{
-						EditorGUILayout.LabelField("<No Systems>");
+						EditorGUILayout.LabelField("- No Systems");
 					}
 				}
-				EditorGUILayout.EndVertical();
+				EditorGUI.indentLevel--;
 			}
+			EditorGUILayout.EndVertical();
 
-			_showExecuteSystems = EditorGUILayout.Foldout(
-				_showExecuteSystems, 
-				$"Execute Systems ({_self.Scenario.ExecuteSystemsCount})"
-			);
-			
-			if (_showExecuteSystems)
+			EditorGUILayout.BeginVertical(EditorStyles.helpBox);
 			{
-				EditorGUILayout.BeginVertical(GUI.skin.box);
+				EditorGUI.indentLevel++;
+				_showExecuteSystems = EditorGUILayout.Foldout(
+					_showExecuteSystems, 
+					$"Execute Systems ({_self.Scenario.ExecuteSystemsCount})",
+					true
+				);
+			
+				if (_showExecuteSystems)
 				{
 					if (DrawSystemInfos(_self.Scenario, false, false) == 0)
 					{
-						EditorGUILayout.LabelField("<No Systems>");
+						EditorGUILayout.LabelField("- No Systems");
 					}
 				}
-				EditorGUILayout.EndVertical();
+				EditorGUI.indentLevel--;
 			}
+			EditorGUILayout.EndVertical();
 		}
 
 		private int DrawSystemInfos(AntDebugScenario aScenario, bool aInitOnly, bool aIsChildSystem)

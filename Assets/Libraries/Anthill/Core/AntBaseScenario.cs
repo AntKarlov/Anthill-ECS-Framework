@@ -43,7 +43,7 @@ namespace Anthill.Core
 		/// <summary>
 		/// Count of the locks.
 		/// </summary>
-		public bool IsLocked { get => (_lockCount > 0); }
+		public bool IsLocked => (_lockCount > 0);
 
 	#endregion
 

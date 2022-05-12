@@ -21,7 +21,7 @@ namespace Anthill.Core
 		/// <summary>
 		/// List of nodes.
 		/// </summary>
-		public AntNodeList<T> Nodes { get => _nodes; }
+		public AntNodeList<T> Nodes => _nodes;
 
 	#endregion
 
@@ -31,7 +31,7 @@ namespace Anthill.Core
 		{
 			_nodes = new AntNodeList<T>();
 			_entities = new Dictionary<AntEntity, T>();
-			_pool = (aPool != null) ? aPool : new AntNodePool<T>();
+			_pool = (aPool is object) ? aPool : new AntNodePool<T>();
 
 			var type = typeof(T);
 			_components = type.GetProperties().ToDictionary(propInfo => propInfo.PropertyType, propInfo => propInfo);

@@ -23,18 +23,19 @@ namespace Anthill.Core
 		/// <summary>
 		/// Called when entity added to the ECS engine.
 		/// </summary>
-		public event EntityDelegate EventEntityAddedToEngine;
+		public event EntityDelegate EventAddedToEngine;
 
 		/// <summary>
 		/// Called when entity removed from the ECS engine.
 		/// </summary>
-		public event EntityDelegate EventEntityRemovedFromEngine;
+		public event EntityDelegate EventRemovedFromEngine;
 	
 	#endregion
 
 	#region Private Variables
 
-		protected Transform _transform;
+		protected Transform _cachedTransform;
+		protected bool _isInit;
 
 	#endregion
 
@@ -48,15 +49,30 @@ namespace Anthill.Core
 		/// <summary>
 		/// Cashed transform of the entity.
 		/// </summary>
-		public Transform Transform { get => _transform; }
+		public Transform Transform
+		{
+			get 
+			{
+				Init();
+				return _cachedTransform;
+			}
+		}
 
 		/// <summary>
 		/// Position of the entity transform.
 		/// </summary>
 		public Vector3 Position
 		{
-			get => _transform.position;
-			set => _transform.position = value;
+			get
+			{
+				Init();
+				return _cachedTransform.position;
+			}
+			set
+			{
+				Init();
+				_cachedTransform.position = value;
+			}
 		}
 
 		/// <summary>
@@ -64,18 +80,23 @@ namespace Anthill.Core
 		/// </summary>
 		public Quaternion Rotation
 		{
-			get => _transform.rotation;
-			set => _transform.rotation = value;
+			get
+			{
+				Init();
+				return _cachedTransform.rotation;
+			}
+			set
+			{
+				Init();
+				_cachedTransform.rotation = value;
+			}
 		}
 
 	#endregion
 
 	#region Unity Calls
 
-		private void Awake()
-		{
-			_transform = GetComponent<Transform>();
-		}
+		// ..
 
 	#endregion
 
@@ -162,16 +183,22 @@ namespace Anthill.Core
 
 	#region Protected Methods
 
+		internal void Init()
+		{
+			if (_isInit) return;
+			_cachedTransform = GetComponent<Transform>();
+		}
+
 		internal void OnAddedToEngine()
 		{
 			IsAddedToEngine = true;
-			EventEntityAddedToEngine?.Invoke(this);
+			EventAddedToEngine?.Invoke(this);
 		}
 
 		internal void OnRemovedFromEngine()
 		{
 			IsAddedToEngine = false;
-			EventEntityRemovedFromEngine?.Invoke(this);
+			EventRemovedFromEngine?.Invoke(this);
 		}
 
 		protected virtual void DestroyComponent(Component aComponent)

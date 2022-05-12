@@ -1,6 +1,6 @@
 namespace Anthill.Core
 {
-#if UNITY_EDITOR && !ANTHILL_DISABLE_DEBUG
+#if UNITY_EDITOR && !FINAL_BUILD
 	public class AntScenario : AntDebugScenario
 	{
 #else
