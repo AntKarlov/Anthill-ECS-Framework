@@ -105,64 +105,55 @@ namespace Anthill.Core
 			_systems.Add(new AntPriorityPair<ISystem>(aSystem, aPriority));
 			_systems = _systems.OrderBy(x => x.Priority).ToList();
 
-			var initializeSystem = aSystem as IInitializeSystem;
-			if (initializeSystem != null)
+			if (aSystem is IInitializeSystem initializeSystem)
 			{
 				_initializeSystems.Add(new AntPriorityPair<IInitializeSystem>(initializeSystem, aPriority));
 				_initializeSystems = _initializeSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			var deinitializeSystem = aSystem as IDeinitializeSystem;
-			if (deinitializeSystem != null)
+			if (aSystem is IDeinitializeSystem deinitializeSystem)
 			{
 				_deinitializeSystems.Add(new AntPriorityPair<IDeinitializeSystem>(deinitializeSystem, aPriority));
 				_deinitializeSystems = _deinitializeSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			var disableSystem = aSystem as IDisableSystem;
-			if (disableSystem != null)
+			if (aSystem is IDisableSystem disableSystem)
 			{
 				_disableSystems.Add(new AntPriorityPair<IDisableSystem>(disableSystem, aPriority));
 				_disableSystems = _disableSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			var enableSystem = aSystem as IEnableSystem;
-			if (enableSystem != null)
+			if (aSystem is IEnableSystem enableSystem)
 			{
 				_enableSystems.Add(new AntPriorityPair<IEnableSystem>(enableSystem, aPriority));
 				_enableSystems = _enableSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			var executeSystem = aSystem as IExecuteSystem;
-			if (executeSystem != null)
+			if (aSystem is IExecuteSystem executeSystem)
 			{
 				_executeSystems.Add(new AntPriorityPair<IExecuteSystem>(executeSystem, aPriority));
 				_executeSystems = _executeSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			var executeFixedSystem = aSystem as IExecuteFixedSystem;
-			if (executeFixedSystem != null)
+			if (aSystem is IExecuteFixedSystem executeFixedSystem)
 			{
 				_executeFixedSystems.Add(new AntPriorityPair<IExecuteFixedSystem>(executeFixedSystem, aPriority));
 				_executeFixedSystems = _executeFixedSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			var executeLateSystem = aSystem as IExecuteLateSystem;
-			if (executeLateSystem != null)
+			if (aSystem is IExecuteLateSystem executeLateSystem)
 			{
 				_executeLateSystems.Add(new AntPriorityPair<IExecuteLateSystem>(executeLateSystem, aPriority));
 				_executeLateSystems = _executeLateSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			var cleanupSystem = aSystem as ICleanupSystem;
-			if (cleanupSystem != null)
+			if (aSystem is ICleanupSystem cleanupSystem)
 			{
 				_cleanupSystems.Add(new AntPriorityPair<ICleanupSystem>(cleanupSystem, aPriority));
 				_cleanupSystems = _cleanupSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			var resetSystem = aSystem as IResetSystem;
-			if (resetSystem != null)
+			if (aSystem is IResetSystem resetSystem)
 			{
 				_resetSystems.Add(new AntPriorityPair<IResetSystem>(resetSystem, aPriority));
 				_resetSystems = _resetSystems.OrderBy(x => x.Priority).ToList();
@@ -192,56 +183,47 @@ namespace Anthill.Core
 
 			_systems.RemoveAll(x => Object.ReferenceEquals(x.System, aSystem));
 
-			var initializeSystem = aSystem as IInitializeSystem;
-			if (initializeSystem != null)
+			if (aSystem is IInitializeSystem initializeSystem)
 			{
 				_initializeSystems.RemoveAll(x => Object.ReferenceEquals(x.System, initializeSystem));
 			}
 			
-			var deinitializeSystem = aSystem as IDeinitializeSystem;
-			if (deinitializeSystem != null)
+			if (aSystem is IDeinitializeSystem deinitializeSystem)
 			{
 				_deinitializeSystems.RemoveAll(x => Object.ReferenceEquals(x.System, deinitializeSystem));
 			}
 
-			var disableSystem = aSystem as IDisableSystem;
-			if (disableSystem != null)
+			if (aSystem is IDisableSystem disableSystem)
 			{
 				_disableSystems.RemoveAll(x => Object.ReferenceEquals(x.System, disableSystem));
 			}
 
-			var enableSystem = aSystem as IEnableSystem;
-			if (enableSystem != null)
+			if (aSystem is IEnableSystem enableSystem)
 			{
 				_enableSystems.RemoveAll(x => Object.ReferenceEquals(x.System, enableSystem));
 			}
 
-			var executeSystem = aSystem as IExecuteSystem;
-			if (executeSystem != null)
+			if (aSystem is IExecuteSystem executeSystem)
 			{
 				_executeSystems.RemoveAll(x => Object.ReferenceEquals(x.System, executeSystem));
 			}
 
-			var executeFixedSystem = aSystem as IExecuteFixedSystem;
-			if (executeFixedSystem != null)
+			if (aSystem is IExecuteFixedSystem executeFixedSystem)
 			{
 				_executeFixedSystems.RemoveAll(x => Object.ReferenceEquals(x.System, executeFixedSystem));
 			}
 
-			var executeLateSystem = aSystem as IExecuteLateSystem;
-			if (executeLateSystem != null)
+			if (aSystem is IExecuteLateSystem executeLateSystem)
 			{
 				_executeLateSystems.RemoveAll(x => Object.ReferenceEquals(x.System, executeLateSystem));
 			}
 
-			var cleanupSystem = aSystem as ICleanupSystem;
-			if (cleanupSystem != null)
+			if (aSystem is ICleanupSystem cleanupSystem)
 			{
 				_cleanupSystems.RemoveAll(x => Object.ReferenceEquals(x.System, cleanupSystem));
 			}
 
-			var resetSystem = aSystem as IResetSystem;
-			if (resetSystem != null)
+			if (aSystem is IResetSystem resetSystem)
 			{
 				_resetSystems.RemoveAll(x => Object.ReferenceEquals(x.System, resetSystem));
 			}
@@ -258,10 +240,7 @@ namespace Anthill.Core
 		public T Remove<T>() where T : ISystem
 		{
 			var system = Get<T>();
-			if (system != null)
-			{
-				Remove((ISystem) system);
-			}
+			if (system is ISystem sys) Remove(sys);
 			return system;
 		}
 

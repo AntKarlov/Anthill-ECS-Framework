@@ -19,7 +19,7 @@ namespace Anthill.Core
 			{
 				if (!_isInitialized)
 				{
-					_scenario = AntEngine.Add<AntDelayedCallScenario>(-1);
+					_scenario = AntEngine.Add<AntDelayedCallScenario>(aPriority: -1);
 					_isInitialized = true;
 				}
 

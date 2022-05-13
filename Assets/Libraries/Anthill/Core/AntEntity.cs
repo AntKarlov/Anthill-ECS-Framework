@@ -109,7 +109,7 @@ namespace Anthill.Core
 		/// <returns>True if component exists.</returns>
 		public bool Has(Type aType)
 		{
-			return gameObject.GetComponent(aType) != null;
+			return gameObject.GetComponent(aType) is object;
 		}
 
 		/// <summary>
@@ -119,7 +119,7 @@ namespace Anthill.Core
 		/// <returns>True if component exists.</returns>
 		public bool Has<T>()
 		{
-			return gameObject.GetComponent<T>() != null;
+			return gameObject.GetComponent<T>() is object;
 		}
 
 		/// <summary>
@@ -186,6 +186,7 @@ namespace Anthill.Core
 		internal void Init()
 		{
 			if (_isInit) return;
+			_isInit = true;
 			_cachedTransform = GetComponent<Transform>();
 		}
 

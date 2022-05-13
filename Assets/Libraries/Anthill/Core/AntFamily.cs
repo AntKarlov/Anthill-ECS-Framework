@@ -34,7 +34,8 @@ namespace Anthill.Core
 			_pool = (aPool is object) ? aPool : new AntNodePool<T>();
 
 			var type = typeof(T);
-			_components = type.GetProperties().ToDictionary(propInfo => propInfo.PropertyType, propInfo => propInfo);
+			_components = type.GetProperties()
+				.ToDictionary(propInfo => propInfo.PropertyType, propInfo => propInfo);
 		}
 
 		public void ComponentAdded(AntEntity aEntity, Type aComponentType)
