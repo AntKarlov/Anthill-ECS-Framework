@@ -1,9 +1,9 @@
+using System.Linq;
+using UnityEditor;
+using UnityEngine;
+
 namespace Anthill.Core
 {
-	using System.Linq;
-	using UnityEditor;
-	using UnityEngine;
-	
 	public class AntSystemMonitor
 	{
 		public float xBorder = 48;
@@ -23,10 +23,16 @@ namespace Anthill.Core
 
 		public AntSystemMonitor(int aDataLength)
 		{
-			_labelTextStyle = new GUIStyle(GUI.skin.label);
-			_labelTextStyle.alignment = TextAnchor.UpperRight;
-			_centeredStyle = new GUIStyle();
-			_centeredStyle.alignment = TextAnchor.UpperCenter;
+			_labelTextStyle = new(GUI.skin.label)
+			{
+				alignment = TextAnchor.UpperRight
+			};
+			
+			_centeredStyle = new()
+			{
+				alignment = TextAnchor.UpperCenter
+			};
+
 			_centeredStyle.normal.textColor = Color.white;
 			_linePoints = new Vector3[aDataLength];
 			_cachedLinePointVerticies = new Vector3[]

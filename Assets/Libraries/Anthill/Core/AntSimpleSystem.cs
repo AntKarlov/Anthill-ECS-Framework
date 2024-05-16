@@ -2,8 +2,12 @@ namespace Anthill.Core
 {
 	public class AntSimpleSystem : ISystem, IExecuteSystem
 	{
+	#region Getters / Setters
+
 		public AntEngine Engine { get; set; }
 		public int Priority { get; set; }
+
+	#endregion
 
 	#region ISystem Implementation
 

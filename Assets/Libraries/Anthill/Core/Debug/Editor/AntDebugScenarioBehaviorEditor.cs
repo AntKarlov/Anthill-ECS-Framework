@@ -1,12 +1,12 @@
+using System.Linq;
+// using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
+
 namespace Anthill.Core
 {
-	using System.Linq;
-	// using System.Collections.Generic;
-	using UnityEditor;
-	using UnityEngine;
-
 	[CustomEditor(typeof(AntDebugScenarioBehaviour))]
-	public class AntDebugScenarioBehaviourEditor : Editor
+	public class AntDebugScenarioBehaviourEditor : UnityEditor.Editor
 	{
 		private enum SortMode
 		{

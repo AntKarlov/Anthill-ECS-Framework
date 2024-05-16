@@ -1,13 +1,13 @@
+using System;
+using System.Collections.Generic;
+
 namespace Anthill.Core
 {
-	using System;
-	using System.Collections.Generic;
-
 	public class AntNodePool<T>
 	{
 	#region Private Variables
 
-		private List<T> _availList;
+		private readonly List<T> _availList;
 
 	#endregion
 	
@@ -28,7 +28,7 @@ namespace Anthill.Core
 			T result;
 			if (_availList.Count > 0)
 			{
-				result = _availList[_availList.Count - 1];
+				result = _availList[^1];
 				_availList.RemoveAt(_availList.Count - 1);
 			}
 			else

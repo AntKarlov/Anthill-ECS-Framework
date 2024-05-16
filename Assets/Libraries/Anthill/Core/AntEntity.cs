@@ -1,8 +1,8 @@
+using System;
+using UnityEngine;
+
 namespace Anthill.Core
 {
-	using System;
-	using UnityEngine;
-
 	public class AntEntity : MonoBehaviour
 	{
 	#region Public Variables
@@ -29,6 +29,8 @@ namespace Anthill.Core
 		/// Called when entity removed from the ECS engine.
 		/// </summary>
 		public event EntityDelegate EventRemovedFromEngine;
+
+		public bool allowToAddFromHierachy = true;
 	
 	#endregion
 
@@ -109,7 +111,7 @@ namespace Anthill.Core
 		/// <returns>True if component exists.</returns>
 		public bool Has(Type aType)
 		{
-			return gameObject.GetComponent(aType) is object;
+			return gameObject.GetComponent(aType) != null;
 		}
 
 		/// <summary>
@@ -117,9 +119,9 @@ namespace Anthill.Core
 		/// </summary>
 		/// <typeparam name="T">Type of the component.</typeparam>
 		/// <returns>True if component exists.</returns>
-		public bool Has<T>()
+		public bool Has<T>() where T : Component
 		{
-			return gameObject.GetComponent<T>() is object;
+			return gameObject.TryGetComponent<T>(out var component);
 		}
 
 		/// <summary>
@@ -137,9 +139,9 @@ namespace Anthill.Core
 		/// </summary>
 		/// <typeparam name="T"></typeparam>
 		/// <returns></returns>
-		public T Get<T>()
+		public T Get<T>() where T : Component
 		{
-			return gameObject.GetComponent<T>();
+			return gameObject.TryGetComponent<T>(out var component) ? component : null;
 		}
 
 		/// <summary>

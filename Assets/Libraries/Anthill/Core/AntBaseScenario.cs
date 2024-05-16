@@ -1,10 +1,10 @@
+using System;
+using System.Linq;
+using System.Reflection;
+using System.Collections.Generic;
+
 namespace Anthill.Core
 {
-	using System;
-	using System.Linq;
-	using System.Reflection;
-	using System.Collections.Generic;
-
 	public class AntBaseScenario : ISystem, IInitializeSystem, IDeinitializeSystem, IExecuteSystem,
 		IExecuteFixedSystem, IExecuteLateSystem, ICleanupSystem, IEnableSystem, IDisableSystem, IResetSystem
 	{
@@ -43,7 +43,7 @@ namespace Anthill.Core
 		/// <summary>
 		/// Count of the locks.
 		/// </summary>
-		public bool IsLocked => (_lockCount > 0);
+		public bool IsLocked => _lockCount > 0;
 
 	#endregion
 
@@ -254,7 +254,26 @@ namespace Anthill.Core
 			int index = _systems.FindIndex(x => x.System is T);
 			return (index >= 0 && index < _systems.Count)
 				? (T) _systems[index].System
-				: default(T);
+				: default;
+		}
+
+		/// <summary>
+		/// Try to get system from the scenario by Type.
+		/// </summary>
+		/// <typeparam name="T">Type of the system that need to extract.</typeparam>
+		/// <typeparam name="aResult">Referense on the extracted system.</typeparam>
+		/// <returns>True if the system is extracted or false if not found.</returns>
+		public bool TryGet<T>(out T aResult) where T : ISystem
+		{
+			int index = _systems.FindIndex(x => x.System is T);
+			if (index >= 0 && index < _systems.Count)
+			{
+				aResult = (T) _systems[index].System;
+				return true;
+			}
+			
+			aResult = default;
+			return false;
 		}
 
 	#endregion

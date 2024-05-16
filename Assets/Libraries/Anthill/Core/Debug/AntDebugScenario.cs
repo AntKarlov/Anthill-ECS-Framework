@@ -1,10 +1,10 @@
+using System.Diagnostics;
+using System.Collections.Generic;
+using System.Text;
+using UnityEngine;
+
 namespace Anthill.Core
 {
-	using System.Diagnostics;
-	using System.Collections.Generic;
-	using System.Text;
-	using UnityEngine;
-
 	public enum AvgResetDuration
 	{
 		Always = 1,
@@ -26,13 +26,13 @@ namespace Anthill.Core
 
 	#region Private Variables
 
-		private GameObject _container;
+		private readonly GameObject _container;
 		private double _totalDuration;
-		private Stopwatch _stopwatch;
-		private List<AntSystemInfo> _initializeSystemsInfos;
-		private List<AntSystemInfo> _executeSystemsInfos;
+		private readonly Stopwatch _stopwatch;
+		private readonly List<AntSystemInfo> _initializeSystemsInfos;
+		private readonly List<AntSystemInfo> _executeSystemsInfos;
 
-		private readonly StringBuilder _stringBuilder = new StringBuilder();
+		private readonly StringBuilder _stringBuilder = new();
 		private readonly static string[] _numbers = new string[] 
 		{
 			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", 
@@ -44,8 +44,8 @@ namespace Anthill.Core
 		};
 
 		private float _lastUpdateTime = 0.0f;
-		private float _updateInterval = 0.25f;
-		private bool _isInit;
+		private readonly float _updateInterval = 0.25f;
+		private readonly bool _isInit;
 
 	#endregion
 
@@ -63,8 +63,7 @@ namespace Anthill.Core
 				int count = 0;
 				for (int i = 0, n = _initializeSystems.Count; i < n; i++)
 				{
-					var debugScenario = _initializeSystems[i].System as AntDebugScenario;
-					if (debugScenario != null)
+					if (_initializeSystems[i].System is AntDebugScenario debugScenario)
 					{
 						count += debugScenario.TotalInitializeSystemsCount;
 					}
@@ -84,8 +83,7 @@ namespace Anthill.Core
 				int count = 0;
 				for (int i = 0, n = _executeSystems.Count; i < n; i++)
 				{
-					var debugScenario = _executeSystems[i].System as AntDebugScenario;
-					if (debugScenario != null)
+					if (_executeSystems[i].System is AntDebugScenario debugScenario)
 					{
 						count += debugScenario.TotalExecuteSystemsCount;
 					}
@@ -109,7 +107,7 @@ namespace Anthill.Core
 		public AntDebugScenario(string aName) : base(aName)
 		{
 			_container = new GameObject();
-			_container.gameObject.AddComponent<AntDebugScenarioBehaviour>().Init(this);
+			_container.AddComponent<AntDebugScenarioBehaviour>().Init(this);
 			_totalDuration = 0;
 			_stopwatch = new Stopwatch();
 			_initializeSystemsInfos = new List<AntSystemInfo>();
@@ -121,8 +119,7 @@ namespace Anthill.Core
 
 		public override ISystem Add(ISystem aSystem, int aPriority = 0)
 		{
-			var debugScenario = aSystem as AntDebugScenario;
-			if (debugScenario != null)
+			if (aSystem is AntDebugScenario debugScenario)
 			{
 				debugScenario.Container.transform.SetParent(_container.transform, false);
 			}
@@ -143,8 +140,7 @@ namespace Anthill.Core
 
 		public override ISystem Remove(ISystem aSystem)
 		{
-			var debugScenario = aSystem as AntDebugScenario;
-			if (debugScenario != null)
+			if (aSystem is AntDebugScenario debugScenario)
 			{
 				GameObject.Destroy(debugScenario.Container);
 			}

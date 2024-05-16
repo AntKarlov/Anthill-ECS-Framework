@@ -1,7 +1,7 @@
+using System.Collections.Generic;
+
 namespace Anthill.Core
 {
-	using System.Collections.Generic;
-	
 	public class AntNodeList<T>
 	{
 	#region Public Variables
@@ -28,9 +28,9 @@ namespace Anthill.Core
 			Remove
 		}
 		
-		private List<T> _nodes;
+		private readonly List<T> _nodes;
 		private int _count;
-		private List<KeyValuePair<T, PendingChange>> _pending;
+		private readonly List<KeyValuePair<T, PendingChange>> _pending;
 		private int _lockCount;
 
 	#endregion
@@ -40,12 +40,12 @@ namespace Anthill.Core
 		/// <summary>
 		/// Returns first element of the list or null if list is empty.
 		/// </summary>
-		public T FirstOrNull => (_count > 0) ? _nodes[0] : default(T);
+		public T FirstOrNull => (_count > 0) ? _nodes[0] : default;
 
 		/// <summary>
 		/// Returns last element of the list or null if list is empty.
 		/// </summary>
-		public T LastOrNull => (_count > 0) ? _nodes[_count - 1] : default(T);
+		public T LastOrNull => (_count > 0) ? _nodes[_count - 1] : default;
 
 		/// <summary>
 		/// Returns element of the list by index.

@@ -1,7 +1,7 @@
+using System;
+
 namespace Anthill.Core
 {
-	using System;
-	
 	public static class AntDelayed
 	{
 	#region Private Variables
@@ -136,8 +136,10 @@ namespace Anthill.Core
 	public class DelayedCall
 	{
 		public float delay;
-		public bool isUnscaledTime;
 		private Action _process;
+
+		public bool IsUnscaledTime { get; private set; }
+		public bool IsKillOnDeinitialize { get; private set; }
 
 		public virtual bool Update(float aDeltaTime)
 		{
@@ -161,9 +163,16 @@ namespace Anthill.Core
 			AntDelayed.Scenario.Remove(this);
 		}
 
-		public void SetUpdate(bool aIsUnscaledTime)
+		public DelayedCall SetUpdate(bool aIsUnscaledTime)
 		{
-			isUnscaledTime = aIsUnscaledTime;
+			IsUnscaledTime = aIsUnscaledTime;
+			return this;
+		}
+
+		public DelayedCall SetKillOnDeinitialize(bool aValue)
+		{
+			IsKillOnDeinitialize = aValue;
+			return this;
 		}
 	}
 

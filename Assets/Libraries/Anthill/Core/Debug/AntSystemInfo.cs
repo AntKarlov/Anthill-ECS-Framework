@@ -1,7 +1,7 @@
+using System;
+
 namespace Anthill.Core
 {
-	using System;
-	
 	public class AntSystemInfo
 	{
 	#region Public Variables
@@ -41,20 +41,17 @@ namespace Anthill.Core
 			System = aSystem;
 			isActive = true;
 
-			var initializeSystem = aSystem as IInitializeSystem;
-			if (initializeSystem != null)
+			if (aSystem is IInitializeSystem)
 			{
 				IsInitializeSystem = true;
 			}
 
-			var executeSystem = aSystem as IExecuteSystem;
-			if (executeSystem != null)
+			if (aSystem is IExecuteSystem)
 			{
 				IsExecuteSystem = true;
 			}
 
-			var debugScenario = aSystem as AntBaseScenario;
-			if (debugScenario != null)
+			if (aSystem is AntBaseScenario debugScenario)
 			{
 				Name = debugScenario.Name;
 			}

@@ -1,16 +1,16 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace Anthill.Core
 {
-	using System;
-	using System.Collections.Generic;
-	using UnityEngine;
-
 	public class AntEngine
 	{
 	#region Private Variables
 
-		private static readonly Dictionary<Type, IFamily> _families = new Dictionary<Type, IFamily>();
-		private static List<AntEntity> _entities = new List<AntEntity>();
-		private static AntScenario _scenario = new AntScenario();
+		private static readonly Dictionary<Type, IFamily> _families = new();
+		private static readonly List<AntEntity> _entities = new();
+		private static AntScenario _scenario = new();
 
 	#endregion
 
@@ -33,8 +33,7 @@ namespace Anthill.Core
 		/// <param name="aTransformName">Name of the GameObject on scene.</param>
 		public static void AddEntitiesFromHierarchy(string aTransformName)
 		{
-			var go = GameObject.Find(aTransformName);
-			if (go is object)
+			if (GameObject.Find(aTransformName) is GameObject go)
 			{
 				AddEntitiesFromHierarchy(go.transform);
 			}
@@ -50,8 +49,7 @@ namespace Anthill.Core
 		/// <param name="aParent">Transform of the GameObject.</param>
 		public static void AddEntitiesFromHierarchy(Transform aParent)
 		{
-			var entity = aParent.GetComponent<AntEntity>();
-			if (entity is object)
+			if (aParent.TryGetComponent<AntEntity>(out var entity) && entity.allowToAddFromHierachy)
 			{
 				AddEntity(entity);
 			}
@@ -68,8 +66,7 @@ namespace Anthill.Core
 					}
 					else
 					{
-						entity = child.GetComponent<AntEntity>();
-						if (entity is object)
+						if (child.TryGetComponent(out entity) && entity.allowToAddFromHierachy)
 						{
 							AddEntity(entity);
 						}
@@ -85,8 +82,7 @@ namespace Anthill.Core
 		/// <param name="aTransformName">Name of the GameObject on scene.</param>
 		public static void RemoveEntitiesFromHierarchy(string aTransformName)
 		{
-			var go = GameObject.Find(aTransformName);
-			if (go is object)
+			if (GameObject.Find(aTransformName) is GameObject go)
 			{
 				RemoveEntitiesFromHierarchy(go.transform);
 			}
@@ -102,8 +98,7 @@ namespace Anthill.Core
 		/// <param name="aParent">Transform of the GameObject.</param>
 		public static void RemoveEntitiesFromHierarchy(Transform aParent)
 		{
-			var entity = aParent.GetComponent<AntEntity>();
-			if (entity is object)
+			if (aParent.TryGetComponent<AntEntity>(out var entity))
 			{
 				RemoveEntity(entity);
 			}
@@ -114,17 +109,14 @@ namespace Anthill.Core
 				child = aParent.GetChild(i);
 				if (child.gameObject.activeSelf)
 				{
+					if (child.TryGetComponent(out entity))
+					{
+						RemoveEntity(entity);
+					}
+
 					if (child.childCount > 0)
 					{
 						RemoveEntitiesFromHierarchy(child);
-					}
-					else
-					{
-						entity = child.GetComponent<AntEntity>();
-						if (entity is object)
-						{
-							RemoveEntity(entity);
-						}
 					}
 				}
 			}
@@ -147,8 +139,7 @@ namespace Anthill.Core
 		/// <param name="aIncludeChildren">Checks and adds children entities if true.</param>
 		public static void AddEntity(Transform aTransform, bool aIncludeChildren = false)
 		{
-			var entity = aTransform.GetComponent<AntEntity>();
-			if (entity is object)
+			if (aTransform.TryGetComponent<AntEntity>(out var entity))
 			{
 				AddEntity(entity);
 			}
@@ -286,6 +277,17 @@ namespace Anthill.Core
 		public static T Get<T>() where T : ISystem
 		{
 			return Scenario.Get<T>();
+		}
+
+		/// <summary>
+		/// Trying to get system from the scenario by Type.
+		/// </summary>
+		/// <typeparam name="T">Type of the system that need to extract.</typeparam>
+		/// <typeparam name="aResult">Extracted system..</typeparam>
+		/// <returns>True if system is extracted or false if not found.</returns>
+		public static bool TryGet<T>(out T aResult) where T : ISystem
+		{
+			return Scenario.TryGet<T>(out aResult);
 		}
 
 		/// <summary>

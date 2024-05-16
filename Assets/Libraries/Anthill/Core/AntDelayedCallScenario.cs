@@ -1,8 +1,8 @@
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace Anthill.Core
 {
-	using System.Collections.Generic;
-	using UnityEngine;
-
 	public class AntDelayedCallScenario : AntScenario
 	{
 	#region Private Variables
@@ -48,7 +48,7 @@ namespace Anthill.Core
 			for (int i = _delayedCalls.Count - 1; i >= 0; i--)
 			{
 				call = _delayedCalls[i];
-				if (call.isUnscaledTime)
+				if (call.IsUnscaledTime)
 				{
 					if (_delayedCalls[i].Update(undt))
 					{
@@ -62,6 +62,26 @@ namespace Anthill.Core
 			}
 
 			Unlock();
+		}
+
+		public override void Deinitialize()
+		{
+			base.Deinitialize();
+			for (int i = _delayedCalls.Count - 1; i >= 0; i--)
+			{
+				if (_delayedCalls[i].IsKillOnDeinitialize)
+				{
+					_delayedCalls[i].Kill();
+				}
+			}
+		}
+
+		public void KillAll()
+		{
+			for (int i = _delayedCalls.Count - 1; i >= 0; i--)
+			{
+				_delayedCalls[i].Kill();
+			}
 		}
 
 		/// <summary>

@@ -1,18 +1,18 @@
+using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
+using System;
+
 namespace Anthill.Core
 {
-	using System.Collections.Generic;
-	using System.Reflection;
-	using System.Linq;
-	using System;
-
 	public class AntFamily<T> : IFamily<T>
 	{
 	#region Private Variables
 
-		private AntNodeList<T> _nodes;
-		private Dictionary<AntEntity, T> _entities;
-		private Dictionary<Type, PropertyInfo> _components;
-		private AntNodePool<T> _pool;
+		private readonly AntNodeList<T> _nodes;
+		private readonly Dictionary<AntEntity, T> _entities;
+		private readonly Dictionary<Type, PropertyInfo> _components;
+		private readonly AntNodePool<T> _pool;
 
 	#endregion
 
@@ -31,7 +31,7 @@ namespace Anthill.Core
 		{
 			_nodes = new AntNodeList<T>();
 			_entities = new Dictionary<AntEntity, T>();
-			_pool = (aPool is object) ? aPool : new AntNodePool<T>();
+			_pool = aPool ?? new AntNodePool<T>();
 
 			var type = typeof(T);
 			_components = type.GetProperties()
