@@ -36,46 +36,46 @@ namespace Anthill.Core
 
 	#region Public Methods
 
-		public AntSystemInfo(ISystem aSystem)
+		public AntSystemInfo(ISystem system)
 		{
-			System = aSystem;
+			System = system;
 			isActive = true;
 
-			if (aSystem is IInitializeSystem)
+			if (system is IInitializeSystem)
 			{
 				IsInitializeSystem = true;
 			}
 
-			if (aSystem is IExecuteSystem)
+			if (system is IExecuteSystem)
 			{
 				IsExecuteSystem = true;
 			}
 
-			if (aSystem is AntBaseScenario debugScenario)
+			if (system is AntBaseScenario debugScenario)
 			{
 				Name = debugScenario.Name;
 			}
 			else
 			{
-				Type systemType = aSystem.GetType();
+				Type systemType = system.GetType();
 				Name = systemType.Name.EndsWith(SYSTEM_SUFFIX, StringComparison.Ordinal)
                     ? systemType.Name.Substring(0, systemType.Name.Length - SYSTEM_SUFFIX.Length)
                     : systemType.Name;
 			}
 		}
 
-		public void AddExecutionDuration(double aExecutionDuration)
+		public void AddExecutionDuration(double executionDuration)
 		{
-			if (aExecutionDuration < _minExecutionDuration || _minExecutionDuration == 0.0f)
+			if (executionDuration < _minExecutionDuration || _minExecutionDuration == 0.0f)
 			{
-				_minExecutionDuration = aExecutionDuration;
+				_minExecutionDuration = executionDuration;
 			}
-			else if (aExecutionDuration > _maxExecutionDuration)
+			else if (executionDuration > _maxExecutionDuration)
 			{
-				_maxExecutionDuration = aExecutionDuration;
+				_maxExecutionDuration = executionDuration;
 			}
 
-			_accumulatedExecutionDuration += aExecutionDuration;
+			_accumulatedExecutionDuration += executionDuration;
 			_durationCount++;
 		}
 

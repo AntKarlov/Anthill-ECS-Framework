@@ -7,7 +7,7 @@ namespace Anthill.Core
 	public class AntScenario : AntBaseScenario
 	{
 #endif
-		public AntScenario(string aName = "Systems") : base(aName)
+		public AntScenario(string name = "Systems") : base(name)
 		{
 			//..
 		}

@@ -104,11 +104,12 @@ namespace Anthill.Core
 
 	#region Public Methods
 
-		public AntDebugScenario(string aName) : base(aName)
+		public AntDebugScenario(string name) : base(name)
 		{
 			_container = new GameObject();
 			_container.AddComponent<AntDebugScenarioBehaviour>().Init(this);
 			_totalDuration = 0;
+
 			_stopwatch = new Stopwatch();
 			_initializeSystemsInfos = new List<AntSystemInfo>();
 			_executeSystemsInfos = new List<AntSystemInfo>();
@@ -117,14 +118,14 @@ namespace Anthill.Core
 			UpdateName();
 		}
 
-		public override ISystem Add(ISystem aSystem, int aPriority = 0)
+		public override ISystem Add(ISystem system, int priority = -1)
 		{
-			if (aSystem is AntDebugScenario debugScenario)
+			if (system is AntDebugScenario debugScenario)
 			{
 				debugScenario.Container.transform.SetParent(_container.transform, false);
 			}
 
-			var systemInfo = new AntSystemInfo(aSystem);
+			var systemInfo = new AntSystemInfo(system);
 			if (systemInfo.IsInitializeSystem)
 			{
 				_initializeSystemsInfos.Add(systemInfo);
@@ -135,20 +136,20 @@ namespace Anthill.Core
 				_executeSystemsInfos.Add(systemInfo);
 			}
 
-			return base.Add(aSystem, aPriority);
+			return base.Add(system, priority);
 		}
 
-		public override ISystem Remove(ISystem aSystem)
+		public override ISystem Remove(ISystem system)
 		{
-			if (aSystem is AntDebugScenario debugScenario)
+			if (system is AntDebugScenario debugScenario)
 			{
 				GameObject.Destroy(debugScenario.Container);
 			}
 
-			_initializeSystemsInfos.RemoveAll(x => System.Object.ReferenceEquals(x.System, aSystem));
-			_executeSystemsInfos.RemoveAll(x => System.Object.ReferenceEquals(x.System, aSystem));
+			_initializeSystemsInfos.RemoveAll(x => System.Object.ReferenceEquals(x.System, system));
+			_executeSystemsInfos.RemoveAll(x => System.Object.ReferenceEquals(x.System, system));
 
-			return base.Remove(aSystem);
+			return base.Remove(system);
 		}
 
 		public override void Initialize()
@@ -253,20 +254,20 @@ namespace Anthill.Core
 			// );
 		}
 
-		private double MonitorInitializeSystemDuration(IInitializeSystem aSystem)
+		private double MonitorInitializeSystemDuration(IInitializeSystem system)
 		{
 			_stopwatch.Reset();
 			_stopwatch.Start();
-			aSystem.Initialize();
+			system.Initialize();
 			_stopwatch.Stop();
 			return _stopwatch.Elapsed.TotalMilliseconds;
 		}
 
-		private double MonitorExecuteSystemDuration(IExecuteSystem aSystem)
+		private double MonitorExecuteSystemDuration(IExecuteSystem system)
 		{
 			_stopwatch.Reset();
 			_stopwatch.Start();
-			aSystem.Execute();
+			system.Execute();
 			_stopwatch.Stop();
 			return _stopwatch.Elapsed.TotalMilliseconds;
 		}

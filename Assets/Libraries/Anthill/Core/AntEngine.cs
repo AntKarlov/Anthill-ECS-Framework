@@ -6,11 +6,19 @@ namespace Anthill.Core
 {
 	public class AntEngine
 	{
+	#region Public Variables
+
+		public static readonly int InitialEntityListSize = 128;
+		public static readonly int InitialNodeListSize = 128;
+
+	#endregion
+
 	#region Private Variables
 
 		private static readonly Dictionary<Type, IFamily> _families = new();
-		private static readonly List<AntEntity> _entities = new();
+		private static readonly List<IEntity> _entities = new(InitialEntityListSize);
 		private static AntScenario _scenario = new();
+		private static int _currentAvailPriority = 0;
 
 	#endregion
 
@@ -21,6 +29,8 @@ namespace Anthill.Core
 			get => _scenario;
 			set => _scenario = value;
 		}
+
+		public static List<IEntity> Entities => _entities;
 		
 	#endregion
 
@@ -30,34 +40,34 @@ namespace Anthill.Core
 		/// Adds all entities from existing GameObject on the scene.
 		/// GameObject will be found by name.
 		/// </summary>
-		/// <param name="aTransformName">Name of the GameObject on scene.</param>
-		public static void AddEntitiesFromHierarchy(string aTransformName)
+		/// <param name="transformName">Name of the GameObject on scene.</param>
+		public static void AddEntitiesFromHierarchy(string transformName)
 		{
-			if (GameObject.Find(aTransformName) is GameObject go)
+			if (GameObject.Find(transformName) is GameObject go)
 			{
 				AddEntitiesFromHierarchy(go.transform);
 			}
 			else
 			{
-				A.Assert(true, $"Can't find `{aTransformName}` object on scene.");
+				A.Assert(true, $"Can't find `{transformName}` object on scene.");
 			}
 		}
 
 		/// <summary>
 		/// Adds all entities from specified GameObject.
 		/// </summary>
-		/// <param name="aParent">Transform of the GameObject.</param>
-		public static void AddEntitiesFromHierarchy(Transform aParent)
+		/// <param name="parent">Transform of the GameObject.</param>
+		public static void AddEntitiesFromHierarchy(Transform parent)
 		{
-			if (aParent.TryGetComponent<AntEntity>(out var entity) && entity.allowToAddFromHierachy)
+			if (parent.TryGetComponent<AntEntity>(out var entity) && entity.allowToAddFromHierachy)
 			{
 				AddEntity(entity);
 			}
 
 			Transform child;
-			for (int i = 0, n = aParent.childCount; i < n; i++)
+			for (int i = 0, n = parent.childCount; i < n; i++)
 			{
-				child = aParent.GetChild(i);
+				child = parent.GetChild(i);
 				if (child.gameObject.activeSelf)
 				{
 					if (child.childCount > 0)
@@ -79,16 +89,16 @@ namespace Anthill.Core
 		/// Removes all entities from existing GameObject on the scene.
 		/// Transform will be found by name.
 		/// </summary>
-		/// <param name="aTransformName">Name of the GameObject on scene.</param>
-		public static void RemoveEntitiesFromHierarchy(string aTransformName)
+		/// <param name="transformName">Name of the GameObject on scene.</param>
+		public static void RemoveEntitiesFromHierarchy(string transformName)
 		{
-			if (GameObject.Find(aTransformName) is GameObject go)
+			if (GameObject.Find(transformName) is GameObject go)
 			{
 				RemoveEntitiesFromHierarchy(go.transform);
 			}
 			else
 			{
-				A.Assert(true, $"Can't find `{aTransformName}` object on scene.");
+				A.Assert(true, $"Can't find `{transformName}` object on scene.");
 			}
 		}
 
@@ -96,17 +106,17 @@ namespace Anthill.Core
 		/// Removes all entities from specified GameObject.
 		/// </summary>
 		/// <param name="aParent">Transform of the GameObject.</param>
-		public static void RemoveEntitiesFromHierarchy(Transform aParent)
+		public static void RemoveEntitiesFromHierarchy(Transform parent)
 		{
-			if (aParent.TryGetComponent<AntEntity>(out var entity))
+			if (parent.TryGetComponent<AntEntity>(out var entity))
 			{
 				RemoveEntity(entity);
 			}
 
 			Transform child;
-			for (int i = 0, n = aParent.childCount; i < n; i++)
+			for (int i = 0, n = parent.childCount; i < n; i++)
 			{
-				child = aParent.GetChild(i);
+				child = parent.GetChild(i);
 				if (child.gameObject.activeSelf)
 				{
 					if (child.TryGetComponent(out entity))
@@ -125,30 +135,30 @@ namespace Anthill.Core
 		/// <summary>
 		/// Adds GameObject entity to the ECS.
 		/// </summary>
-		/// <param name="aGameObject">GameObject with Entity component to add.</param>
-		/// <param name="aIncludeChildren">Checks and adds children entities if true.</param>
-		public static void AddEntity(GameObject aGameObject, bool aIncludeChildren = false)
+		/// <param name="gameObject">GameObject with Entity component to add.</param>
+		/// <param name="includeChildren">Checks and adds children entities if true.</param>
+		public static void AddEntity(GameObject gameObject, bool includeChildren = false)
 		{
-			AddEntity(aGameObject.transform, aIncludeChildren);
+			AddEntity(gameObject.transform, includeChildren);
 		}
 
 		/// <summary>
 		/// Adds Transform entity to the ECS.
 		/// </summary>
-		/// <param name="aGameObject">Transform with Entity component to add.</param>
-		/// <param name="aIncludeChildren">Checks and adds children entities if true.</param>
-		public static void AddEntity(Transform aTransform, bool aIncludeChildren = false)
+		/// <param name="transform">Transform with Entity component to add.</param>
+		/// <param name="includeChildren">Checks and adds children entities if true.</param>
+		public static void AddEntity(Transform transform, bool includeChildren = false)
 		{
-			if (aTransform.TryGetComponent<AntEntity>(out var entity))
+			if (transform.TryGetComponent<AntEntity>(out var entity))
 			{
 				AddEntity(entity);
 			}
 
-			if (aIncludeChildren && aTransform.childCount > 0)
+			if (includeChildren && transform.childCount > 0)
 			{
-				for (int i = 0, n = aTransform.childCount; i < n; i++)
+				for (int i = 0, n = transform.childCount; i < n; i++)
 				{
-					AddEntity(aTransform.GetChild(i), aIncludeChildren);
+					AddEntity(transform.GetChild(i), includeChildren);
 				}
 			}
 		}
@@ -156,35 +166,35 @@ namespace Anthill.Core
 		/// <summary>
 		/// Adds specified entity to the ECS.
 		/// </summary>
-		/// <param name="aEntity">Entity component.</param>
-		public static void AddEntity(AntEntity aEntity)
+		/// <param name="entity">Entity component.</param>
+		public static void AddEntity(IEntity entity)
 		{
 			foreach (var pair in _families)
 			{
-				pair.Value.EntityAdded(aEntity);
+				pair.Value.EntityAdded(entity);
 			}
 
-			aEntity.EventComponentAdded += OnComponentAdded;
-			aEntity.EventComponentRemoved += OnComponentRemoved;
-			_entities.Add(aEntity);
-			aEntity.OnAddedToEngine();
+			entity.EventComponentAdded += OnComponentAdded;
+			entity.EventComponentRemoved += OnComponentRemoved;
+			_entities.Add(entity);
+			entity.OnAddedToEngine();
 		}
 
 		/// <summary>
 		/// Removes specified entity from the ECS.
 		/// </summary>
-		/// <param name="aEntity">Entity Component.</param>
-		public static void RemoveEntity(AntEntity aEntity)
+		/// <param name="entity">Entity Component.</param>
+		public static void RemoveEntity(IEntity entity)
 		{
 			foreach (var pair in _families)
 			{
-				pair.Value.EntityRemoved(aEntity);
+				pair.Value.EntityRemoved(entity);
 			}
 
-			aEntity.EventComponentAdded -= OnComponentAdded;
-			aEntity.EventComponentRemoved -= OnComponentRemoved;
-			_entities.Remove(aEntity);
-			aEntity.OnRemovedFromEngine();
+			entity.EventComponentAdded -= OnComponentAdded;
+			entity.EventComponentRemoved -= OnComponentRemoved;
+			_entities.Remove(entity);
+			entity.OnRemovedFromEngine();
 		}
 
 		/// <summary>
@@ -216,9 +226,9 @@ namespace Anthill.Core
 		/// <summary>
 		/// Releases list of nodes by Type.
 		/// </summary>
-		/// <param name="aNodes">List of nodes for relese.</param>
+		/// <param name="nodes">List of nodes for relese.</param>
 		/// <typeparam name="T">Type of nodes.</typeparam>
-		public static void ReleaseNodes<T>(AntNodeList<T> aNodes)
+		public static void ReleaseNodes<T>()
 		{
 			var type = typeof(T);
 			if (_families.ContainsKey(type))
@@ -230,23 +240,23 @@ namespace Anthill.Core
 		/// <summary>
 		/// Creates and adds new system into engine with priority.
 		/// </summary>
-		/// <param name="aPriority">Value of the priority (lower value means higher priority).</param>
+		/// <param name="priority">Value of the priority (lower value means higher priority).</param>
 		/// <typeparam name="T">Type of the system.</typeparam>
 		/// <returns>Reference on the new system.</returns>
-		public static T Add<T>(int aPriority = 0) where T : ISystem
+		public static T Add<T>(int priority = -1) where T : ISystem
 		{
-			return Scenario.Add<T>(aPriority);
+			return Scenario.Add<T>(priority == -1 ? _currentAvailPriority++ : priority);
 		}
 
 		/// <summary>
 		/// Adds new system into engine with priority.
 		/// </summary>
-		/// <param name="aSystem">Reference on the system.</param>
-		/// <param name="aPriority">Value of the priority (lower value means higher priority).</param>
+		/// <param name="system">Reference on the system.</param>
+		/// <param name="priority">Value of the priority (lower value means higher priority).</param>
 		/// <returns>Reference on the added system.</returns>
-		public static ISystem Add(ISystem aSystem, int aPriority = 0)
+		public static ISystem Add(ISystem system, int priority = -1)
 		{
-			return (ISystem) Scenario.Add(aSystem, aPriority);
+			return Scenario.Add(system, priority == -1 ? _currentAvailPriority++ : priority);
 		}
 
 		/// <summary>
@@ -264,9 +274,9 @@ namespace Anthill.Core
 		/// </summary>
 		/// <param name="aSystem">Reference on the system that need to remove.</param>
 		/// <returns>Reference on the removed system.</returns>
-		public static ISystem Remove(ISystem aSystem)
+		public static ISystem Remove(ISystem system)
 		{
-			return Scenario.Remove(aSystem);
+			return Scenario.Remove(system);
 		}
 
 		/// <summary>
@@ -285,9 +295,9 @@ namespace Anthill.Core
 		/// <typeparam name="T">Type of the system that need to extract.</typeparam>
 		/// <typeparam name="aResult">Extracted system..</typeparam>
 		/// <returns>True if system is extracted or false if not found.</returns>
-		public static bool TryGet<T>(out T aResult) where T : ISystem
+		public static bool TryGet<T>(out T system) where T : ISystem
 		{
-			return Scenario.TryGet<T>(out aResult);
+			return Scenario.TryGet(out system);
 		}
 
 		/// <summary>
@@ -366,19 +376,19 @@ namespace Anthill.Core
 
 	#region Event Handlers
 
-		private static void OnComponentAdded(AntEntity aEntity, Type aComponent)
+		private static void OnComponentAdded(IEntity entity, Type component)
 		{
 			foreach (var pair in _families)
 			{
-				pair.Value.ComponentAdded(aEntity, aComponent);
+				pair.Value.ComponentAdded(entity, component);
 			}
 		}
 
-		private static void OnComponentRemoved(AntEntity aEntity, Type aComponent)
+		private static void OnComponentRemoved(IEntity entity, Type component)
 		{
 			foreach (var pair in _families)
 			{
-				pair.Value.ComponentRemoved(aEntity, aComponent);
+				pair.Value.ComponentRemoved(entity, component);
 			}
 		}
 

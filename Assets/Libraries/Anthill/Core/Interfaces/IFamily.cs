@@ -1,13 +1,13 @@
+using System;
+
 namespace Anthill.Core
-{
-	using System;
-	
+{	
 	public interface IFamily
 	{
-		void ComponentAdded(AntEntity aEntity, Type aComponentType);
-		void ComponentRemoved(AntEntity aEntity, Type aComponentType);
-		void EntityAdded(AntEntity aEntity);
-		void EntityRemoved(AntEntity aEntity);
+		void ComponentAdded(IEntity entity, Type componentType);
+		void ComponentRemoved(IEntity entity, Type componentType);
+		void EntityAdded(IEntity entity);
+		void EntityRemoved(IEntity entity);
 	}
 
 	public interface IFamily<T> : IFamily

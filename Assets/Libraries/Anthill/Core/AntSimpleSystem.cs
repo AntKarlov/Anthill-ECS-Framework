@@ -2,13 +2,6 @@ namespace Anthill.Core
 {
 	public class AntSimpleSystem : ISystem, IExecuteSystem
 	{
-	#region Getters / Setters
-
-		public AntEngine Engine { get; set; }
-		public int Priority { get; set; }
-
-	#endregion
-
 	#region ISystem Implementation
 
 		public virtual void AddedToEngine()
@@ -44,7 +37,7 @@ namespace Anthill.Core
 
 		public override void RemovedFromEngine()
 		{
-			AntEngine.ReleaseNodes(_nodes);
+			AntEngine.ReleaseNodes<AntNode<T1>>();
 		}
 
 		public override void Execute()
@@ -55,7 +48,7 @@ namespace Anthill.Core
 			}
 		}
 
-		protected virtual void UpdateNode(T1 aComp1)
+		protected virtual void UpdateNode(T1 comp1)
 		{
 			// ..
 		}
@@ -72,7 +65,7 @@ namespace Anthill.Core
 
 		public override void RemovedFromEngine()
 		{
-			AntEngine.ReleaseNodes(_nodes);
+			AntEngine.ReleaseNodes<AntNode<T1, T2>>();
 		}
 
 		public override void Execute()
@@ -85,7 +78,7 @@ namespace Anthill.Core
 			}
 		}
 
-		protected virtual void UpdateNode(T1 aComp1, T2 aComp2)
+		protected virtual void UpdateNode(T1 comp1, T2 comp2)
 		{
 			// ..
 		}
@@ -102,7 +95,7 @@ namespace Anthill.Core
 
 		public override void RemovedFromEngine()
 		{
-			AntEngine.ReleaseNodes(_nodes);
+			AntEngine.ReleaseNodes<AntNode<T1, T2, T3>>();
 		}
 
 		public override void Execute()
@@ -115,7 +108,7 @@ namespace Anthill.Core
 			}
 		}
 
-		protected virtual void UpdateNode(T1 aComp1, T2 aComp2, T3 aComp3)
+		protected virtual void UpdateNode(T1 comp1, T2 comp2, T3 comp3)
 		{
 			// ..
 		}
@@ -132,7 +125,7 @@ namespace Anthill.Core
 
 		public override void RemovedFromEngine()
 		{
-			AntEngine.ReleaseNodes(_nodes);
+			AntEngine.ReleaseNodes<AntNode<T1, T2, T3, T4>>();
 		}
 
 		public override void Execute()
@@ -145,7 +138,7 @@ namespace Anthill.Core
 			}
 		}
 
-		protected virtual void UpdateNode(T1 aComp1, T2 aComp2, T3 aComp3, T4 aComp4)
+		protected virtual void UpdateNode(T1 comp1, T2 comp2, T3 comp3, T4 comp4)
 		{
 			// ..
 		}
@@ -162,7 +155,7 @@ namespace Anthill.Core
 
 		public override void RemovedFromEngine()
 		{
-			AntEngine.ReleaseNodes(_nodes);
+			AntEngine.ReleaseNodes<AntNode<T1, T2, T3, T4, T5>>();
 		}
 
 		public override void Execute()
@@ -175,7 +168,7 @@ namespace Anthill.Core
 			}
 		}
 
-		protected virtual void UpdateNode(T1 aComp1, T2 aComp2, T3 aComp3, T4 aComp4, T5 aComp5)
+		protected virtual void UpdateNode(T1 comp1, T2 comp2, T3 comp3, T4 comp4, T5 comp5)
 		{
 			// ..
 		}
@@ -192,7 +185,7 @@ namespace Anthill.Core
 
 		public override void RemovedFromEngine()
 		{
-			AntEngine.ReleaseNodes(_nodes);
+			AntEngine.ReleaseNodes<AntNode<T1, T2, T3, T4, T5, T6>>();
 		}
 
 		public override void Execute()
@@ -205,7 +198,7 @@ namespace Anthill.Core
 			}
 		}
 
-		protected virtual void UpdateNode(T1 aComp1, T2 aComp2, T3 aComp3, T4 aComp4, T5 aComp5, T6 aComp6)
+		protected virtual void UpdateNode(T1 comp1, T2 comp2, T3 comp3, T4 comp4, T5 comp5, T6 comp6)
 		{
 			// ..
 		}

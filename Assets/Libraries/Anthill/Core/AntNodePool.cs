@@ -15,12 +15,12 @@ namespace Anthill.Core
 
 		public AntNodePool()
 		{
-			_availList = new List<T>();
+			_availList = new List<T>(AntEngine.InitialNodeListSize);
 		}
 
-		public void Add(T aNode)
+		public void Add(T node)
 		{
-			_availList.Add(aNode);
+			_availList.Add(node);
 		}
 
 		public T Get()

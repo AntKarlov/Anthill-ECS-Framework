@@ -8,13 +8,13 @@ namespace Anthill.Core
 	public class AntBaseScenario : ISystem, IInitializeSystem, IDeinitializeSystem, IExecuteSystem,
 		IExecuteFixedSystem, IExecuteLateSystem, ICleanupSystem, IEnableSystem, IDisableSystem, IResetSystem
 	{
+	#region Private Variables
+
 		protected enum PendingChange
 		{
 			Add,
 			Remove
 		}
-	
-	#region Private Variables
 
 		private int _lockCount;
 		protected bool _enabled;
@@ -49,9 +49,9 @@ namespace Anthill.Core
 
 	#region Public Methods
 
-		public AntBaseScenario(string aName)
+		public AntBaseScenario(string name)
 		{
-			Name = aName;
+			Name = name;
 
 			_systems = new List<AntPriorityPair<ISystem>>();
 			_initializeSystems = new List<AntPriorityPair<IInitializeSystem>>();
@@ -69,167 +69,179 @@ namespace Anthill.Core
 		}
 
 		/// <summary>
+		/// Checks if system already added into scenario.
+		/// </summary>
+		/// <typeparam name="T">Type of the system.</typeparam>
+		/// <returns>Returns true if system already added into scenario.</returns>
+		public virtual bool Has<T>() where T : ISystem
+		{
+			int index = _systems.FindIndex(x => x.System is T);
+			return index >= 0 && index < _systems.Count;
+		}
+
+		/// <summary>
 		/// Creates and adds new system into engine with priority.
 		/// </summary>
-		/// <param name="aPriority">Value of the priority (lower value means higher priority).</param>
+		/// <param name="priority">Value of the priority (lower value means higher priority).</param>
 		/// <typeparam name="T">Type of the system.</typeparam>
 		/// <returns>Reference on the new system.</returns>
-		public virtual T Add<T>(int aPriority = 0) where T : ISystem
+		public virtual T Add<T>(int priority = 0) where T : ISystem
 		{
 			Type type = typeof(T);
 			ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
 			var system = (ISystem) constructor.Invoke(null);
 			// A.Assert(system == null, $"Class `{type.ToString()}` not implemented <b>ISystem</b> interface!");
-			return (T) Add(system, aPriority);
+			return (T) Add(system, priority);
 		}
 
 		/// <summary>
 		/// Adds new system into engine with priority.
 		/// </summary>
-		/// <param name="aSystem">Reference on the system.</param>
-		/// <param name="aPriority">Value of the priority (lower value means higher priority).</param>
+		/// <param name="system">Reference on the system.</param>
+		/// <param name="priority">Value of the priority (lower value means higher priority).</param>
 		/// <returns>Reference on the added system.</returns>
-		public virtual ISystem Add(ISystem aSystem, int aPriority = 0)
+		public virtual ISystem Add(ISystem system, int priority = 0)
 		{
 			if (IsLocked)
 			{
 				_pending.Add(
 					new KeyValuePair<AntPriorityPair<ISystem>, PendingChange>(
-						new AntPriorityPair<ISystem>(aSystem, aPriority), 
+						new AntPriorityPair<ISystem>(system, priority), 
 						PendingChange.Add
 					)
 				);
-				return aSystem;
+
+				return system;
 			}
 
-			_systems.Add(new AntPriorityPair<ISystem>(aSystem, aPriority));
+			_systems.Add(new AntPriorityPair<ISystem>(system, priority));
 			_systems = _systems.OrderBy(x => x.Priority).ToList();
 
-			if (aSystem is IInitializeSystem initializeSystem)
+			if (system is IInitializeSystem initializeSystem)
 			{
-				_initializeSystems.Add(new AntPriorityPair<IInitializeSystem>(initializeSystem, aPriority));
+				_initializeSystems.Add(new AntPriorityPair<IInitializeSystem>(initializeSystem, priority));
 				_initializeSystems = _initializeSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			if (aSystem is IDeinitializeSystem deinitializeSystem)
+			if (system is IDeinitializeSystem deinitializeSystem)
 			{
-				_deinitializeSystems.Add(new AntPriorityPair<IDeinitializeSystem>(deinitializeSystem, aPriority));
+				_deinitializeSystems.Add(new AntPriorityPair<IDeinitializeSystem>(deinitializeSystem, priority));
 				_deinitializeSystems = _deinitializeSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			if (aSystem is IDisableSystem disableSystem)
+			if (system is IDisableSystem disableSystem)
 			{
-				_disableSystems.Add(new AntPriorityPair<IDisableSystem>(disableSystem, aPriority));
+				_disableSystems.Add(new AntPriorityPair<IDisableSystem>(disableSystem, priority));
 				_disableSystems = _disableSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			if (aSystem is IEnableSystem enableSystem)
+			if (system is IEnableSystem enableSystem)
 			{
-				_enableSystems.Add(new AntPriorityPair<IEnableSystem>(enableSystem, aPriority));
+				_enableSystems.Add(new AntPriorityPair<IEnableSystem>(enableSystem, priority));
 				_enableSystems = _enableSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			if (aSystem is IExecuteSystem executeSystem)
+			if (system is IExecuteSystem executeSystem)
 			{
-				_executeSystems.Add(new AntPriorityPair<IExecuteSystem>(executeSystem, aPriority));
+				_executeSystems.Add(new AntPriorityPair<IExecuteSystem>(executeSystem, priority));
 				_executeSystems = _executeSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			if (aSystem is IExecuteFixedSystem executeFixedSystem)
+			if (system is IExecuteFixedSystem executeFixedSystem)
 			{
-				_executeFixedSystems.Add(new AntPriorityPair<IExecuteFixedSystem>(executeFixedSystem, aPriority));
+				_executeFixedSystems.Add(new AntPriorityPair<IExecuteFixedSystem>(executeFixedSystem, priority));
 				_executeFixedSystems = _executeFixedSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			if (aSystem is IExecuteLateSystem executeLateSystem)
+			if (system is IExecuteLateSystem executeLateSystem)
 			{
-				_executeLateSystems.Add(new AntPriorityPair<IExecuteLateSystem>(executeLateSystem, aPriority));
+				_executeLateSystems.Add(new AntPriorityPair<IExecuteLateSystem>(executeLateSystem, priority));
 				_executeLateSystems = _executeLateSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			if (aSystem is ICleanupSystem cleanupSystem)
+			if (system is ICleanupSystem cleanupSystem)
 			{
-				_cleanupSystems.Add(new AntPriorityPair<ICleanupSystem>(cleanupSystem, aPriority));
+				_cleanupSystems.Add(new AntPriorityPair<ICleanupSystem>(cleanupSystem, priority));
 				_cleanupSystems = _cleanupSystems.OrderBy(x => x.Priority).ToList();
 			}
 
-			if (aSystem is IResetSystem resetSystem)
+			if (system is IResetSystem resetSystem)
 			{
-				_resetSystems.Add(new AntPriorityPair<IResetSystem>(resetSystem, aPriority));
+				_resetSystems.Add(new AntPriorityPair<IResetSystem>(resetSystem, priority));
 				_resetSystems = _resetSystems.OrderBy(x => x.Priority).ToList();
 			}
 			
-			aSystem.AddedToEngine();
-			return aSystem;
+			system.AddedToEngine();
+			return system;
 		}
 
 		/// <summary>
 		/// Removes system from the scenario.
 		/// </summary>
-		/// <param name="aSystem">Reference on the system that need to remove.</param>
+		/// <param name="system">Reference on the system that need to remove.</param>
 		/// <returns>Reference on the removed system.</returns>
-		public virtual ISystem Remove(ISystem aSystem)
+		public virtual ISystem Remove(ISystem system)
 		{
 			if (IsLocked)
 			{
 				_pending.Add(
 					new KeyValuePair<AntPriorityPair<ISystem>, PendingChange>(
-						new AntPriorityPair<ISystem>(aSystem, 0),
+						new AntPriorityPair<ISystem>(system, 0),
 						PendingChange.Remove
 					)
 				);
-				return aSystem;
+				return system;
 			}
 
-			_systems.RemoveAll(x => Object.ReferenceEquals(x.System, aSystem));
+			_systems.RemoveAll(x => Object.ReferenceEquals(x.System, system));
 
-			if (aSystem is IInitializeSystem initializeSystem)
+			if (system is IInitializeSystem initializeSystem)
 			{
 				_initializeSystems.RemoveAll(x => Object.ReferenceEquals(x.System, initializeSystem));
 			}
 			
-			if (aSystem is IDeinitializeSystem deinitializeSystem)
+			if (system is IDeinitializeSystem deinitializeSystem)
 			{
 				_deinitializeSystems.RemoveAll(x => Object.ReferenceEquals(x.System, deinitializeSystem));
 			}
 
-			if (aSystem is IDisableSystem disableSystem)
+			if (system is IDisableSystem disableSystem)
 			{
 				_disableSystems.RemoveAll(x => Object.ReferenceEquals(x.System, disableSystem));
 			}
 
-			if (aSystem is IEnableSystem enableSystem)
+			if (system is IEnableSystem enableSystem)
 			{
 				_enableSystems.RemoveAll(x => Object.ReferenceEquals(x.System, enableSystem));
 			}
 
-			if (aSystem is IExecuteSystem executeSystem)
+			if (system is IExecuteSystem executeSystem)
 			{
 				_executeSystems.RemoveAll(x => Object.ReferenceEquals(x.System, executeSystem));
 			}
 
-			if (aSystem is IExecuteFixedSystem executeFixedSystem)
+			if (system is IExecuteFixedSystem executeFixedSystem)
 			{
 				_executeFixedSystems.RemoveAll(x => Object.ReferenceEquals(x.System, executeFixedSystem));
 			}
 
-			if (aSystem is IExecuteLateSystem executeLateSystem)
+			if (system is IExecuteLateSystem executeLateSystem)
 			{
 				_executeLateSystems.RemoveAll(x => Object.ReferenceEquals(x.System, executeLateSystem));
 			}
 
-			if (aSystem is ICleanupSystem cleanupSystem)
+			if (system is ICleanupSystem cleanupSystem)
 			{
 				_cleanupSystems.RemoveAll(x => Object.ReferenceEquals(x.System, cleanupSystem));
 			}
 
-			if (aSystem is IResetSystem resetSystem)
+			if (system is IResetSystem resetSystem)
 			{
 				_resetSystems.RemoveAll(x => Object.ReferenceEquals(x.System, resetSystem));
 			}
 
-			aSystem.RemovedFromEngine();
-			return aSystem;
+			system.RemovedFromEngine();
+			return system;
 		}
 
 		/// <summary>
@@ -263,16 +275,16 @@ namespace Anthill.Core
 		/// <typeparam name="T">Type of the system that need to extract.</typeparam>
 		/// <typeparam name="aResult">Referense on the extracted system.</typeparam>
 		/// <returns>True if the system is extracted or false if not found.</returns>
-		public bool TryGet<T>(out T aResult) where T : ISystem
+		public bool TryGet<T>(out T component) where T : ISystem
 		{
 			int index = _systems.FindIndex(x => x.System is T);
 			if (index >= 0 && index < _systems.Count)
 			{
-				aResult = (T) _systems[index].System;
+				component = (T) _systems[index].System;
 				return true;
 			}
 			
-			aResult = default;
+			component = default;
 			return false;
 		}
 

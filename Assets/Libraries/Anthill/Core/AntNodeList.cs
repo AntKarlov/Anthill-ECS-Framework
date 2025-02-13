@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace Anthill.Core
@@ -6,7 +7,7 @@ namespace Anthill.Core
 	{
 	#region Public Variables
 
-		public delegate void NodeChangeDelegate(T aNode);
+		public delegate void NodeChangeDelegate(T node);
 
 		/// <summary>
 		/// Called when new node added to the list.
@@ -40,12 +41,12 @@ namespace Anthill.Core
 		/// <summary>
 		/// Returns first element of the list or null if list is empty.
 		/// </summary>
-		public T FirstOrNull => (_count > 0) ? _nodes[0] : default;
+		public T FirstOrNull => _count > 0 ? _nodes[0] : default;
 
 		/// <summary>
 		/// Returns last element of the list or null if list is empty.
 		/// </summary>
-		public T LastOrNull => (_count > 0) ? _nodes[_count - 1] : default;
+		public T LastOrNull => _count > 0 ? _nodes[_count - 1] : default;
 
 		/// <summary>
 		/// Returns element of the list by index.
@@ -60,7 +61,7 @@ namespace Anthill.Core
 		/// <summary>
 		/// Returns true is list locked.
 		/// </summary>
-		public bool IsLocked => (_lockCount > 0);
+		public bool IsLocked => _lockCount > 0;
 
 	#endregion
 
@@ -75,34 +76,34 @@ namespace Anthill.Core
 		/// <summary>
 		/// Adds new node to the list.
 		/// </summary>
-		/// <param name="aNode">Node.</param>
-		public void Add(T aNode)
+		/// <param name="node">Node.</param>
+		public void Add(T node)
 		{
 			if (IsLocked)
 			{
-				_pending.Add(new KeyValuePair<T, PendingChange>(aNode, PendingChange.Add));
+				_pending.Add(new KeyValuePair<T, PendingChange>(node, PendingChange.Add));
 				return;
 			}
 
-			EventNodeAdded?.Invoke(aNode);
-			_nodes.Add(aNode);
+			EventNodeAdded?.Invoke(node);
+			_nodes.Add(node);
 			_count++;
 		}
 
 		/// <summary>
 		/// Removes node from the list.
 		/// </summary>
-		/// <param name="aNode"></param>
-		public void Remove(T aNode)
+		/// <param name="node"></param>
+		public void Remove(T node)
 		{
 			if (IsLocked)
 			{
-				_pending.Add(new KeyValuePair<T, PendingChange>(aNode, PendingChange.Remove));
+				_pending.Add(new KeyValuePair<T, PendingChange>(node, PendingChange.Remove));
 				return;
 			}
 				
-			EventNodeRemoved?.Invoke(aNode);
-			_nodes.Remove(aNode);
+			EventNodeRemoved?.Invoke(node);
+			_nodes.Remove(node);
 			_count--;
 		}
 
@@ -127,6 +128,18 @@ namespace Anthill.Core
 			}
 		}
 
+		/// <summary>
+		/// Calls specified method for all nodes.
+		/// </summary>
+		/// <param name="func">Method to apply each node from list.</param>
+		public void ForEach(Action<T> func)
+		{
+			for (int i = _nodes.Count - 1; i >= 0; i--)
+			{
+				func(_nodes[i]);
+			}
+		}
+
 	#endregion
 
 	#region Private Methods
@@ -146,6 +159,7 @@ namespace Anthill.Core
 					Remove(pair.Key);
 				}
 			}
+
 			_pending.Clear();
 		}
 

@@ -185,11 +185,11 @@ namespace Anthill.Core
 			EditorGUILayout.EndVertical();
 		}
 
-		private int DrawSystemInfos(AntDebugScenario aScenario, bool aInitOnly, bool aIsChildSystem)
+		private int DrawSystemInfos(AntDebugScenario scenario, bool onlyInit, bool isChildSystem)
 		{
-			var systemInfosList = (aInitOnly)
-				? aScenario.InitializeSystemsInfos
-				: aScenario.ExecuteSystemInfos;
+			var systemInfosList = onlyInit
+				? scenario.InitializeSystemsInfos
+				: scenario.ExecuteSystemInfos;
 			
 			var systemInfos = systemInfosList
 				.Where(sys => sys.AverageExecutionDuration >= _threshold)
@@ -216,7 +216,7 @@ namespace Anthill.Core
 				{
 					EditorGUILayout.BeginHorizontal();
 					{
-						EditorGUI.BeginDisabledGroup(aIsChildSystem);
+						EditorGUI.BeginDisabledGroup(isChildSystem);
 						{
 							systemInfo.isActive = EditorGUILayout.Toggle(systemInfo.isActive, GUILayout.Width(20.0f));
 						}
@@ -234,7 +234,7 @@ namespace Anthill.Core
 				if (debugScenario != null)
 				{
 					EditorGUI.indentLevel++;
-					count += DrawSystemInfos(debugScenario, aInitOnly, true);
+					count += DrawSystemInfos(debugScenario, onlyInit, true);
 					EditorGUI.indentLevel--;
 				}
 
@@ -244,31 +244,31 @@ namespace Anthill.Core
 			return count;
 		}
 
-		private AntSystemInfo[] SortSystemInfos(AntSystemInfo[] aSystems, SortMode aSortMode)
+		private AntSystemInfo[] SortSystemInfos(AntSystemInfo[] systems, SortMode sortMode)
 		{
-			AntSystemInfo[] result = aSystems;
-			switch (aSortMode)
+			AntSystemInfo[] result = systems;
+			switch (sortMode)
 			{
 				case SortMode.Name :
-					result = aSystems
+					result = systems
 						.OrderBy(sys => sys.Name)
 						.ToArray();
 					break;
 
 				case SortMode.NameDescending :
-					result = aSystems
+					result = systems
 						.OrderByDescending(sys => sys.Name)
 						.ToArray();
 					break;
 
 				case SortMode.ExecutionTime :
-					result = aSystems
+					result = systems
 						.OrderBy(sys => sys.AverageExecutionDuration)
 						.ToArray();
 					break;
 
 				case SortMode.ExecutionTimeDescending :
-					result = aSystems
+					result = systems
 						.OrderByDescending(sys => sys.AverageExecutionDuration)
 						.ToArray();
 					break;

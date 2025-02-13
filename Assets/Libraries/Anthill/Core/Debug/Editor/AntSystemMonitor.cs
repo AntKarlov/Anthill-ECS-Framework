@@ -21,7 +21,7 @@ namespace Anthill.Core
 		private readonly Vector3[] _cachedLinePointVerticies;
 		private readonly Vector3[] _linePoints;
 
-		public AntSystemMonitor(int aDataLength)
+		public AntSystemMonitor(int dataLength)
 		{
 			_labelTextStyle = new(GUI.skin.label)
 			{
@@ -34,7 +34,7 @@ namespace Anthill.Core
 			};
 
 			_centeredStyle.normal.textColor = Color.white;
-			_linePoints = new Vector3[aDataLength];
+			_linePoints = new Vector3[dataLength];
 			_cachedLinePointVerticies = new Vector3[]
 			{
 				new Vector3(-1, 1, 0) * anchorRadius,
@@ -44,63 +44,63 @@ namespace Anthill.Core
 			};
 		}
 
-		public void Draw(float[] aData, float aHeight)
+		public void Draw(float[] data, float height)
 		{
-			Rect rect = GUILayoutUtility.GetRect(EditorGUILayout.GetControlRect().width, aHeight);
+			Rect rect = GUILayoutUtility.GetRect(EditorGUILayout.GetControlRect().width, height);
 			float top = rect.y + yBorder;
 			float floor = rect.y + rect.height - yBorder;
 			float availableHeight = floor - top;
-			float max = (aData.Length != 0) ? aData.Max() : 0.0f;
+			float max = (data.Length != 0) ? data.Max() : 0.0f;
 			if (max % axisRounding != 0)
 			{
 				max = max + axisRounding - (max % axisRounding);
 			}
 
 			DrawGridLines(top, rect.width, availableHeight, max);
-			DrawAvg(aData, top, floor, rect.width, availableHeight, max);
-			DrawLine(aData, floor, rect.width, availableHeight, max);
+			DrawAvg(data, floor, rect.width, availableHeight, max);
+			DrawLine(data, floor, rect.width, availableHeight, max);
 		}
 
-		private void DrawGridLines(float aTop, float aWidth, float aAvailableHeight, float aMax)
+		private void DrawGridLines(float top, float width, float availableHeight, float max)
 		{
 			Color c = Handles.color;
 			Handles.color = Color.grey;
 			int n = gridLines + 1;
-			float lineSpacing = aAvailableHeight / n;
+			float lineSpacing = availableHeight / n;
 			for (int i = 0; i <= n; i++)
 			{
-				float lineY = aTop + (lineSpacing * i);
+				float lineY = top + (lineSpacing * i);
 				Handles.DrawLine(
 					new Vector2(xBorder, lineY),
-					new Vector2(aWidth - rightLinePadding, lineY)
+					new Vector2(width - rightLinePadding, lineY)
 				);
 
 				GUI.Label(
 					new Rect(0.0f, lineY - 8.0f, xBorder - 2.0f, 50.0f),
-					string.Format(axisFormat, aMax * (1.0f - ((float) i / (float) n))),
+					string.Format(axisFormat, max * (1.0f - (i / n))),
 					_labelTextStyle
 				);
 			}
 			Handles.color = c;
 		}
 
-		private void DrawAvg(float[] aData, float aTop, float aFloor, float aWidth, float aAvailableHeight, float aMax)
+		private void DrawAvg(float[] data, float floor, float width, float availableHeight, float max)
 		{
 			Color c = Handles.color;
 			Handles.color = Color.yellow;
 
-			float avg = aData.Average();
-			float lineY = aFloor - (aAvailableHeight * (avg / aMax));
+			float avg = data.Average();
+			float lineY = floor - (availableHeight * (avg / max));
 			Handles.DrawLine(
 				new Vector2(xBorder, lineY),
-				new Vector2(aWidth - rightLinePadding, lineY)
+				new Vector2(width - rightLinePadding, lineY)
 			);
 			Handles.color = c;
 		}
 
-		private void DrawLine(float[] aData, float aFloor, float aWidth, float aAvailableHeight, float aMax)
+		private void DrawLine(float[] data, float floor, float width, float availableHeight, float max)
 		{
-			float lineWidth = (float) (aWidth - xBorder - rightLinePadding) / aData.Length;
+			float lineWidth = (float) (width - xBorder - rightLinePadding) / data.Length;
 			Color c = Handles.color;
 			var labelRect = new Rect();
 			Vector2 newLine;
@@ -111,10 +111,10 @@ namespace Anthill.Core
 			Handles.matrix = Matrix4x4.identity;
 			HandleUtility.handleMaterial.SetPass(0);
 			
-			for (int i = 0, n = aData.Length; i < n; i++)
+			for (int i = 0, n = data.Length; i < n; i++)
 			{
-				float value = aData[i];
-				float lineTop = aFloor - (aAvailableHeight * (value / aMax));
+				float value = data[i];
+				float lineTop = floor - (availableHeight * (value / max));
 				newLine = new Vector2(xBorder + (lineWidth * i), lineTop);
 				_linePoints[i] = new Vector3(newLine.x, newLine.y, 0);
 				linePointScale = 1.0f;
@@ -144,7 +144,7 @@ namespace Anthill.Core
 			}
 
 			Handles.matrix = Matrix4x4.identity;
-			Handles.DrawAAPolyLine(2.0f, aData.Length, _linePoints);
+			Handles.DrawAAPolyLine(2.0f, data.Length, _linePoints);
 
 			if (mousePositionDiscovered)
 			{

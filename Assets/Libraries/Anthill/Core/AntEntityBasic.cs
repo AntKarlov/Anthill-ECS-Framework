@@ -1,23 +1,13 @@
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace Anthill.Core
 {
-	[AddComponentMenu("Anthill/Core/AntEntity")]
-	public class AntEntity : MonoBehaviour, IEntity
+	public class AntEntityBasic : IEntity
 	{
-	#region Public Variables
-
-		[Tooltip("If true, then entity can be added into ECS from AddFromHiearachy methods.")]
-		public bool allowToAddFromHierachy = true;
-	
-	#endregion
-
 	#region Private Variables
 
-		private bool _isMonoInitialized;
-		private List<object> _components = new();
+		private readonly List<object> _components;
 
 	#endregion
 
@@ -26,26 +16,21 @@ namespace Anthill.Core
 		/// <summary>
 		/// Return reference to the list with all components.
 		/// </summary>
-		public List<object> Components
-		{
-			get
-			{
-				SetupMonoComponents();
-				return _components;
-			}
-		}
+		public List<object> Components => _components;
 
 		/// <summary>
 		/// Returns component by index from the component list.
 		/// </summary>
-		public object this[int index]
+		public object this[int index] => index >= 0 && index < _components.Count ? _components[index] : null;
+
+	#endregion
+
+	#region Public Methods
+
+		public AntEntityBasic()
 		{
-			get
-			{
-				SetupMonoComponents();
-				return index >= 0 && index < _components.Count ? _components[index] : null;
-			}
-		} 
+			_components = new List<object>() { this };
+		}
 
 	#endregion
 
@@ -74,7 +59,7 @@ namespace Anthill.Core
 		/// <summary>
 		/// Determines if entity can be added into engine from AddFromHiearachy methods (Mono).
 		/// </summary>
-		public bool AllowToAddFromHierachy => allowToAddFromHierachy;
+		public bool AllowToAddFromHierachy => false;
 
 		/// <summary>
 		/// Determines is added into ECS engine.
@@ -88,7 +73,6 @@ namespace Anthill.Core
 		/// <returns>True if component exists.</returns>
 		public bool Has(Type componentType)
 		{
-			SetupMonoComponents();
 			return GetComponentIndex(componentType) >= 0;
 		}
 
@@ -99,7 +83,6 @@ namespace Anthill.Core
 		/// <returns>True if component exists.</returns>
 		public bool Has<T>() where T : class
 		{
-			SetupMonoComponents();
 			return GetComponentIndex<T>() >= 0;
 		}
 
@@ -110,7 +93,6 @@ namespace Anthill.Core
 		/// <returns>Reference on component or null if component not exists.</returns>
 		public object Get(Type componentType)
 		{
-			SetupMonoComponents();
 			int index = GetComponentIndex(componentType);
 			return index >= 0 && index < _components.Count ? _components[index] : null;
 		}
@@ -134,7 +116,6 @@ namespace Anthill.Core
 		/// <returns>Returns component or null if component not exists.</returns>
 		public T Get<T>() where T : class
 		{
-			SetupMonoComponents();
 			int index = GetComponentIndex<T>();
 			return index >= 0 && index < _components.Count ? (T) _components[index] : null;
 		}
@@ -159,7 +140,6 @@ namespace Anthill.Core
 		/// <returns>Returns reference to the added or existing component.</returns>
 		public object Add(object component)
 		{
-			SetupMonoComponents();
 			var type = component.GetType();
 			int index = GetComponentIndex(type);
 			if (index >= 0 && index < _components.Count)
@@ -167,19 +147,9 @@ namespace Anthill.Core
 				return _components[index];
 			}
 
-			if (type.IsSubclassOf(typeof(Component)))
-			{
-				var monoComponent = gameObject.AddComponent(type);
-				_components.Add(monoComponent);
-				EventComponentAdded?.Invoke(this, type);
-				return monoComponent;
-			}
-			else
-			{
-				_components.Add(component);
-				EventComponentAdded?.Invoke(this, type);
-				return component;
-			}
+			_components.Add(component);
+			EventComponentAdded?.Invoke(this, type);
+			return component;
 		}
 
 		/// <summary>
@@ -190,7 +160,6 @@ namespace Anthill.Core
 		/// <returns>Returns reference on the added or existing component.</returns>
 		public T Add<T>() where T : class
 		{
-			SetupMonoComponents();
 			int index = GetComponentIndex<T>();
 			if (index >= 0 && index < _components.Count)
 			{
@@ -198,20 +167,10 @@ namespace Anthill.Core
 			}
 
 			var type = typeof(T);
-			if (type.IsSubclassOf(typeof(Component)))
-			{
-				var monoComponent = gameObject.AddComponent(type);
-				_components.Add(monoComponent);
-				EventComponentAdded?.Invoke(this, type);
-				return monoComponent as T;
-			}
-			else
-			{
-				var component = Activator.CreateInstance<T>();
-				_components.Add(component);
-				EventComponentAdded?.Invoke(this, type);
-				return component;
-			}
+			var component = Activator.CreateInstance<T>();
+			_components.Add(component);
+			EventComponentAdded?.Invoke(this, type);
+			return component;
 		}
 
 		/// <summary>
@@ -221,27 +180,16 @@ namespace Anthill.Core
 		/// <returns>Returns reference on the removed component or null if component not existing.</returns>
 		public object Remove(object component)
 		{
-			SetupMonoComponents();
-			object result = null;
 			var type = component.GetType();
 			var index = GetComponentIndex(type);
 			if (index >= 0 && index < _components.Count)
 			{
-				if (component is Component monoComponent)
-				{
-					DestroyComponent(monoComponent);
-					result = monoComponent;
-				}
-				else
-				{
-					result = component;
-				}
-
 				_components.RemoveAt(index);
 				EventComponentRemoved?.Invoke(this, type);
+				return component;
 			}
 
-			return result;
+			return null;
 		}
 
 		/// <summary>
@@ -251,16 +199,10 @@ namespace Anthill.Core
 		/// <returns>Returns reference on the removed component or null if component not existing.</returns>
 		public T Remove<T>() where T : class
 		{
-			SetupMonoComponents();
 			int index = GetComponentIndex<T>();
 			if (index >= 0 && index < _components.Count)
 			{
 				var component = _components[index];
-				if (component is Component monoComponent)
-				{
-					DestroyComponent(monoComponent);
-				}
-
 				_components.RemoveAt(index);
 				EventComponentRemoved?.Invoke(this, component.GetType());
 				return (T) component;
@@ -302,28 +244,6 @@ namespace Anthill.Core
 	#endregion
 
 	#region Protected Methods
-
-		private void SetupMonoComponents()
-		{
-			if (_isMonoInitialized) return;
-			_isMonoInitialized = true;
-
-			var monoComponents = GetComponents<Component>();
-			_components = new List<object>();
-
-			for (int i = 0, n = monoComponents.Length; i < n; i++)
-			{
-				_components.Add(monoComponents[i]);
-			}
-
-			// Add GameObject as component in the list.
-			_components.Add(gameObject);
-		}
-
-		protected virtual void DestroyComponent(Component component)
-		{
-			Destroy(component);
-		}
 
 		private int GetComponentIndex<T>()
 		{

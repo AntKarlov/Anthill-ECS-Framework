@@ -112,7 +112,7 @@ namespace Anthill.Tweening
 			if (_isInitialized) return;
 			_isInitialized = true;
 			
-			_scenario = AntEngine.Add<AntTweeningScenario>(aPriority: -2);
+			_scenario = AntEngine.Add<AntTweeningScenario>(priority: -5);
 
 			try
 			{

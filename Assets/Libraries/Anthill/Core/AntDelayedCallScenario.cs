@@ -87,21 +87,21 @@ namespace Anthill.Core
 		/// <summary>
 		/// Adds new DelayedCall into list.
 		/// </summary>
-		/// <param name="aDelayedCall">Delayed call.</param>
-		public void Add(DelayedCall aDelayedCall)
+		/// <param name="delayedCall">Delayed call.</param>
+		public void Add(DelayedCall delayedCall)
 		{
 			if (_lockCount > 0)
 			{
 				_callPending.Add(
 					new KeyValuePair<DelayedCall, PendingChange>(
-						aDelayedCall,
+						delayedCall,
 						PendingChange.Add
 					)
 				);
 			}
 			else
 			{
-				_delayedCalls.Add(aDelayedCall);
+				_delayedCalls.Add(delayedCall);
 			}
 		}
 
@@ -109,22 +109,22 @@ namespace Anthill.Core
 		/// Removes DelaydCall from the list.
 		/// </summary>
 		/// <param name="aDelayedCall"></param>
-		public void Remove(DelayedCall aDelayedCall)
+		public void Remove(DelayedCall delayedCall)
 		{
 			if (_lockCount > 0)
 			{
 				_callPending.Add(
 					new KeyValuePair<DelayedCall, PendingChange>(
-						aDelayedCall,
+						delayedCall,
 						PendingChange.Remove
 					)
 				);
 			}
 			else
 			{
-				if (_delayedCalls.Contains(aDelayedCall))
+				if (_delayedCalls.Contains(delayedCall))
 				{
-					_delayedCalls.Remove(aDelayedCall);
+					_delayedCalls.Remove(delayedCall);
 				}
 			}
 		}

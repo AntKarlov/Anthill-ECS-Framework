@@ -5,10 +5,10 @@ namespace Anthill.Core
 		public T System { get; private set; }
 		public int Priority { get; private set; }
 
-		public AntPriorityPair(T aSystem, int aPriority)
+		public AntPriorityPair(T system, int priority)
 		{
-			System = aSystem;
-			Priority = aPriority;
+			System = system;
+			Priority = priority;
 		}
 	}
 }

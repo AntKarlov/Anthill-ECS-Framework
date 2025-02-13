@@ -19,7 +19,7 @@ namespace Anthill.Core
 			{
 				if (!_isInitialized)
 				{
-					_scenario = AntEngine.Add<AntDelayedCallScenario>(aPriority: -1);
+					_scenario = AntEngine.Add<AntDelayedCallScenario>(priority: -10);
 					_isInitialized = true;
 				}
 
@@ -34,13 +34,13 @@ namespace Anthill.Core
 		/// <summary>
 		/// Sets delayed call of specified action without arguments.
 		/// </summary>
-		/// <param name="aDelay">Delay in secodns before calling.</param>
-		/// <param name="aFunc">Reference to the method to call.</param>
-		public static DelayedCall Call(float aDelay, Action aFunc)
+		/// <param name="delay">Delay in secodns before calling.</param>
+		/// <param name="func">Reference to the method to call.</param>
+		public static DelayedCall Call(float delay, Action func)
 		{
 			var call = new DelayedCall();
-			call.SetProcess(aFunc);
-			call.delay = aDelay;
+			call.SetProcess(func);
+			call.delay = delay;
 			Scenario.Add(call);
 			return call;
 		}
@@ -48,16 +48,16 @@ namespace Anthill.Core
 		/// <summary>
 		/// Sets delayed call of specified action with one argument.
 		/// </summary>
-		/// <param name="aDelay">Delay in secodns before calling.</param>
-		/// <param name="aFunc">Reference to the method to call.</param>
-		/// <param name="aArg1">Argument for method.</param>
+		/// <param name="delay">Delay in secodns before calling.</param>
+		/// <param name="func">Reference to the method to call.</param>
+		/// <param name="arg1">Argument for method.</param>
 		/// <typeparam name="T1">Type of the argument.</typeparam>
-		public static DelayedCall Call<T1>(float aDelay, Action<T1> aFunc, T1 aArg1)
+		public static DelayedCall Call<T1>(float delay, Action<T1> func, T1 arg1)
 		{
 			var call = new DelayedCall<T1>();
-			call.SetProcess(aFunc);
-			call.SetArgumens(aArg1);
-			call.delay = aDelay;
+			call.SetProcess(func);
+			call.SetArgumens(arg1);
+			call.delay = delay;
 			Scenario.Add(call);
 			return call;
 		}
@@ -65,18 +65,18 @@ namespace Anthill.Core
 		/// <summary>
 		/// Sets delayed call of specified action with two arguments.
 		/// </summary>
-		/// <param name="aDelay">Delay in secodns before calling.</param>
-		/// <param name="aFunc">Reference to the method to call.</param>
-		/// <param name="aArg1">Argument one.</param>
-		/// <param name="aArg2">Argument two.</param>
+		/// <param name="delay">Delay in secodns before calling.</param>
+		/// <param name="func">Reference to the method to call.</param>
+		/// <param name="arg1">Argument one.</param>
+		/// <param name="arg2">Argument two.</param>
 		/// <typeparam name="T1">Type of the first argument.</typeparam>
 		/// <typeparam name="T2">Type of the second argument.</typeparam>
-		public static DelayedCall Call<T1, T2>(float aDelay, Action<T1, T2> aFunc, T1 aArg1, T2 aArg2)
+		public static DelayedCall Call<T1, T2>(float delay, Action<T1, T2> func, T1 arg1, T2 arg2)
 		{
 			var call = new DelayedCall<T1, T2>();
-			call.SetProcess(aFunc);
-			call.SetArgumens(aArg1, aArg2);
-			call.delay = aDelay;
+			call.SetProcess(func);
+			call.SetArgumens(arg1, arg2);
+			call.delay = delay;
 			Scenario.Add(call);
 			return call;
 		}
@@ -84,21 +84,21 @@ namespace Anthill.Core
 		/// <summary>
 		/// Sets delayed call of specified action with three arguments.
 		/// </summary>
-		/// <param name="aDelay">Delay in secodns before calling.</param>
-		/// <param name="aFunc">Reference to the method to call.</param>
-		/// <param name="aArg1">Argument one.</param>
-		/// <param name="aArg2">Argument two.</param>
-		/// <param name="aArg3"></param>
+		/// <param name="delay">Delay in secodns before calling.</param>
+		/// <param name="func">Reference to the method to call.</param>
+		/// <param name="arg1">Argument one.</param>
+		/// <param name="arg2">Argument two.</param>
+		/// <param name="arg3"></param>
 		/// <typeparam name="T1">Type of the first argument.</typeparam>
 		/// <typeparam name="T2">Type of the second argument.</typeparam>
 		/// <typeparam name="T3">Type of the third argument.</typeparam>
 		/// <returns></returns>
-		public static DelayedCall Call<T1, T2, T3>(float aDelay, Action<T1, T2, T3> aFunc, T1 aArg1, T2 aArg2, T3 aArg3)
+		public static DelayedCall Call<T1, T2, T3>(float delay, Action<T1, T2, T3> func, T1 arg1, T2 arg2, T3 arg3)
 		{
 			var call = new DelayedCall<T1, T2, T3>();
-			call.SetProcess(aFunc);
-			call.SetArgumens(aArg1, aArg2, aArg3);
-			call.delay = aDelay;
+			call.SetProcess(func);
+			call.SetArgumens(arg1, arg2, arg3);
+			call.delay = delay;
 			Scenario.Add(call);
 			return call;
 		}
@@ -106,23 +106,23 @@ namespace Anthill.Core
 		/// <summary>
 		/// Sets delayed call of specified action with four arguments.
 		/// </summary>
-		/// <param name="aDelay">Delay in secodns before calling.</param>
-		/// <param name="aFunc">Reference to the method to call.</param>
-		/// <param name="aArg1">Argument one.</param>
-		/// <param name="aArg2">Argument two.</param>
-		/// <param name="aArg3">Argument three.</param>
-		/// <param name="aArg4">Argument four.</param>
+		/// <param name="delay">Delay in secodns before calling.</param>
+		/// <param name="func">Reference to the method to call.</param>
+		/// <param name="arg1">Argument one.</param>
+		/// <param name="arg2">Argument two.</param>
+		/// <param name="arg3">Argument three.</param>
+		/// <param name="arg4">Argument four.</param>
 		/// <typeparam name="T1">Type of the first argument.</typeparam>
 		/// <typeparam name="T2">Type of the second argument.</typeparam>
 		/// <typeparam name="T3">Type of the third argument.</typeparam>
 		/// <typeparam name="T4">Type of the fourth argument.</typeparam>
 		/// <returns></returns>
-		public static DelayedCall Call<T1, T2, T3, T4>(float aDelay, Action<T1, T2, T3, T4> aFunc, T1 aArg1, T2 aArg2, T3 aArg3, T4 aArg4)
+		public static DelayedCall Call<T1, T2, T3, T4>(float delay, Action<T1, T2, T3, T4> func, T1 arg1, T2 arg2, T3 arg3, T4 arg4)
 		{
 			var call = new DelayedCall<T1, T2, T3, T4>();
-			call.SetProcess(aFunc);
-			call.SetArgumens(aArg1, aArg2, aArg3, aArg4);
-			call.delay = aDelay;
+			call.SetProcess(func);
+			call.SetArgumens(arg1, arg2, arg3, arg4);
+			call.delay = delay;
 			Scenario.Add(call);
 			return call;
 		}
@@ -141,9 +141,9 @@ namespace Anthill.Core
 		public bool IsUnscaledTime { get; private set; }
 		public bool IsKillOnDeinitialize { get; private set; }
 
-		public virtual bool Update(float aDeltaTime)
+		public virtual bool Update(float deltaTime)
 		{
-			delay -= aDeltaTime;
+			delay -= deltaTime;
 			if (delay <= 0.0f)
 			{
 				_process();
@@ -153,9 +153,9 @@ namespace Anthill.Core
 			return false;
 		}
 
-		public void SetProcess(Action aProcess)
+		public void SetProcess(Action process)
 		{
-			_process = aProcess;
+			_process = process;
 		}
 
 		public void Kill()
@@ -163,15 +163,15 @@ namespace Anthill.Core
 			AntDelayed.Scenario.Remove(this);
 		}
 
-		public DelayedCall SetUpdate(bool aIsUnscaledTime)
+		public DelayedCall SetUpdate(bool useUnscaledTime)
 		{
-			IsUnscaledTime = aIsUnscaledTime;
+			IsUnscaledTime = useUnscaledTime;
 			return this;
 		}
 
-		public DelayedCall SetKillOnDeinitialize(bool aValue)
+		public DelayedCall SetKillOnDeinitialize(bool kill)
 		{
-			IsKillOnDeinitialize = aValue;
+			IsKillOnDeinitialize = kill;
 			return this;
 		}
 	}
@@ -181,9 +181,9 @@ namespace Anthill.Core
 		private Action<T1> _process;
 		protected T1 _arg1;
 
-		public override bool Update(float aDeltaTime)
+		public override bool Update(float deltaTime)
 		{
-			delay -= aDeltaTime;
+			delay -= deltaTime;
 			if (delay <= 0.0f)
 			{
 				_process(_arg1);
@@ -193,14 +193,14 @@ namespace Anthill.Core
 			return false;
 		}
 
-		public void SetProcess(Action<T1> aProcess)
+		public void SetProcess(Action<T1> process)
 		{
-			_process = aProcess;
+			_process = process;
 		}
 
-		public void SetArgumens(T1 aArg1)
+		public void SetArgumens(T1 arg1)
 		{
-			_arg1 = aArg1;
+			_arg1 = arg1;
 		}
 	}
 
@@ -209,9 +209,9 @@ namespace Anthill.Core
 		private Action<T1, T2> _process;
 		protected T2 _arg2;
 
-		public override bool Update(float aDeltaTime)
+		public override bool Update(float deltaTime)
 		{
-			delay -= aDeltaTime;
+			delay -= deltaTime;
 			if (delay <= 0.0f)
 			{
 				_process(_arg1, _arg2);
@@ -221,15 +221,15 @@ namespace Anthill.Core
 			return false;
 		}
 
-		public void SetProcess(Action<T1, T2> aProcess)
+		public void SetProcess(Action<T1, T2> process)
 		{
-			_process = aProcess;
+			_process = process;
 		}
 
-		public void SetArgumens(T1 aArg1, T2 aArg2)
+		public void SetArgumens(T1 arg1, T2 arg2)
 		{
-			_arg1 = aArg1;
-			_arg2 = aArg2;
+			_arg1 = arg1;
+			_arg2 = arg2;
 		}
 	}
 
@@ -238,9 +238,9 @@ namespace Anthill.Core
 		private Action<T1, T2, T3> _process;
 		protected T3 _arg3;
 
-		public override bool Update(float aDeltaTime)
+		public override bool Update(float deltaTime)
 		{
-			delay -= aDeltaTime;
+			delay -= deltaTime;
 			if (delay <= 0.0f)
 			{
 				_process(_arg1, _arg2, _arg3);
@@ -250,16 +250,16 @@ namespace Anthill.Core
 			return false;
 		}
 
-		public void SetProcess(Action<T1, T2, T3> aProcess)
+		public void SetProcess(Action<T1, T2, T3> process)
 		{
-			_process = aProcess;
+			_process = process;
 		}
 
-		public void SetArgumens(T1 aArg1, T2 aArg2, T3 aArg3)
+		public void SetArgumens(T1 arg1, T2 arg2, T3 arg3)
 		{
-			_arg1 = aArg1;
-			_arg2 = aArg2;
-			_arg3 = aArg3;
+			_arg1 = arg1;
+			_arg2 = arg2;
+			_arg3 = arg3;
 		}
 	}
 
@@ -268,9 +268,9 @@ namespace Anthill.Core
 		private Action<T1, T2, T3, T4> _process;
 		protected T4 _arg4;
 
-		public override bool Update(float aDeltaTime)
+		public override bool Update(float deltaTime)
 		{
-			delay -= aDeltaTime;
+			delay -= deltaTime;
 			if (delay <= 0.0f)
 			{
 				_process(_arg1, _arg2, _arg3, _arg4);
@@ -280,17 +280,17 @@ namespace Anthill.Core
 			return false;
 		}
 
-		public void SetProcess(Action<T1, T2, T3, T4> aProcess)
+		public void SetProcess(Action<T1, T2, T3, T4> process)
 		{
-			_process = aProcess;
+			_process = process;
 		}
 
-		public void SetArgumens(T1 aArg1, T2 aArg2, T3 aArg3, T4 aArg4)
+		public void SetArgumens(T1 arg1, T2 arg2, T3 arg3, T4 arg4)
 		{
-			_arg1 = aArg1;
-			_arg2 = aArg2;
-			_arg3 = aArg3;
-			_arg4 = aArg4;
+			_arg1 = arg1;
+			_arg2 = arg2;
+			_arg3 = arg3;
+			_arg4 = arg4;
 		}
 	}
 }

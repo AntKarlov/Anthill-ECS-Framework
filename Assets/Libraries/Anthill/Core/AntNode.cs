@@ -2,7 +2,7 @@ namespace Anthill.Core
 {
 	public class AntNode
 	{
-		public AntEntity Entity { get; set; }
+		public IEntity Entity { get; set; }
 	}
 
 	public class AntNode<T> : AntNode

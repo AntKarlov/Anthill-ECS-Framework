@@ -69,3 +69,15 @@ The following packages were updated:
   com.unity.ide.vscode from version 1.2.2 to 1.2.5
   com.unity.test-framework from version 1.1.18 to 1.1.31
   com.unity.timeline from version 1.2.16 to 1.4.8
+
+=== Wed Feb 12 21:12:33 2025
+
+Packages were changed.
+Update Mode: updateDependencies
+
+The following packages were added:
+  com.unity.ai.navigation@1.1.5
+The following packages were updated:
+  com.unity.ide.visualstudio from version 2.0.14 to 2.0.22
+  com.unity.test-framework from version 1.1.31 to 1.1.33
+  com.unity.timeline from version 1.4.8 to 1.7.6

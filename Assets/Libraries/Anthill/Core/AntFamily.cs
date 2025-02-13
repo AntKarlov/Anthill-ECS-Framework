@@ -10,8 +10,9 @@ namespace Anthill.Core
 	#region Private Variables
 
 		private readonly AntNodeList<T> _nodes;
-		private readonly Dictionary<AntEntity, T> _entities;
+		private readonly Dictionary<IEntity, T> _entities;
 		private readonly Dictionary<Type, PropertyInfo> _components;
+		private readonly Type[] _excludeTypes;
 		private readonly AntNodePool<T> _pool;
 
 	#endregion
@@ -27,46 +28,61 @@ namespace Anthill.Core
 
 	#region Public Methods
 
-		public AntFamily(AntNodePool<T> aPool = null)
+		public AntFamily(AntNodePool<T> pool = null)
 		{
 			_nodes = new AntNodeList<T>();
-			_entities = new Dictionary<AntEntity, T>();
-			_pool = aPool ?? new AntNodePool<T>();
+			_entities = new Dictionary<IEntity, T>();
+			_pool = pool ?? new AntNodePool<T>();
 
 			var type = typeof(T);
+			var excludeAttr = type.GetCustomAttribute<ExcludeAttribute>();
+			_excludeTypes = excludeAttr != null ? excludeAttr.excludeTypes : Array.Empty<Type>();
+
 			_components = type.GetProperties()
 				.ToDictionary(propInfo => propInfo.PropertyType, propInfo => propInfo);
 		}
 
-		public void ComponentAdded(AntEntity aEntity, Type aComponentType)
+		public void ComponentAdded(IEntity entity, Type componentType)
 		{
-			if (!_entities.ContainsKey(aEntity))
+			if (_entities.ContainsKey(entity) && HasExclude(componentType))
 			{
-				AddEntity(aEntity);
+				RemoveEntity(entity);
+				return;
+			}
+
+			if (!_entities.ContainsKey(entity))
+			{
+				AddEntity(entity);
 			}
 		}
 
-		public void ComponentRemoved(AntEntity aEntity, Type aComponentType)
+		public void ComponentRemoved(IEntity entity, Type componentType)
 		{
-			if (_entities.ContainsKey(aEntity) && _components.ContainsKey(aComponentType))
+			if (_entities.ContainsKey(entity) && HasComponent(componentType))
 			{
-				RemoveEntity(aEntity);
+				RemoveEntity(entity);
+				return;
+			}
+
+			if (!_entities.ContainsKey(entity) && HasExclude(componentType))
+			{
+				AddEntity(entity);
 			}
 		}
 
-		public void EntityAdded(AntEntity aEntity)
+		public void EntityAdded(IEntity entity)
 		{
-			if (!_entities.ContainsKey(aEntity))
+			if (!_entities.ContainsKey(entity))
 			{
-				AddEntity(aEntity);
+				AddEntity(entity);
 			}
 		}
 
-		public void EntityRemoved(AntEntity aEntity)
+		public void EntityRemoved(IEntity entity)
 		{
-			if (_entities.ContainsKey(aEntity))
+			if (_entities.ContainsKey(entity))
 			{
-				RemoveEntity(aEntity);
+				RemoveEntity(entity);
 			}
 		}
 
@@ -74,33 +90,67 @@ namespace Anthill.Core
 
 	#region Private Methods
 
-		private void AddEntity(AntEntity aEntity)
+		private void AddEntity(IEntity entity)
 		{
+			foreach (var excludeComponent in _excludeTypes)
+			{
+				if (entity.Has(excludeComponent))
+				{
+					return;
+				}
+			}
+
 			foreach (var pair in _components)
 			{
-				if (!aEntity.Has(pair.Key))
+				if (!entity.Has(pair.Key))
 				{
 					return;
 				}
 			}
 
 			var node = _pool.Get();
-			_entities[aEntity] = node;
+			_entities[entity] = node;
 
 			foreach (var pair in _components)
 			{
-				pair.Value.SetValue(node, aEntity.Get(pair.Key), null);
+				pair.Value.SetValue(node, entity.Get(pair.Key), null);
 			}
 
 			_nodes.Add(node);
 		}
 
-		private void RemoveEntity(AntEntity aEntity)
+		private void RemoveEntity(IEntity entity)
 		{
-			var node = _entities[aEntity];
+			var node = _entities[entity];
 			_pool.Add(node);
-			_entities.Remove(aEntity);
+			_entities.Remove(entity);
 			_nodes.Remove(node);
+		}
+
+		private bool HasComponent(Type componentType)
+		{
+			foreach (var pair in _components)
+			{
+				if (pair.Key.Equals(componentType) || pair.Key.IsAssignableFrom(componentType))
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		private bool HasExclude(Type componentType)
+		{
+			for (int i = 0, n = _excludeTypes.Length; i < n; i++)
+			{
+				if (_excludeTypes[i].Equals(componentType))
+				{
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 	#endregion
