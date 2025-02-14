@@ -1,9 +1,9 @@
+using UnityEngine;
+using Anthill.Tasks;
+using Anthill.Core;
+
 namespace Anthill
 {
-	using UnityEngine;
-	using Anthill.Tasks;
-	using Anthill.Core;
-	
 	public class TestTaskManager : MonoBehaviour
 	{
 		public Transform fromRef;
