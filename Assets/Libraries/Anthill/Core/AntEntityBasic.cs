@@ -5,13 +5,15 @@ namespace Anthill.Core
 {
 	public class AntEntityBasic : IEntity
 	{
-	#region Private Variables
+		// -----------------------------------------------------
+		// Private Variables
+		// -----------------------------------------------------
 
 		private readonly List<object> _components;
 
-	#endregion
-
-	#region Getters Setters
+		// -----------------------------------------------------
+		// Getters Setters
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Return reference to the list with all components.
@@ -23,18 +25,18 @@ namespace Anthill.Core
 		/// </summary>
 		public object this[int index] => index >= 0 && index < _components.Count ? _components[index] : null;
 
-	#endregion
-
-	#region Public Methods
+		// -----------------------------------------------------
+		// Public Methods
+		// -----------------------------------------------------
 
 		public AntEntityBasic()
 		{
 			_components = new List<object>() { this };
 		}
 
-	#endregion
-
-	#region IEntity Implementation
+		// -----------------------------------------------------
+		// IEntity Implementation
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Called when added new component on the entity.
@@ -117,7 +119,7 @@ namespace Anthill.Core
 		public T Get<T>() where T : class
 		{
 			int index = GetComponentIndex<T>();
-			return index >= 0 && index < _components.Count ? (T) _components[index] : null;
+			return index >= 0 && index < _components.Count ? (T)_components[index] : null;
 		}
 
 		/// <summary>
@@ -163,7 +165,7 @@ namespace Anthill.Core
 			int index = GetComponentIndex<T>();
 			if (index >= 0 && index < _components.Count)
 			{
-				return (T) _components[index];
+				return (T)_components[index];
 			}
 
 			var type = typeof(T);
@@ -205,7 +207,7 @@ namespace Anthill.Core
 				var component = _components[index];
 				_components.RemoveAt(index);
 				EventComponentRemoved?.Invoke(this, component.GetType());
-				return (T) component;
+				return (T)component;
 			}
 
 			return default;
@@ -241,9 +243,9 @@ namespace Anthill.Core
 			EventRemovedFromEngine?.Invoke(this);
 		}
 
-	#endregion
-
-	#region Protected Methods
+		// -----------------------------------------------------
+		// Protected Methods
+		// -----------------------------------------------------
 
 		private int GetComponentIndex<T>()
 		{
@@ -271,7 +273,5 @@ namespace Anthill.Core
 
 			return -1;
 		}
-
-	#endregion
 	}
 }

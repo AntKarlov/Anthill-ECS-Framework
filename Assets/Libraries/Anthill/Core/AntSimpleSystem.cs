@@ -2,7 +2,9 @@ namespace Anthill.Core
 {
 	public class AntSimpleSystem : ISystem, IExecuteSystem
 	{
-	#region ISystem Implementation
+		// -----------------------------------------------------
+		// ISystem Implementation
+		// -----------------------------------------------------
 
 		public virtual void AddedToEngine()
 		{
@@ -14,22 +16,20 @@ namespace Anthill.Core
 			// ..
 		}
 
-	#endregion
+		// -----------------------------------------------------
+		// IExecuteSystem Implementation
+		// -----------------------------------------------------
 
-	#region IExecuteSystem Implementation
-		
 		public virtual void Execute()
 		{
 			// ..
 		}
-
-	#endregion
 	}
 
 	public class AntSimpleSystem<T1> : AntSimpleSystem
 	{
 		private AntNodeList<AntNode<T1>> _nodes;
-		
+
 		public override void AddedToEngine()
 		{
 			_nodes = AntEngine.GetNodes<AntNode<T1>>();

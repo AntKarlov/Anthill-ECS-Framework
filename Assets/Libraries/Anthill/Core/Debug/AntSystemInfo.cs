@@ -4,7 +4,9 @@ namespace Anthill.Core
 {
 	public class AntSystemInfo
 	{
-	#region Public Variables
+		// -----------------------------------------------------
+		// Public Variables
+		// -----------------------------------------------------
 
 		public bool isActive;
 
@@ -13,9 +15,9 @@ namespace Anthill.Core
 		public bool IsInitializeSystem { get; private set; }
 		public bool IsExecuteSystem { get; private set; }
 
-	#endregion
-
-	#region Private Variables
+		// -----------------------------------------------------
+		// Private Variables
+		// -----------------------------------------------------
 
 		private double _accumulatedExecutionDuration;
 		private double _minExecutionDuration;
@@ -24,17 +26,17 @@ namespace Anthill.Core
 
 		private const string SYSTEM_SUFFIX = "System";
 
-	#endregion
-
-	#region Getters / Setters
+		// -----------------------------------------------------
+		// Getters / Setters
+		// -----------------------------------------------------
 
 		public double AverageExecutionDuration => (_durationCount == 0) ? 0 : _accumulatedExecutionDuration / _durationCount;
 		public double MinExecutionDuration => _minExecutionDuration;
 		public double MaxExecutionDuration => _maxExecutionDuration;
 
-	#endregion
-
-	#region Public Methods
+		// -----------------------------------------------------
+		// Public Methods
+		// -----------------------------------------------------
 
 		public AntSystemInfo(ISystem system)
 		{
@@ -59,8 +61,8 @@ namespace Anthill.Core
 			{
 				Type systemType = system.GetType();
 				Name = systemType.Name.EndsWith(SYSTEM_SUFFIX, StringComparison.Ordinal)
-                    ? systemType.Name.Substring(0, systemType.Name.Length - SYSTEM_SUFFIX.Length)
-                    : systemType.Name;
+					? systemType.Name.Substring(0, systemType.Name.Length - SYSTEM_SUFFIX.Length)
+					: systemType.Name;
 			}
 		}
 
@@ -84,10 +86,8 @@ namespace Anthill.Core
 			_accumulatedExecutionDuration = 0.0f;
 			_durationCount = 0;
 
-			var debugScenario = (AntDebugScenario) System;
+			var debugScenario = (AntDebugScenario)System;
 			debugScenario?.ResetDurations();
 		}
-
-	#endregion
 	}
 }

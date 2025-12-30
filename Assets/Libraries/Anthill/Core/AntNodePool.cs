@@ -5,13 +5,15 @@ namespace Anthill.Core
 {
 	public class AntNodePool<T>
 	{
-	#region Private Variables
+		// -----------------------------------------------------
+		// Private Variables
+		// -----------------------------------------------------
 
 		private readonly List<T> _availList;
 
-	#endregion
-	
-	#region Public Methods
+		// -----------------------------------------------------
+		// Public Methods
+		// -----------------------------------------------------
 
 		public AntNodePool()
 		{
@@ -33,11 +35,9 @@ namespace Anthill.Core
 			}
 			else
 			{
-				result = Activator.CreateInstance<T>(); 
+				result = Activator.CreateInstance<T>();
 			}
 			return result;
 		}
-
-	#endregion
 	}
 }

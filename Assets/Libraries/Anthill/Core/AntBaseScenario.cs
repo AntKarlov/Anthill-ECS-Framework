@@ -8,7 +8,9 @@ namespace Anthill.Core
 	public class AntBaseScenario : ISystem, IInitializeSystem, IDeinitializeSystem, IExecuteSystem,
 		IExecuteFixedSystem, IExecuteLateSystem, ICleanupSystem, IEnableSystem, IDisableSystem, IResetSystem
 	{
-	#region Private Variables
+		// -----------------------------------------------------
+		// Private Variables
+		// -----------------------------------------------------
 
 		protected enum PendingChange
 		{
@@ -31,9 +33,9 @@ namespace Anthill.Core
 		protected List<AntPriorityPair<IResetSystem>> _resetSystems;
 		protected List<KeyValuePair<AntPriorityPair<ISystem>, PendingChange>> _pending;
 
-	#endregion
-
-	#region Getters Setters
+		// -----------------------------------------------------
+		// Getters Setters
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Name of the scenario, uses for the debug states.
@@ -45,9 +47,9 @@ namespace Anthill.Core
 		/// </summary>
 		public bool IsLocked => _lockCount > 0;
 
-	#endregion
-
-	#region Public Methods
+		// -----------------------------------------------------
+		// Public Methods
+		// -----------------------------------------------------
 
 		public AntBaseScenario(string name)
 		{
@@ -89,9 +91,9 @@ namespace Anthill.Core
 		{
 			Type type = typeof(T);
 			ConstructorInfo constructor = type.GetConstructor(Type.EmptyTypes);
-			var system = (ISystem) constructor.Invoke(null);
+			var system = (ISystem)constructor.Invoke(null);
 			// A.Assert(system == null, $"Class `{type.ToString()}` not implemented <b>ISystem</b> interface!");
-			return (T) Add(system, priority);
+			return (T)Add(system, priority);
 		}
 
 		/// <summary>
@@ -106,7 +108,7 @@ namespace Anthill.Core
 			{
 				_pending.Add(
 					new KeyValuePair<AntPriorityPair<ISystem>, PendingChange>(
-						new AntPriorityPair<ISystem>(system, priority), 
+						new AntPriorityPair<ISystem>(system, priority),
 						PendingChange.Add
 					)
 				);
@@ -170,7 +172,7 @@ namespace Anthill.Core
 				_resetSystems.Add(new AntPriorityPair<IResetSystem>(resetSystem, priority));
 				_resetSystems = _resetSystems.OrderBy(x => x.Priority).ToList();
 			}
-			
+
 			system.AddedToEngine();
 			return system;
 		}
@@ -199,7 +201,7 @@ namespace Anthill.Core
 			{
 				_initializeSystems.RemoveAll(x => Object.ReferenceEquals(x.System, initializeSystem));
 			}
-			
+
 			if (system is IDeinitializeSystem deinitializeSystem)
 			{
 				_deinitializeSystems.RemoveAll(x => Object.ReferenceEquals(x.System, deinitializeSystem));
@@ -265,7 +267,7 @@ namespace Anthill.Core
 		{
 			int index = _systems.FindIndex(x => x.System is T);
 			return (index >= 0 && index < _systems.Count)
-				? (T) _systems[index].System
+				? (T)_systems[index].System
 				: default;
 		}
 
@@ -280,17 +282,17 @@ namespace Anthill.Core
 			int index = _systems.FindIndex(x => x.System is T);
 			if (index >= 0 && index < _systems.Count)
 			{
-				component = (T) _systems[index].System;
+				component = (T)_systems[index].System;
 				return true;
 			}
-			
+
 			component = default;
 			return false;
 		}
 
-	#endregion
-
-	#region Protected Methods
+		// -----------------------------------------------------
+		// Protected Methods
+		// -----------------------------------------------------
 
 		private void Lock()
 		{
@@ -326,9 +328,9 @@ namespace Anthill.Core
 			_pending.Clear();
 		}
 
-	#endregion
-
-	#region ISystem Implementation
+		// -----------------------------------------------------
+		// ISystem Implementation
+		// -----------------------------------------------------
 
 		public virtual void AddedToEngine()
 		{
@@ -340,9 +342,9 @@ namespace Anthill.Core
 			// ..
 		}
 
-	#endregion
-
-	#region IInitializeSystem Implementation
+		// -----------------------------------------------------
+		// IInitializeSystem Implementation
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Initializes all IInitializeSystem systems.
@@ -355,9 +357,9 @@ namespace Anthill.Core
 			}
 		}
 
-	#endregion
-
-	#region IDeinitializeSystem Implementation
+		// -----------------------------------------------------
+		// IDeinitializeSystem Implementation
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Deinitializes all IDeinitializeSystem systems.
@@ -370,10 +372,10 @@ namespace Anthill.Core
 			}
 		}
 
-	#endregion
+		// -----------------------------------------------------
+		// IExecuteSystem Implementation
+		// -----------------------------------------------------
 
-	#region IExecuteSystem Implementation
-		
 		/// <summary>
 		/// Executes all IExecuteSystem systems.
 		/// </summary>
@@ -388,10 +390,10 @@ namespace Anthill.Core
 			}
 		}
 
-	#endregion
+		// -----------------------------------------------------
+		// IExecuteFixed Implementation
+		// -----------------------------------------------------
 
-	#region IExecuteFixed Implementation
-		
 		/// <summary>
 		/// Executes all IExecuteFixedSystem systems.
 		/// </summary>
@@ -405,10 +407,10 @@ namespace Anthill.Core
 				}
 			}
 		}
-		
-	#endregion
 
-	#region IExecuteLate Implementation
+		// -----------------------------------------------------
+		// IExecuteLate Implementation
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Executes all IExecuteLateSystem systems.
@@ -424,9 +426,9 @@ namespace Anthill.Core
 			}
 		}
 
-	#endregion
-
-	#region ICleanupSystem Implementation
+		// -----------------------------------------------------
+		// ICleanupSystem Implementation
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Cleanups all ICleanupSystem systems.
@@ -442,9 +444,9 @@ namespace Anthill.Core
 			}
 		}
 
-	#endregion
-
-	#region IDisableSystem Implementation
+		// -----------------------------------------------------
+		// IDisableSystem Implementation
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Disable all IDisableSystem systems.
@@ -459,9 +461,9 @@ namespace Anthill.Core
 			_enabled = false;
 		}
 
-	#endregion
-
-	#region IEnableSystem Implementation
+		// -----------------------------------------------------
+		// IEnableSystem Implementation
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Enable all IEnableSystem systems.
@@ -476,10 +478,10 @@ namespace Anthill.Core
 			_enabled = true;
 		}
 
-	#endregion
+		// -----------------------------------------------------
+		// IResetSystem Implementation
+		// -----------------------------------------------------
 
-	#region IResetSystem Implementation
-		
 		/// <summary>
 		/// Reset all IResetSystem systems.
 		/// </summary>
@@ -490,7 +492,5 @@ namespace Anthill.Core
 				_resetSystems[i].System.Reset();
 			}
 		}
-		
-	#endregion
 	}
 }

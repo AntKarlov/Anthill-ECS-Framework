@@ -7,24 +7,26 @@ namespace Anthill.Core
 	[CustomEditor(typeof(AntEntity))]
 	public class AntEntityEditor : UnityEditor.Editor
 	{
-	#region Private Variables
+		// -----------------------------------------------------
+		// Private Variables
+		// -----------------------------------------------------
 
 		private AntEntity _self;
 		private bool _isFoldout;
 
-	#endregion
-	
-	#region Unity Calls
-	
+		// -----------------------------------------------------
+		// Unity Calls
+		// -----------------------------------------------------
+
 		private void OnEnable()
 		{
-			_self = (AntEntity) target;
+			_self = (AntEntity)target;
 		}
-	
+
 		public override void OnInspectorGUI()
 		{
 			base.OnInspectorGUI();
-			
+
 			GUILayout.Space(10.0f);
 			EditorGUILayout.LabelField("Debug", EditorStyles.boldLabel);
 			GUI.enabled = false;
@@ -58,7 +60,5 @@ namespace Anthill.Core
 				}
 			}
 		}
-	
-	#endregion
 	}
 }

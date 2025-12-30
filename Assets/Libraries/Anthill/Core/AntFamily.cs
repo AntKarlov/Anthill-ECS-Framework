@@ -7,7 +7,9 @@ namespace Anthill.Core
 {
 	public class AntFamily<T> : IFamily<T>
 	{
-	#region Private Variables
+		// -----------------------------------------------------
+		// Private Variables
+		// -----------------------------------------------------
 
 		private readonly AntNodeList<T> _nodes;
 		private readonly Dictionary<IEntity, T> _entities;
@@ -15,18 +17,18 @@ namespace Anthill.Core
 		private readonly Type[] _excludeTypes;
 		private readonly AntNodePool<T> _pool;
 
-	#endregion
-
-	#region Getters / Setters
+		// -----------------------------------------------------
+		// Getters / Setters
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// List of nodes.
 		/// </summary>
 		public AntNodeList<T> Nodes => _nodes;
 
-	#endregion
-
-	#region Public Methods
+		// -----------------------------------------------------
+		// Public Methods
+		// -----------------------------------------------------
 
 		public AntFamily(AntNodePool<T> pool = null)
 		{
@@ -86,9 +88,9 @@ namespace Anthill.Core
 			}
 		}
 
-	#endregion
-
-	#region Private Methods
+		// -----------------------------------------------------
+		// Private Methods
+		// -----------------------------------------------------
 
 		private void AddEntity(IEntity entity)
 		{
@@ -152,7 +154,5 @@ namespace Anthill.Core
 
 			return false;
 		}
-
-	#endregion
 	}
 }

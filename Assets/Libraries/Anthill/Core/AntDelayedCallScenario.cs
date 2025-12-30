@@ -5,15 +5,17 @@ namespace Anthill.Core
 {
 	public class AntDelayedCallScenario : AntScenario
 	{
-	#region Private Variables
+		// -----------------------------------------------------
+		// Private Variables
+		// -----------------------------------------------------
 
 		private int _lockCount;
 		private List<DelayedCall> _delayedCalls;
 		private List<KeyValuePair<DelayedCall, PendingChange>> _callPending;
 
-	#endregion
-
-	#region Public Methods
+		// -----------------------------------------------------
+		// Public Methods
+		// -----------------------------------------------------
 
 		public AntDelayedCallScenario() : base("Delayed Call Scenario")
 		{
@@ -32,7 +34,7 @@ namespace Anthill.Core
 			base.RemovedFromEngine();
 			_callPending.Clear();
 			_callPending = null;
-			
+
 			_delayedCalls.Clear();
 			_delayedCalls = null;
 		}
@@ -136,10 +138,10 @@ namespace Anthill.Core
 		{
 			_delayedCalls.Clear();
 		}
-	
-	#endregion
 
-	#region Private Methods
+		// -----------------------------------------------------
+		// Private Methods
+		// -----------------------------------------------------
 
 		private void Lock()
 		{
@@ -174,7 +176,5 @@ namespace Anthill.Core
 
 			_callPending.Clear();
 		}
-
-	#endregion
 	}
 }

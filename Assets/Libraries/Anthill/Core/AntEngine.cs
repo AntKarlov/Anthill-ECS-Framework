@@ -6,24 +6,26 @@ namespace Anthill.Core
 {
 	public class AntEngine
 	{
-	#region Public Variables
+		// -----------------------------------------------------
+		// Public Variables
+		// -----------------------------------------------------
 
 		public static readonly int InitialEntityListSize = 128;
 		public static readonly int InitialNodeListSize = 128;
 
-	#endregion
-
-	#region Private Variables
+		// -----------------------------------------------------
+		// Private Variables
+		// -----------------------------------------------------
 
 		private static readonly Dictionary<Type, IFamily> _families = new();
 		private static readonly List<IEntity> _entities = new(InitialEntityListSize);
 		private static AntScenario _scenario = new();
 		private static int _currentAvailPriority = 0;
 
-	#endregion
+		// -----------------------------------------------------
+		// Getters / Setters
+		// -----------------------------------------------------
 
-	#region Getters / Setters
-		
 		public static AntScenario Scenario
 		{
 			get => _scenario;
@@ -31,10 +33,10 @@ namespace Anthill.Core
 		}
 
 		public static List<IEntity> Entities => _entities;
-		
-	#endregion
 
-	#region Public Methods
+		// -----------------------------------------------------
+		// Public Methods
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Adds all entities from existing GameObject on the scene.
@@ -217,7 +219,7 @@ namespace Anthill.Core
 			}
 			else
 			{
-				family = (AntFamily<T>) _families[type];
+				family = (AntFamily<T>)_families[type];
 			}
 
 			return family.Nodes;
@@ -315,7 +317,7 @@ namespace Anthill.Core
 		{
 			Scenario.Deinitialize();
 		}
-		
+
 		/// <summary>
 		/// Executes all IExecuteSystem systems.
 		/// </summary>
@@ -323,7 +325,7 @@ namespace Anthill.Core
 		{
 			Scenario.Execute();
 		}
-		
+
 		/// <summary>
 		/// Executes all IExecuteFixedSystem systems.
 		/// </summary>
@@ -363,7 +365,7 @@ namespace Anthill.Core
 		{
 			Scenario.Enable();
 		}
-		
+
 		/// <summary>
 		/// Reset all IResetSystem systems.
 		/// </summary>
@@ -372,9 +374,9 @@ namespace Anthill.Core
 			Scenario.Reset();
 		}
 
-	#endregion
-
-	#region Event Handlers
+		// -----------------------------------------------------
+		// Event Handlers
+		// -----------------------------------------------------
 
 		private static void OnComponentAdded(IEntity entity, Type component)
 		{
@@ -391,7 +393,5 @@ namespace Anthill.Core
 				pair.Value.ComponentRemoved(entity, component);
 			}
 		}
-
-	#endregion
 	}
 }

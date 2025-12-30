@@ -5,7 +5,9 @@ namespace Anthill.Core
 {
 	public class AntNodeList<T>
 	{
-	#region Public Variables
+		// -----------------------------------------------------
+		// Public Variables
+		// -----------------------------------------------------
 
 		public delegate void NodeChangeDelegate(T node);
 
@@ -19,24 +21,24 @@ namespace Anthill.Core
 		/// </summary>
 		public event NodeChangeDelegate EventNodeRemoved;
 
-	#endregion
-
-	#region Private Variables
+		// -----------------------------------------------------
+		// Private Variables
+		// -----------------------------------------------------
 
 		internal enum PendingChange
 		{
 			Add,
 			Remove
 		}
-		
+
 		private readonly List<T> _nodes;
 		private int _count;
 		private readonly List<KeyValuePair<T, PendingChange>> _pending;
 		private int _lockCount;
 
-	#endregion
-
-	#region Getters / Setters
+		// -----------------------------------------------------
+		// Getters / Setters
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Returns first element of the list or null if list is empty.
@@ -63,9 +65,9 @@ namespace Anthill.Core
 		/// </summary>
 		public bool IsLocked => _lockCount > 0;
 
-	#endregion
-
-	#region Public Methods
+		// -----------------------------------------------------
+		// Public Methods
+		// -----------------------------------------------------
 
 		public AntNodeList()
 		{
@@ -101,7 +103,7 @@ namespace Anthill.Core
 				_pending.Add(new KeyValuePair<T, PendingChange>(node, PendingChange.Remove));
 				return;
 			}
-				
+
 			EventNodeRemoved?.Invoke(node);
 			_nodes.Remove(node);
 			_count--;
@@ -140,9 +142,9 @@ namespace Anthill.Core
 			}
 		}
 
-	#endregion
-
-	#region Private Methods
+		// -----------------------------------------------------
+		// Private Methods
+		// -----------------------------------------------------
 
 		private void ApplyPending()
 		{
@@ -162,7 +164,5 @@ namespace Anthill.Core
 
 			_pending.Clear();
 		}
-
-	#endregion
 	}
 }

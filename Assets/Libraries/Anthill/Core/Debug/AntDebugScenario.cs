@@ -17,14 +17,16 @@ namespace Anthill.Core
 
 	public class AntDebugScenario : AntBaseScenario
 	{
-	#region Public Variables
+		// -----------------------------------------------------
+		// Public Variables
+		// -----------------------------------------------------
 
 		public static AvgResetDuration avgResetDuration = AvgResetDuration.Never;
 		public bool isPaused;
 
-	#endregion
-
-	#region Private Variables
+		// -----------------------------------------------------
+		// Private Variables
+		// -----------------------------------------------------
 
 		private readonly GameObject _container;
 		private double _totalDuration;
@@ -33,13 +35,13 @@ namespace Anthill.Core
 		private readonly List<AntSystemInfo> _executeSystemsInfos;
 
 		private readonly StringBuilder _stringBuilder = new();
-		private readonly static string[] _numbers = new string[] 
+		private readonly static string[] _numbers = new string[]
 		{
-			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", 
-			"19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35", 
-			"36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52", 
-			"53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69", 
-			"70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86", 
+			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18",
+			"19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32", "33", "34", "35",
+			"36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46", "47", "48", "49", "50", "51", "52",
+			"53", "54", "55", "56", "57", "58", "59", "60", "61", "62", "63", "64", "65", "66", "67", "68", "69",
+			"70", "71", "72", "73", "74", "75", "76", "77", "78", "79", "80", "81", "82", "83", "84", "85", "86",
 			"87", "88", "89", "90", "91", "92", "93", "94", "95", "96", "97", "98", "99", "100"
 		};
 
@@ -47,9 +49,9 @@ namespace Anthill.Core
 		private readonly float _updateInterval = 0.25f;
 		private readonly bool _isInit;
 
-	#endregion
-
-	#region Getters / Setters
+		// -----------------------------------------------------
+		// Getters / Setters
+		// -----------------------------------------------------
 
 		public GameObject Container => _container;
 		public int InitializeSystemsCount => _initializeSystems.Count;
@@ -100,9 +102,9 @@ namespace Anthill.Core
 		public List<AntSystemInfo> InitializeSystemsInfos => _initializeSystemsInfos;
 		public List<AntSystemInfo> ExecuteSystemInfos => _executeSystemsInfos;
 
-	#endregion
-
-	#region Public Methods
+		// -----------------------------------------------------
+		// Public Methods
+		// -----------------------------------------------------
 
 		public AntDebugScenario(string name) : base(name)
 		{
@@ -184,7 +186,7 @@ namespace Anthill.Core
 		public void Step()
 		{
 			_totalDuration = 0;
-			if (Time.frameCount % (int) avgResetDuration == 0)
+			if (Time.frameCount % (int)avgResetDuration == 0)
 			{
 				ResetDurations();
 			}
@@ -224,14 +226,14 @@ namespace Anthill.Core
 			}
 		}
 
-	#endregion
-
-	#region Private Methods
+		// -----------------------------------------------------
+		// Private Methods
+		// -----------------------------------------------------
 
 		private void UpdateName()
 		{
 			if (!_isInit) return;
-			
+
 			_stringBuilder.Append(Name)
 				.Append(" (")
 				.Append((_initializeSystems.Count <= 100) ? _numbers[_initializeSystems.Count] : ">100")
@@ -271,7 +273,5 @@ namespace Anthill.Core
 			_stopwatch.Stop();
 			return _stopwatch.Elapsed.TotalMilliseconds;
 		}
-
-	#endregion
 	}
 }

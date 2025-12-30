@@ -7,21 +7,23 @@ namespace Anthill.Core
 	[AddComponentMenu("Anthill/Core/AntEntity")]
 	public class AntEntity : MonoBehaviour, IEntity
 	{
-	#region Public Variables
+		// -----------------------------------------------------
+		// Public Variables
+		// -----------------------------------------------------
 
 		[Tooltip("If true, then entity can be added into ECS from AddFromHiearachy methods.")]
 		public bool allowToAddFromHierachy = true;
-	
-	#endregion
 
-	#region Private Variables
+		// -----------------------------------------------------
+		// Private Variables
+		// -----------------------------------------------------
 
 		private bool _isMonoInitialized;
 		private List<object> _components = new();
 
-	#endregion
-
-	#region Getters Setters
+		// -----------------------------------------------------
+		// Getters Setters
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Return reference to the list with all components.
@@ -45,11 +47,11 @@ namespace Anthill.Core
 				SetupMonoComponents();
 				return index >= 0 && index < _components.Count ? _components[index] : null;
 			}
-		} 
+		}
 
-	#endregion
-
-	#region IEntity Implementation
+		// -----------------------------------------------------
+		// IEntity Implementation
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Called when added new component on the entity.
@@ -136,7 +138,7 @@ namespace Anthill.Core
 		{
 			SetupMonoComponents();
 			int index = GetComponentIndex<T>();
-			return index >= 0 && index < _components.Count ? (T) _components[index] : null;
+			return index >= 0 && index < _components.Count ? (T)_components[index] : null;
 		}
 
 		/// <summary>
@@ -194,7 +196,7 @@ namespace Anthill.Core
 			int index = GetComponentIndex<T>();
 			if (index >= 0 && index < _components.Count)
 			{
-				return (T) _components[index];
+				return (T)_components[index];
 			}
 
 			var type = typeof(T);
@@ -263,7 +265,7 @@ namespace Anthill.Core
 
 				_components.RemoveAt(index);
 				EventComponentRemoved?.Invoke(this, component.GetType());
-				return (T) component;
+				return (T)component;
 			}
 
 			return default;
@@ -299,9 +301,9 @@ namespace Anthill.Core
 			EventRemovedFromEngine?.Invoke(this);
 		}
 
-	#endregion
-
-	#region Protected Methods
+		// -----------------------------------------------------
+		// Protected Methods
+		// -----------------------------------------------------
 
 		private void SetupMonoComponents()
 		{
@@ -351,7 +353,5 @@ namespace Anthill.Core
 
 			return -1;
 		}
-
-	#endregion
 	}
 }

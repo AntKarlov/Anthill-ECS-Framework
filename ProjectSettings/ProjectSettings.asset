@@ -818,7 +818,7 @@ PlayerSettings:
   webGLMemoryGeometricGrowthCap: 96
   webGLPowerPreference: 2
   scriptingDefineSymbols:
-    Android: 
+    Android: FINAL_BUILD
     LinuxHeadlessSimulation: FINAL_BUILD
     Nintendo Switch: FINAL_BUILD
     PS4: FINAL_BUILD
@@ -829,7 +829,9 @@ PlayerSettings:
     XboxOne: FINAL_BUILD
     iPhone: FINAL_BUILD
     tvOS: FINAL_BUILD
-  additionalCompilerArguments: {}
+  additionalCompilerArguments:
+    Android:
+    - 
   platformArchitecture: {}
   scriptingBackend: {}
   il2cppCompilerConfiguration: {}

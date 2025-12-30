@@ -1,7 +1,7 @@
 using System;
 
 namespace Anthill.Core
-{	
+{
 	public interface IFamily
 	{
 		void ComponentAdded(IEntity entity, Type componentType);

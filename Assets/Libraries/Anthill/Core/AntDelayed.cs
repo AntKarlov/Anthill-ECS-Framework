@@ -4,15 +4,17 @@ namespace Anthill.Core
 {
 	public static class AntDelayed
 	{
-	#region Private Variables
+		// -----------------------------------------------------
+		// Private Variables
+		// -----------------------------------------------------
 
 		private static bool _isInitialized = false;
 		private static AntDelayedCallScenario _scenario = null;
 
-	#endregion
+		// -----------------------------------------------------
+		// Getters / Setters
+		// -----------------------------------------------------
 
-	#region Getters / Setters
-		
 		public static AntDelayedCallScenario Scenario
 		{
 			get
@@ -27,9 +29,9 @@ namespace Anthill.Core
 			}
 		}
 
-	#endregion
-
-	#region Public Methods
+		// -----------------------------------------------------
+		// Public Methods
+		// -----------------------------------------------------
 
 		/// <summary>
 		/// Sets delayed call of specified action without arguments.
@@ -44,7 +46,7 @@ namespace Anthill.Core
 			Scenario.Add(call);
 			return call;
 		}
-		
+
 		/// <summary>
 		/// Sets delayed call of specified action with one argument.
 		/// </summary>
@@ -61,7 +63,7 @@ namespace Anthill.Core
 			Scenario.Add(call);
 			return call;
 		}
-		
+
 		/// <summary>
 		/// Sets delayed call of specified action with two arguments.
 		/// </summary>
@@ -126,8 +128,6 @@ namespace Anthill.Core
 			Scenario.Add(call);
 			return call;
 		}
-
-	#endregion
 	}
 
 	/// <summary>
